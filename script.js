@@ -8,12 +8,32 @@ let imgIndex = 1;
 let totalImg = 1;
 let codActual = "";
 
-// Cargar Datos desde JSON
-fetch('productos.json')
-    .then(res => res.json())
-    .then(data => {
-        // Solo mostramos productos marcados como activos
-        todosLosProductos = data.filter(p => p.activo !== false);
+// URL de tu Google Sheets en formato CSV
+const URL_SHEET = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=0&single=true&output=csv';
+
+// Cargar Datos desde Google Sheets
+fetch(URL_SHEET)
+    .then(res => res.text())
+    .then(csvText => {
+        // Dividimos el texto en filas
+        const filas = csvText.split('\n');
+        
+        // Empezamos desde la fila 1 para saltar los encabezados
+        todosLosProductos = filas.slice(1).map(fila => {
+            // Dividimos por comas (CSV)
+            const columnas = fila.split(',');
+            
+            return {
+                codigo: columnas[0]?.trim(),        // Columna A: codigo
+                categoria: columnas[1]?.trim(),     // Columna B: categoria
+                nombre: columnas[3]?.trim(),        // Columna D: nombre prenda
+                precio: parseFloat(columnas[5]) || 0, // Columna F: venta
+                descripcion: columnas[7]?.trim() || "", // Columna H: descripcion
+                status: columnas[8]?.trim().toLowerCase(), // Columna I: status
+                totalImagenes: 1 // Por defecto 1 imagen por carpeta
+            };
+        }).filter(p => p.codigo && p.status !== 'false'); // Solo códigos válidos y activos
+
         productosFiltrados = todosLosProductos;
         generarCategorias();
         mostrarProductos();
@@ -32,7 +52,7 @@ function mostrarProductos() {
         div.className = 'producto';
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
-                <img src="images/${p.codigo}/1.png" alt="${p.nombre}" loading="lazy">
+                <img src="images/${p.codigo}/1.png" alt="${p.nombre}" loading="lazy" onerror="this.src='logo.png'">
             </div>
             <div class="producto-info">
                 <p class="precio">$${p.precio.toFixed(2)}</p>
@@ -56,7 +76,7 @@ function abrirGaleria(codigo, total) {
     imgIndex = 1;
     actualizarVistaGaleria();
     document.getElementById('lightbox').style.display = 'flex';
-    document.body.style.overflow = 'hidden'; // Bloquea scroll fondo
+    document.body.style.overflow = 'hidden';
 }
 
 function actualizarVistaGaleria() {
@@ -88,7 +108,7 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- LÓGICA DEL CARRITO PROFESIONAL ---
+// --- LÓGICA DEL CARRITO ---
 function añadirAlCarrito(codigo) {
     const p = todosLosProductos.find(x => x.codigo === codigo);
     if (p) { 
@@ -96,7 +116,6 @@ function añadirAlCarrito(codigo) {
         const contador = document.getElementById('contador-carrito');
         contador.innerText = carrito.length;
         
-        // Efecto visual de rebote en el botón flotante
         const btn = document.getElementById('btn-carrito');
         btn.style.transform = "scale(1.2) rotate(10deg)";
         setTimeout(() => btn.style.transform = "scale(1) rotate(0deg)", 250);
@@ -118,12 +137,7 @@ function dibujarCarrito() {
     let total = 0;
 
     if (carrito.length === 0) {
-        lista.innerHTML = `
-            <div style="text-align:center; padding:60px 0; color:#bbb;">
-                <p style="font-size:4rem; margin-bottom:15px;">🛒</p>
-                <p style="font-weight:600;">Tu lista está vacía</p>
-                <p style="font-size:0.85rem;">Añade tus prendas favoritas para pedirlas</p>
-            </div>`;
+        lista.innerHTML = `<div style="text-align:center; padding:60px 0; color:#bbb;"><p>Tu lista está vacía</p></div>`;
         totalSpan.innerText = "0.00";
         return;
     }
@@ -133,11 +147,11 @@ function dibujarCarrito() {
         lista.innerHTML += `
             <div class="item-carrito">
                 <div>
-                    <strong style="display:block; color:#111; font-size:0.95rem;">${p.nombre}</strong>
-                    <small style="color:#888; letter-spacing:1px;">CÓD: ${p.codigo}</small>
+                    <strong>${p.nombre}</strong><br>
+                    <small>CÓD: ${p.codigo}</small>
                 </div>
                 <div style="display:flex; align-items:center; gap:15px;">
-                    <span style="font-weight:800; color:#111;">$${p.precio.toFixed(2)}</span>
+                    <span>$${p.precio.toFixed(2)}</span>
                     <button class="btn-quitar" onclick="quitarDelCarrito(${i})">✕</button>
                 </div>
             </div>`;
@@ -153,21 +167,13 @@ function quitarDelCarrito(i) {
 
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
-    
-    let mensaje = "🛍️ *NUEVO PEDIDO - NTENDENCIA PA*\n";
-    mensaje += "----------------------------------\n\n";
-    
+    let mensaje = "🛍️ *NUEVO PEDIDO - NTENDENCIA PA*\n\n";
     let total = 0;
     carrito.forEach((p, index) => {
-        mensaje += `*${index + 1}.* ${p.nombre}\n`;
-        mensaje += `    _Código: ${p.codigo}_ | *$${p.precio.toFixed(2)}*\n\n`;
+        mensaje += `*${index + 1}.* ${p.nombre} (${p.codigo}) - *$${p.precio.toFixed(2)}*\n`;
         total += p.precio;
     });
-    
-    mensaje += "----------------------------------\n";
-    mensaje += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n\n`;
-    mensaje += "Confirmar disponibilidad de estas piezas únicas. 🙏";
-    
+    mensaje += `\n💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*`;
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(mensaje)}`);
 }
 
@@ -206,7 +212,6 @@ function actualizarPaginacion() {
     cont.innerHTML = "";
     const total = Math.ceil(productosFiltrados.length / productosPorPagina);
     if(total <= 1) return;
-    
     for(let i=1; i<=total; i++) {
         const b = document.createElement('button');
         b.className = `pag-btn ${i === paginaActual ? 'activa' : ''}`;
