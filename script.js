@@ -8,41 +8,37 @@ let imgIndex = 1;
 let totalImg = 1;
 let codActual = "";
 
-// URL de tu Google Sheets en formato CSV
 const URL_SHEET = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=0&single=true&output=csv';
 
-// CARGAR DATOS DESDE GOOGLE SHEETS
 fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
-        // Dividimos por filas y eliminamos la primera (encabezados)
         const filas = csvText.split(/\r?\n/).slice(1);
         
         todosLosProductos = filas.map(fila => {
-            // Separador especial para ignorar comas dentro de comillas
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
-            
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
-            return {
-                codigo: limpiar(columnas[0]),        // Col A: CODIGO
-                nombre: limpiar(columnas[3]),        // Col D: NOMBRE
-                precio: parseFloat(limpiar(columnas[6]).replace('$', '')) || 0, // Col G: VENTAS
-                descripcion: limpiar(columnas[8]) || "", // Col I: DESCRIPCION
-                status: limpiar(columnas[9])?.toLowerCase(), // Col J: status (palomita)
-                categoria: limpiar(columnas[10]) || "General", // Col K: CATEGORIA
+            const prod = {
+                codigo: limpiar(columnas[0]),        // Col A
+                nombre: limpiar(columnas[3]),        // Col D
+                precio: parseFloat(limpiar(columnas[6]).replace('$', '')) || 0, // Col G
+                descripcion: limpiar(columnas[8]) || "", // Col I
+                status: limpiar(columnas[9])?.toLowerCase(), // Col J (status/palomita)
+                categoria: limpiar(columnas[10]) || "General", // Col K
                 totalImagenes: 1 
             };
+            return prod;
         }).filter(p => {
-            // --- LÓGICA DE FILTRADO REFORZADA ---
-            // Un producto es VÁLIDO si tiene código.
+            // REVISIÓN MANUAL: Si tienes dudas, esto nos dirá qué dice la columna J
+            // console.log("Producto:", p.codigo, "Status:", p.status); 
+
             const tieneCodigo = p.codigo && p.codigo.length > 1;
             
-            // Un producto está VENDIDO si el status NO está vacío y no es "false".
-            // Esto detecta: Checkboxes marcados, palabras como "TRUE", "SI", "VENDIDO", etc.
-            const estaVendido = p.status && p.status !== "" && p.status !== "false" && p.status !== "faux" && p.status !== "0";
+            // FILTRO RADICAL: Si la celda de status tiene CUALQUIER COSA (texto, TRUE, SI, X), 
+            // y no es la palabra "false", asumimos que está vendido/marcado en verde.
+            const estaVendido = p.status && p.status !== "" && p.status !== "false" && p.status !== "0" && p.status !== "faux";
 
-            // Solo devolvemos los que tienen código y NO están vendidos
             return tieneCodigo && !estaVendido;
         });
 
@@ -50,9 +46,8 @@ fetch(URL_SHEET)
         generarCategorias();
         mostrarProductos();
     })
-    .catch(err => console.error("Error cargando Google Sheets:", err));
+    .catch(err => console.error("Error:", err));
 
-// --- MOSTRAR PRODUCTOS EN PANTALLA ---
 function mostrarProductos() {
     const contenedor = document.getElementById('productos');
     if (!contenedor) return;
@@ -62,23 +57,23 @@ function mostrarProductos() {
     const fin = inicio + productosPorPagina;
     const lista = productosFiltrados.slice(inicio, fin);
 
-    if (lista.length === 0) {
-        contenedor.innerHTML = "<p style='text-align:center; grid-column: 1/-1; padding: 50px;'>No hay productos disponibles en esta categoría.</p>";
-    }
-
     lista.forEach(p => {
         const div = document.createElement('div');
         div.className = 'producto';
+        // Agregamos onerror para que si la foto no está en GitHub, use una por defecto
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
-                <img src="images/${p.codigo}/1.png" alt="${p.nombre}" loading="lazy" onerror="this.src='logo.png'">
+                <img src="images/${p.codigo}/1.png" 
+                     alt="${p.nombre}" 
+                     loading="lazy" 
+                     onerror="this.onerror=null; this.src='https://placehold.co/300x400?text=Foto+Proximamente'">
             </div>
             <div class="producto-info">
                 <p class="precio">$${p.precio.toFixed(2)}</p>
                 <h3>${p.nombre}</h3>
                 <div class="descripcion">${p.descripcion}</div>
                 <div class="contenedor-botones">
-                    <a href="https://wa.me/50767710645?text=Hola! Me interesa esta pieza única: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
+                    <a href="https://wa.me/50767710645?text=Hola! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
                 </div>
             </div>
@@ -88,11 +83,9 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- LÓGICA DE GALERÍA (LIGHTBOX) ---
+// --- LÓGICA DE GALERÍA ---
 function abrirGaleria(codigo, total) {
-    codActual = codigo; 
-    totalImg = total; 
-    imgIndex = 1;
+    codActual = codigo; totalImg = total; imgIndex = 1;
     actualizarVistaGaleria();
     document.getElementById('lightbox').style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -100,8 +93,10 @@ function abrirGaleria(codigo, total) {
 
 function actualizarVistaGaleria() {
     const imgGrande = document.getElementById('img-grande');
-    if (imgGrande) imgGrande.src = `images/${codActual}/${imgIndex}.png`;
-    
+    if (imgGrande) {
+        imgGrande.src = `images/${codActual}/${imgIndex}.png`;
+        imgGrande.onerror = function() { this.src = 'https://placehold.co/600x800?text=Imagen+no+disponible'; };
+    }
     const nav = document.getElementById('lightbox-nav');
     if (nav) {
         nav.innerHTML = "";
@@ -130,14 +125,13 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- LÓGICA DEL CARRITO ---
+// --- CARRITO ---
 function añadirAlCarrito(codigo) {
     const p = todosLosProductos.find(x => x.codigo === codigo);
     if (p) { 
         carrito.push(p); 
         const contador = document.getElementById('contador-carrito');
         if (contador) contador.innerText = carrito.length;
-        
         const btn = document.getElementById('btn-carrito');
         if (btn) {
             btn.style.transform = "scale(1.2) rotate(10deg)";
@@ -159,24 +153,17 @@ function dibujarCarrito() {
     const lista = document.getElementById('lista-carrito');
     const totalSpan = document.getElementById('precio-total');
     if (!lista || !totalSpan) return;
-    
-    lista.innerHTML = ""; 
-    let total = 0;
-
+    lista.innerHTML = ""; let total = 0;
     if (carrito.length === 0) {
         lista.innerHTML = `<div style="text-align:center; padding:60px 0; color:#bbb;"><p>Tu lista está vacía</p></div>`;
         totalSpan.innerText = "0.00";
         return;
     }
-
     carrito.forEach((p, i) => {
         total += p.precio;
         lista.innerHTML += `
             <div class="item-carrito">
-                <div>
-                    <strong>${p.nombre}</strong><br>
-                    <small>CÓD: ${p.codigo}</small>
-                </div>
+                <div><strong>${p.nombre}</strong><br><small>CÓD: ${p.codigo}</small></div>
                 <div style="display:flex; align-items:center; gap:15px;">
                     <span>$${p.precio.toFixed(2)}</span>
                     <button class="btn-quitar" onclick="quitarDelCarrito(${i})">✕</button>
@@ -209,8 +196,7 @@ function enviarPedidoWhatsApp() {
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
-        p.nombre.toLowerCase().includes(term) || 
-        p.codigo.toLowerCase().includes(term)
+        p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
     );
     paginaActual = 1;
     mostrarProductos();
@@ -242,7 +228,6 @@ function actualizarPaginacion() {
     cont.innerHTML = "";
     const total = Math.ceil(productosFiltrados.length / productosPorPagina);
     if(total <= 1) return;
-    
     for(let i=1; i<=total; i++) {
         const b = document.createElement('button');
         b.className = `pag-btn ${i === paginaActual ? 'activa' : ''}`;
