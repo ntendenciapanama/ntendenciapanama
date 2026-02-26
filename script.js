@@ -15,26 +15,32 @@ const URL_SHEET = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47
 fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
-        const filas = csvText.split(/\r?\n/);
+        // Dividimos por filas y eliminamos la primera (encabezados)
+        const filas = csvText.split(/\r?\n/).slice(1);
         
-        todosLosProductos = filas.slice(1).map(fila => {
-            // Expresión regular para separar por comas respetando textos entre comillas
+        todosLosProductos = filas.map(fila => {
+            // Separador especial para ignorar comas dentro de comillas (descripciones)
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
+            
+            // Función para quitar comillas y espacios extras
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
             return {
                 codigo: limpiar(columnas[0]),        // Col A: CODIGO
                 nombre: limpiar(columnas[3]),        // Col D: NOMBRE
-                precio: parseFloat(limpiar(columnas[6])) || 0, // Col G: VENTAS
+                precio: parseFloat(limpiar(columnas[6]).replace('$', '')) || 0, // Col G: VENTAS
                 descripcion: limpiar(columnas[8]) || "", // Col I: DESCRIPCION
-                status: limpiar(columnas[9])?.toLowerCase(), // Col J: status (palomita)
-                categoria: limpiar(columnas[10]) || "Otros", // Col K: CATEGORIA WEB
-                totalImagenes: 1 // Por defecto 1, se puede ajustar en el Excel después
+                status: limpiar(columnas[9])?.toLowerCase(), // Col J: status
+                categoria: limpiar(columnas[10]) || "General", // Col K: CATEGORIA
+                totalImagenes: 1 
             };
         }).filter(p => {
-            // Solo mostramos productos con código y cuyo status NO sea 'true' (palomita marcada)
+            // FILTRO DE SEGURIDAD:
+            // 1. Debe tener un código válido.
+            // 2. Si el status es 'true' (palomita marcada), NO se muestra.
+            const esValido = p.codigo && p.codigo.length > 1;
             const estaVendido = p.status === 'true' || p.status === 'vrai' || p.status === '1' || p.status === 'verdadero';
-            return p.codigo && p.nombre && !estaVendido;
+            return esValido && !estaVendido;
         });
 
         productosFiltrados = todosLosProductos;
@@ -43,7 +49,7 @@ fetch(URL_SHEET)
     })
     .catch(err => console.error("Error cargando Google Sheets:", err));
 
-// Mostrar Cuadrícula de Productos
+// --- MOSTRAR PRODUCTOS EN PANTALLA ---
 function mostrarProductos() {
     const contenedor = document.getElementById('productos');
     if (!contenedor) return;
@@ -86,7 +92,9 @@ function abrirGaleria(codigo, total) {
 }
 
 function actualizarVistaGaleria() {
-    document.getElementById('img-grande').src = `images/${codActual}/${imgIndex}.png`;
+    const imgGrande = document.getElementById('img-grande');
+    if (imgGrande) imgGrande.src = `images/${codActual}/${imgIndex}.png`;
+    
     const nav = document.getElementById('lightbox-nav');
     if (nav) {
         nav.innerHTML = "";
@@ -115,7 +123,7 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- LÓGICA DEL CARRITO PROFESIONAL ---
+// --- LÓGICA DEL CARRITO ---
 function añadirAlCarrito(codigo) {
     const p = todosLosProductos.find(x => x.codigo === codigo);
     if (p) { 
@@ -149,12 +157,7 @@ function dibujarCarrito() {
     let total = 0;
 
     if (carrito.length === 0) {
-        lista.innerHTML = `
-            <div style="text-align:center; padding:60px 0; color:#bbb;">
-                <p style="font-size:4rem; margin-bottom:15px;">🛒</p>
-                <p style="font-weight:600;">Tu lista está vacía</p>
-                <p style="font-size:0.85rem;">Añade tus prendas favoritas para pedirlas</p>
-            </div>`;
+        lista.innerHTML = `<div style="text-align:center; padding:60px 0; color:#bbb;"><p>Tu lista está vacía</p></div>`;
         totalSpan.innerText = "0.00";
         return;
     }
@@ -164,11 +167,11 @@ function dibujarCarrito() {
         lista.innerHTML += `
             <div class="item-carrito">
                 <div>
-                    <strong style="display:block; color:#111; font-size:0.95rem;">${p.nombre}</strong>
-                    <small style="color:#888; letter-spacing:1px;">CÓD: ${p.codigo}</small>
+                    <strong>${p.nombre}</strong><br>
+                    <small>CÓD: ${p.codigo}</small>
                 </div>
                 <div style="display:flex; align-items:center; gap:15px;">
-                    <span style="font-weight:800; color:#111;">$${p.precio.toFixed(2)}</span>
+                    <span>$${p.precio.toFixed(2)}</span>
                     <button class="btn-quitar" onclick="quitarDelCarrito(${i})">✕</button>
                 </div>
             </div>`;
@@ -185,17 +188,13 @@ function quitarDelCarrito(i) {
 
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
-    let mensaje = "🛍️ *NUEVO PEDIDO - NTENDENCIA PA*\n";
-    mensaje += "----------------------------------\n\n";
+    let mensaje = "🛍️ *NUEVO PEDIDO - NTENDENCIA PA*\n\n";
     let total = 0;
     carrito.forEach((p, index) => {
-        mensaje += `*${index + 1}.* ${p.nombre}\n`;
-        mensaje += `    _Código: ${p.codigo}_ | *$${p.precio.toFixed(2)}*\n\n`;
+        mensaje += `*${index + 1}.* ${p.nombre} (${p.codigo}) - *$${p.precio.toFixed(2)}*\n`;
         total += p.precio;
     });
-    mensaje += "----------------------------------\n";
-    mensaje += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n\n`;
-    mensaje += "Confirmar disponibilidad de estas piezas únicas. 🙏";
+    mensaje += `\n💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*`;
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(mensaje)}`);
 }
 
