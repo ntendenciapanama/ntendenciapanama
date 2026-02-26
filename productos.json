@@ -1,0 +1,362 @@
+[
+  {
+    "codigo": "VB-1U4PR",
+    "nombre": "TOP + PANTI",
+    "precio": 4,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO TOP Y PANTI COLOR NEGRO TALLA M.",
+    "activo": true
+  },
+  {
+    "codigo": "6S-JNOCD",
+    "nombre": "Sandalias Blancas tacón alto",
+    "precio": 4,
+    "categoria": "Sandalias",
+    "totalImagenes": 3,
+    "descripcion": "SANDALIAS DE TACON ALTO BLANCAS TALLA 6-1/2",
+    "activo": true
+  },
+  {
+    "codigo": "VB-2KMWO",
+    "nombre": "SOLO TOP",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO TOP TALLA 2XL",
+    "activo": true 
+  },
+  {
+    "codigo": "VB-03M6O",
+    "nombre": "SOLO PANTI",
+    "precio": 1.50,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO PANTI COLOR NEGRO TALLA XL",
+    "activo": true
+  },
+  {
+    "codigo": "VB-3SK53",
+    "nombre": "Traje de Baño",
+    "precio": 4,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "Vestido de baño con amarre TALLA L",
+    "activo": true
+  },
+  {
+    "codigo": "VB-3U62T",
+    "nombre": "Traje de Baño",
+    "precio": 2,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO NEGRO PEQUEÑO TALLA S",
+    "activo": true 
+    },
+  {
+    "codigo": "VB-5OIWU",
+    "nombre": "Traje de Baño",
+    "precio": 2,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO NEGRO PEQUEÑO TALLA S",
+    "activo": true 
+   },
+{
+    "codigo": "VB-5Y397",
+    "nombre": "TOP + PANTI",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO ROSA TOP CON MOÑO Y PANTI NEGRO M",
+    "activo": true 
+},
+{
+    "codigo": "VB-8DOUY",
+    "nombre": "Traje de Baño",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO GRIS CON RALLAS ARRIBA NEGRO ABAJO ENTERIZO TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-8YDMF",
+    "nombre": "Top + Panti",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE FLORES  COLORIDA MAS PANTI TALLA XL",
+    "activo": true 
+},
+{
+    "codigo": "VB-9DQ52",
+    "nombre": "Traje de Baño",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO COLOR AZUL DE UNA PIEZA ENTERA TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-30IWL",
+    "nombre": "Traje de Baño",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO ENTERIZO NEGRO TALLA XL CON ARRUGA EN EL CENTRO",
+    "activo": true 
+},
+{
+    "codigo": "VB-789MA",
+    "nombre": "SOLO TOP",
+    "precio": 2,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO TOP COLOR NEGRO DE FLORES  TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-2547S",
+    "nombre": "SOLO TOP",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO MORADO LILA SOLO TOP TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-C4PBR",
+    "nombre": "SOLO TOP",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO TOP ESCAMA GRIS TALLA 18W",
+    "activo": true 
+},
+{
+    "codigo": "VB-DHLO6",
+    "nombre": "Traje de Baño",
+    "precio": 4,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO NEGRO DE TIRA TALLA S",
+    "activo": true 
+},
+{
+    "codigo": "VB-ER56H",
+    "nombre": "Traje de Baño",
+    "precio": 2.50,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE COLOR AZUL CON FONDO DE OLEAJE TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-FJOLU",
+    "nombre": "SOLO TOP",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO TOP NARANJA TALLA S",
+    "activo": true 
+},
+{
+    "codigo": "VB-FO0WL",
+    "nombre": "Top + Panti",
+    "precio": 4,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO COLOR AZUL TOP Y PANTI TALLA L",
+    "activo": true 
+},
+{
+    "codigo": "VB-FXX27",
+    "nombre": "Traje de Baño",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO ENTERO 15-16 COLOR GRIS Y AZUL DE FLORES TALLA 15-16",
+    "activo": true 
+},
+{
+    "codigo": "VB-G1KAQ",
+    "nombre": "SOLO TOP",
+    "precio": 2,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO TOP NEGRO, TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-G5745",
+    "nombre": "SOLO TOP",
+    "precio": 2,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO TOP COLOR CHOCOLATE TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-GQMVI",
+    "nombre": "Solo Pantalón",
+    "precio": 1.50,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO PANTALON VERDE DE HUEQUITOS TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-H38EG",
+    "nombre": "SOLO TOP",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDOD DE BAÑO SOLO TOP CAMISA AZUL CON BLANCO TALLA 16",
+    "activo": true 
+},
+{
+    "codigo": "VB-JPAZU",
+    "nombre": "top + Panti",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO TOP RALLAS ROSADAS Y NEGRAS + PANTI TALLA XL",
+    "activo": true 
+},
+{
+    "codigo": "VB-N2M9J",
+    "nombre": "Traje de Baño",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO NEGRO ESTILO ROMP TALLA 5XL",
+    "activo": true 
+},
+{
+    "codigo": "VB-O2DSE",
+    "nombre": "SOLO TOP",
+    "precio": 1.50,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO BLANCO DE BAÑO DE ESTRELLA, TRANSPARENTE TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-O885E",
+    "nombre": "SOLO TOP",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO MORADO SOLO TOP TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-OQ3P2",
+    "nombre": "SOLO TOP",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO TOP CON PLIEGES EN LAS MANGAS TALLA 2XL MARCA KATE KASIN",
+    "activo": true 
+},
+{
+    "codigo": "VB-PKAMI",
+    "nombre": "Traje de Baño",
+    "precio": 5,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO MARCA EOMINIE NUEVO TALLA S",
+    "activo": true 
+},
+{
+    "codigo": "VB-Q6C8R",
+    "nombre": "SOLO TOP",
+    "precio": 2,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO TOP COLOR AZUL CON ETIQUETA TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-S83EC",
+    "nombre": "SOLO TOP",
+    "precio": 2,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO BRAZIEL BLANCO TALLA ",
+    "activo": true 
+},
+{
+    "codigo": "VB-SSXGR",
+    "nombre": "Top + Panti",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO 2 PIEZAS TOP+PANTI NEGRO TALLA M",
+    "activo": true 
+},
+{
+    "codigo": "VB-UI7TP",
+    "nombre": "Top + Panti",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO TOP MAS PANTI TALLA XL",
+    "activo": true 
+},
+{
+    "codigo": "VB-URAMU",
+    "nombre": "Top + Panti",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO SOLO TOP ROSADO CON TIRAS TALLA L",
+    "activo": true 
+},
+{
+    "codigo": "VB-USIZ9",
+    "nombre": "Traje de Baño",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO CHOCOLATE 5X",
+    "activo": true 
+},
+{
+    "codigo": "VB-UY06O",
+    "nombre": "Solo Panti",
+    "precio": 2,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO ROSADO SOLO PANTI TALLA XL",
+    "activo": true 
+},
+{
+    "codigo": "VB-UZRS4",
+    "nombre": "Traje de Baño",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO NEGRO CRUZADO AL FRENTE ESPALDA AFUERA TALLA L",
+    "activo": true 
+},
+{
+    "codigo": "VB-W1QFD",
+    "nombre": "SOLO TOP",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO DE BAÑO AMARILLO SIMULA PERLAS SOLO TOP TALLA XXL",
+    "activo": true 
+},
+{
+    "codigo": "VB-ZE47K",
+    "nombre": "Traje de Baño",
+    "precio": 3,
+    "categoria": "Vestido de Baño",
+    "totalImagenes": 2,
+    "descripcion": "VESTIDO ENTERISO DE RALLAS NEGRAS Y BLANCAS TALLA L",
+    "activo": true 
+}
+]
