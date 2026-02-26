@@ -19,10 +19,9 @@ fetch(URL_SHEET)
         const filas = csvText.split(/\r?\n/).slice(1);
         
         todosLosProductos = filas.map(fila => {
-            // Separador especial para ignorar comas dentro de comillas (descripciones)
+            // Separador especial para ignorar comas dentro de comillas
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             
-            // Función para quitar comillas y espacios extras
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
             return {
@@ -30,17 +29,21 @@ fetch(URL_SHEET)
                 nombre: limpiar(columnas[3]),        // Col D: NOMBRE
                 precio: parseFloat(limpiar(columnas[6]).replace('$', '')) || 0, // Col G: VENTAS
                 descripcion: limpiar(columnas[8]) || "", // Col I: DESCRIPCION
-                status: limpiar(columnas[9])?.toLowerCase(), // Col J: status
+                status: limpiar(columnas[9])?.toLowerCase(), // Col J: status (palomita)
                 categoria: limpiar(columnas[10]) || "General", // Col K: CATEGORIA
                 totalImagenes: 1 
             };
         }).filter(p => {
-            // FILTRO DE SEGURIDAD:
-            // 1. Debe tener un código válido.
-            // 2. Si el status es 'true' (palomita marcada), NO se muestra.
-            const esValido = p.codigo && p.codigo.length > 1;
-            const estaVendido = p.status === 'true' || p.status === 'vrai' || p.status === '1' || p.status === 'verdadero';
-            return esValido && !estaVendido;
+            // --- LÓGICA DE FILTRADO REFORZADA ---
+            // Un producto es VÁLIDO si tiene código.
+            const tieneCodigo = p.codigo && p.codigo.length > 1;
+            
+            // Un producto está VENDIDO si el status NO está vacío y no es "false".
+            // Esto detecta: Checkboxes marcados, palabras como "TRUE", "SI", "VENDIDO", etc.
+            const estaVendido = p.status && p.status !== "" && p.status !== "false" && p.status !== "faux" && p.status !== "0";
+
+            // Solo devolvemos los que tienen código y NO están vendidos
+            return tieneCodigo && !estaVendido;
         });
 
         productosFiltrados = todosLosProductos;
@@ -58,6 +61,10 @@ function mostrarProductos() {
     const inicio = (paginaActual - 1) * productosPorPagina;
     const fin = inicio + productosPorPagina;
     const lista = productosFiltrados.slice(inicio, fin);
+
+    if (lista.length === 0) {
+        contenedor.innerHTML = "<p style='text-align:center; grid-column: 1/-1; padding: 50px;'>No hay productos disponibles en esta categoría.</p>";
+    }
 
     lista.forEach(p => {
         const div = document.createElement('div');
