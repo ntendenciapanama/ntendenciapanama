@@ -11,7 +11,7 @@ let codActual = "";
 // URL BASE de tu HOJA VISUAL
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
 
-// ANTI-CACHE: Agregamos el timestamp para que los cambios en Sheets se vean rápido
+// ANTI-CACHE: Forzamos carga fresca
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
 
 // --- CARGAR DATOS DESDE GOOGLE SHEETS ---
@@ -19,8 +19,6 @@ fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
         const todasLasFilas = csvText.split(/\r?\n/);
-        
-        // .slice(2) salta la fila 1 (Título) y fila 2 (Encabezados)
         const filasDeProductos = todasLasFilas.slice(2);
         
         todosLosProductos = filasDeProductos.map(fila => {
@@ -28,15 +26,13 @@ fetch(URL_SHEET)
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
             return {
-                codigo: limpiar(columnas[0]),        // Col A
-                nombre: limpiar(columnas[1]),        // Col B
-                precio: parseFloat(limpiar(columnas[2]).replace('$', '')) || 0, // Col C
-                stock: limpiar(columnas[3]),         // Col D
-                descripcion: limpiar(columnas[4]) || "", // Col E
-                status: limpiar(columnas[5])?.toLowerCase(), // Col F
-                categoria: limpiar(columnas[6]) || "General", // Col G
-                
-                // NUEVO: Lee la Columna H (FOTOS). Si está vacía, asume 1.
+                codigo: limpiar(columnas[0]),
+                nombre: limpiar(columnas[1]),
+                precio: parseFloat(limpiar(columnas[2]).replace('$', '')) || 0,
+                stock: limpiar(columnas[3]),
+                descripcion: limpiar(columnas[4]) || "",
+                status: limpiar(columnas[5])?.toLowerCase(),
+                categoria: limpiar(columnas[6]) || "General",
                 totalImagenes: parseInt(limpiar(columnas[7])) || 1 
             };
         }).filter(p => {
@@ -64,9 +60,14 @@ function mostrarProductos() {
     lista.forEach(p => {
         const div = document.createElement('div');
         div.className = 'producto';
+        
+        // HACK HÍBRIDO: Intenta cargar .jpg, si falla carga .png (onerror)
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
-                <img src="images/${p.codigo}/1.png?t=${new Date().getTime()}" alt="${p.nombre}" loading="lazy" onerror="this.src='logo.png'">
+                <img src="images/${p.codigo}/1.jpg?t=${new Date().getTime()}" 
+                     alt="${p.nombre}" 
+                     loading="lazy" 
+                     onerror="this.onerror=null; this.src='images/${p.codigo}/1.png'; this.setAttribute('onerror', 'this.src=\'logo.png\'')">
             </div>
             <div class="producto-info">
                 <p class="precio">$${p.precio.toFixed(2)}</p>
@@ -83,7 +84,7 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- LÓGICA DE GALERÍA (DETECTIVE) ---
+// --- LÓGICA DE GALERÍA (DETECTIVE HÍBRIDO) ---
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -95,51 +96,64 @@ function abrirGaleria(codigo, total) {
 
 function actualizarVistaGaleria() {
     const imgGrande = document.getElementById('img-grande');
-    // Forzamos también anti-cache en la imagen de la galería
-    if (imgGrande) imgGrande.src = `images/${codActual}/${imgIndex}.png?t=${new Date().getTime()}`;
+    if (imgGrande) {
+        // Primero intentamos poner la imagen en .jpg
+        imgGrande.src = `images/${codActual}/${imgIndex}.jpg?t=${new Date().getTime()}`;
+        
+        // Si no existe el .jpg, intentamos con el .png
+        imgGrande.onerror = function() {
+            this.onerror = null; 
+            this.src = `images/${codActual}/${imgIndex}.png`;
+        };
+    }
     
     const nav = document.getElementById('lightbox-nav');
     if (!nav) return;
     nav.innerHTML = "";
     
-    // Si el Excel dice que hay más de 1, revisamos cuáles existen realmente
     if (totalImg > 1) {
         for (let i = 1; i <= totalImg; i++) {
-            const ruta = `images/${codActual}/${i}.png`;
-            const tempImg = new Image();
-            tempImg.src = ruta;
-            
-            tempImg.onload = () => {
-                const t = document.createElement('img');
-                t.src = ruta;
-                t.className = `thumb-galeria ${i === imgIndex ? 'activa' : ''}`;
-                t.onclick = () => { imgIndex = i; actualizarVistaGaleria(); };
-                nav.appendChild(t);
-            };
-            // Si la imagen no existe, simplemente no se crea la miniatura (onload no se dispara)
+            verificarYCrearMiniatura(i, nav);
         }
     }
+}
+
+// Función auxiliar para chequear JPG y PNG en miniaturas
+function verificarYCrearMiniatura(i, nav) {
+    const rutaJpg = `images/${codActual}/${i}.jpg`;
+    const tempJpg = new Image();
+    tempJpg.src = rutaJpg;
+
+    tempJpg.onload = () => {
+        crearBotonMini(rutaJpg, i, nav);
+    };
+
+    tempJpg.onerror = () => {
+        const rutaPng = `images/${codActual}/${i}.png`;
+        const tempPng = new Image();
+        tempPng.src = rutaPng;
+        tempPng.onload = () => {
+            crearBotonMini(rutaPng, i, nav);
+        };
+    };
+}
+
+function crearBotonMini(ruta, i, nav) {
+    const t = document.createElement('img');
+    t.src = ruta;
+    t.className = `thumb-galeria ${i === imgIndex ? 'activa' : ''}`;
+    t.onclick = () => { imgIndex = i; actualizarVistaGaleria(); };
+    nav.appendChild(t);
 }
 
 function cambiarImagenNav(paso, event) {
     if(event) event.stopPropagation();
     let nuevoIndex = imgIndex + paso;
-    
     if (nuevoIndex > totalImg) nuevoIndex = 1;
     if (nuevoIndex < 1) nuevoIndex = totalImg;
-
-    // Verificamos si la siguiente imagen existe antes de saltar
-    const checkImg = new Image();
-    checkImg.src = `images/${codActual}/${nuevoIndex}.png`;
     
-    checkImg.onload = () => {
-        imgIndex = nuevoIndex;
-        actualizarVistaGaleria();
-    };
-    checkImg.onerror = () => {
-        imgIndex = 1; // Si falla, vuelve a la principal
-        actualizarVistaGaleria();
-    };
+    imgIndex = nuevoIndex;
+    actualizarVistaGaleria();
 }
 
 function cerrarImagen() {
@@ -147,14 +161,13 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- LÓGICA DEL CARRITO ---
+// --- EL RESTO DEL CÓDIGO (CARRITO, FILTROS, PAGINACIÓN) SE MANTIENE IGUAL ---
 function añadirAlCarrito(codigo) {
     const p = todosLosProductos.find(x => x.codigo === codigo);
     if (p) { 
         carrito.push(p); 
         const contador = document.getElementById('contador-carrito');
         if (contador) contador.innerText = carrito.length;
-        
         const btn = document.getElementById('btn-carrito');
         if (btn) {
             btn.style.transform = "scale(1.2)";
@@ -176,16 +189,13 @@ function dibujarCarrito() {
     const lista = document.getElementById('lista-carrito');
     const totalSpan = document.getElementById('precio-total');
     if (!lista || !totalSpan) return;
-    
     lista.innerHTML = ""; 
     let total = 0;
-
     if (carrito.length === 0) {
         lista.innerHTML = `<div style="text-align:center; padding:40px 0; color:#888;"><p>Tu lista está vacía.</p></div>`;
         totalSpan.innerText = "0.00";
         return;
     }
-
     carrito.forEach((p, i) => {
         total += p.precio;
         lista.innerHTML += `
@@ -222,7 +232,6 @@ function enviarPedidoWhatsApp() {
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
-// --- FILTROS Y CATEGORÍAS ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
@@ -258,7 +267,6 @@ function actualizarPaginacion() {
     cont.innerHTML = "";
     const total = Math.ceil(productosFiltrados.length / productosPorPagina);
     if(total <= 1) return;
-    
     for(let i=1; i<=total; i++) {
         const b = document.createElement('button');
         b.className = `pag-btn ${i === paginaActual ? 'activa' : ''}`;
