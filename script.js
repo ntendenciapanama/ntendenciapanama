@@ -11,8 +11,7 @@ let codActual = "";
 // URL BASE de tu HOJA VISUAL
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
 
-// --- APLICANDO EL HACK ANTI-CACHÉ ---
-// Agregamos un timestamp único al final del URL para forzar la carga de datos frescos
+// ANTI-CACHE: Agregamos el timestamp para que los cambios en Sheets se vean rápido
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
 
 // --- CARGAR DATOS DESDE GOOGLE SHEETS ---
@@ -22,28 +21,26 @@ fetch(URL_SHEET)
         const todasLasFilas = csvText.split(/\r?\n/);
         
         // .slice(2) salta la fila 1 (Título) y fila 2 (Encabezados)
-        // Leemos datos reales desde la fila 3
         const filasDeProductos = todasLasFilas.slice(2);
         
         todosLosProductos = filasDeProductos.map(fila => {
-            // Regex para separar por comas respetando textos entre comillas (descripciones)
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
             return {
-                codigo: limpiar(columnas[0]),        // Col A: codigo
-                nombre: limpiar(columnas[1]),        // Col B: producto
-                precio: parseFloat(limpiar(columnas[2]).replace('$', '')) || 0, // Col C: venta
-                stock: limpiar(columnas[3]),         // Col D: STOCK
-                descripcion: limpiar(columnas[4]) || "", // Col E: DESCRIPCION
-                status: limpiar(columnas[5])?.toLowerCase(), // Col F: STATUS (Palomita)
-                categoria: limpiar(columnas[6]) || "General", // Col G: CATEGORIA
-                totalImagenes: 1 
+                codigo: limpiar(columnas[0]),        // Col A
+                nombre: limpiar(columnas[1]),        // Col B
+                precio: parseFloat(limpiar(columnas[2]).replace('$', '')) || 0, // Col C
+                stock: limpiar(columnas[3]),         // Col D
+                descripcion: limpiar(columnas[4]) || "", // Col E
+                status: limpiar(columnas[5])?.toLowerCase(), // Col F
+                categoria: limpiar(columnas[6]) || "General", // Col G
+                
+                // NUEVO: Lee la Columna H (FOTOS). Si está vacía, asume 1.
+                totalImagenes: parseInt(limpiar(columnas[7])) || 1 
             };
         }).filter(p => {
-            // Filtro: Debe tener código y NO estar marcado como vendido
             const tieneCodigo = p.codigo && p.codigo.length > 1;
-            // Detecta si está marcado en verde (true, 1, vendido)
             const estaVendido = p.status === 'true' || p.status === '1' || p.status === 'vendido' || p.status === 'vrai';
             return tieneCodigo && !estaVendido;
         });
@@ -69,7 +66,7 @@ function mostrarProductos() {
         div.className = 'producto';
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
-                <img src="images/${p.codigo}/1.png" alt="${p.nombre}" loading="lazy" onerror="this.src='logo.png'">
+                <img src="images/${p.codigo}/1.png?t=${new Date().getTime()}" alt="${p.nombre}" loading="lazy" onerror="this.src='logo.png'">
             </div>
             <div class="producto-info">
                 <p class="precio">$${p.precio.toFixed(2)}</p>
@@ -86,9 +83,11 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- LÓGICA DE GALERÍA (LIGHTBOX) ---
+// --- LÓGICA DE GALERÍA (DETECTIVE) ---
 function abrirGaleria(codigo, total) {
-    codActual = codigo; totalImg = total; imgIndex = 1;
+    codActual = codigo; 
+    totalImg = total; 
+    imgIndex = 1;
     actualizarVistaGaleria();
     document.getElementById('lightbox').style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -96,29 +95,51 @@ function abrirGaleria(codigo, total) {
 
 function actualizarVistaGaleria() {
     const imgGrande = document.getElementById('img-grande');
-    if (imgGrande) imgGrande.src = `images/${codActual}/${imgIndex}.png`;
+    // Forzamos también anti-cache en la imagen de la galería
+    if (imgGrande) imgGrande.src = `images/${codActual}/${imgIndex}.png?t=${new Date().getTime()}`;
     
     const nav = document.getElementById('lightbox-nav');
-    if (nav) {
-        nav.innerHTML = "";
-        if (totalImg > 1) {
-            for (let i = 1; i <= totalImg; i++) {
+    if (!nav) return;
+    nav.innerHTML = "";
+    
+    // Si el Excel dice que hay más de 1, revisamos cuáles existen realmente
+    if (totalImg > 1) {
+        for (let i = 1; i <= totalImg; i++) {
+            const ruta = `images/${codActual}/${i}.png`;
+            const tempImg = new Image();
+            tempImg.src = ruta;
+            
+            tempImg.onload = () => {
                 const t = document.createElement('img');
-                t.src = `images/${codActual}/${i}.png`;
+                t.src = ruta;
                 t.className = `thumb-galeria ${i === imgIndex ? 'activa' : ''}`;
                 t.onclick = () => { imgIndex = i; actualizarVistaGaleria(); };
                 nav.appendChild(t);
-            }
+            };
+            // Si la imagen no existe, simplemente no se crea la miniatura (onload no se dispara)
         }
     }
 }
 
 function cambiarImagenNav(paso, event) {
     if(event) event.stopPropagation();
-    imgIndex += paso;
-    if (imgIndex > totalImg) imgIndex = 1;
-    if (imgIndex < 1) imgIndex = totalImg;
-    actualizarVistaGaleria();
+    let nuevoIndex = imgIndex + paso;
+    
+    if (nuevoIndex > totalImg) nuevoIndex = 1;
+    if (nuevoIndex < 1) nuevoIndex = totalImg;
+
+    // Verificamos si la siguiente imagen existe antes de saltar
+    const checkImg = new Image();
+    checkImg.src = `images/${codActual}/${nuevoIndex}.png`;
+    
+    checkImg.onload = () => {
+        imgIndex = nuevoIndex;
+        actualizarVistaGaleria();
+    };
+    checkImg.onerror = () => {
+        imgIndex = 1; // Si falla, vuelve a la principal
+        actualizarVistaGaleria();
+    };
 }
 
 function cerrarImagen() {
