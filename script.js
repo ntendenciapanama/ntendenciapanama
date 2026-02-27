@@ -61,7 +61,6 @@ function mostrarProductos() {
         const div = document.createElement('div');
         div.className = 'producto';
         
-        // HACK HÍBRIDO: Intenta cargar .jpg, si falla carga .png (onerror)
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
                 <img src="images/${p.codigo}/1.jpg?t=${new Date().getTime()}" 
@@ -84,7 +83,7 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- LÓGICA DE GALERÍA (DETECTIVE HÍBRIDO) ---
+// --- LÓGICA DE GALERÍA ---
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -97,10 +96,7 @@ function abrirGaleria(codigo, total) {
 function actualizarVistaGaleria() {
     const imgGrande = document.getElementById('img-grande');
     if (imgGrande) {
-        // Primero intentamos poner la imagen en .jpg
         imgGrande.src = `images/${codActual}/${imgIndex}.jpg?t=${new Date().getTime()}`;
-        
-        // Si no existe el .jpg, intentamos con el .png
         imgGrande.onerror = function() {
             this.onerror = null; 
             this.src = `images/${codActual}/${imgIndex}.png`;
@@ -118,23 +114,16 @@ function actualizarVistaGaleria() {
     }
 }
 
-// Función auxiliar para chequear JPG y PNG en miniaturas
 function verificarYCrearMiniatura(i, nav) {
     const rutaJpg = `images/${codActual}/${i}.jpg`;
     const tempJpg = new Image();
     tempJpg.src = rutaJpg;
-
-    tempJpg.onload = () => {
-        crearBotonMini(rutaJpg, i, nav);
-    };
-
+    tempJpg.onload = () => crearBotonMini(rutaJpg, i, nav);
     tempJpg.onerror = () => {
         const rutaPng = `images/${codActual}/${i}.png`;
         const tempPng = new Image();
         tempPng.src = rutaPng;
-        tempPng.onload = () => {
-            crearBotonMini(rutaPng, i, nav);
-        };
+        tempPng.onload = () => crearBotonMini(rutaPng, i, nav);
     };
 }
 
@@ -151,7 +140,6 @@ function cambiarImagenNav(paso, event) {
     let nuevoIndex = imgIndex + paso;
     if (nuevoIndex > totalImg) nuevoIndex = 1;
     if (nuevoIndex < 1) nuevoIndex = totalImg;
-    
     imgIndex = nuevoIndex;
     actualizarVistaGaleria();
 }
@@ -161,7 +149,7 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- EL RESTO DEL CÓDIGO (CARRITO, FILTROS, PAGINACIÓN) SE MANTIENE IGUAL ---
+// --- CARRITO ---
 function añadirAlCarrito(codigo) {
     const p = todosLosProductos.find(x => x.codigo === codigo);
     if (p) { 
@@ -220,18 +208,36 @@ function quitarDelCarrito(i) {
     dibujarCarrito();
 }
 
+// --- FUNCIÓN REPARADA: MENSAJE PROFESIONAL DE WHATSAPP ---
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
-    let txt = "🛍️ *NUEVO PEDIDO - NTENDENCIA PA*\n\n";
+
+    let txt = "✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n";
+    txt += "Me encantaron estos productos de su catálogo y me gustaría consultar disponibilidad: \n";
+    txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
+    
     let total = 0;
     carrito.forEach((p, index) => {
-        txt += `*${index + 1}.* ${p.nombre} (${p.codigo}) - *$${p.precio.toFixed(2)}*\n`;
+        txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
+        txt += `   🏷️ _Cód: ${p.codigo}_\n`;
+        txt += `   💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
-    txt += `\n💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*`;
+
+    txt += "━━━━━━━━━━━━━━━━━━━━\n";
+    txt += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
+    txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
+    
+    txt += "📝 *MIS DATOS:* \n";
+    txt += "👤 Nombre: \n";
+    txt += "📍 Ubicación: \n\n";
+    
+    txt += "🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
+
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
+// --- BUSCADOR Y CATEGORIAS ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
