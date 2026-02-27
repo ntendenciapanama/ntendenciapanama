@@ -8,8 +8,12 @@ let imgIndex = 1;
 let totalImg = 1;
 let codActual = "";
 
-// URL de tu HOJA VISUAL publicada como CSV (GID: 2091984533)
-const URL_SHEET = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
+// URL BASE de tu HOJA VISUAL
+const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
+
+// --- APLICANDO EL HACK ANTI-CACHÉ ---
+// Agregamos un timestamp único al final del URL para forzar la carga de datos frescos
+const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
 
 // --- CARGAR DATOS DESDE GOOGLE SHEETS ---
 fetch(URL_SHEET)
@@ -34,11 +38,12 @@ fetch(URL_SHEET)
                 descripcion: limpiar(columnas[4]) || "", // Col E: DESCRIPCION
                 status: limpiar(columnas[5])?.toLowerCase(), // Col F: STATUS (Palomita)
                 categoria: limpiar(columnas[6]) || "General", // Col G: CATEGORIA
-                totalImagenes: 1 // Cambiar en el Excel si manejas más fotos por prenda
+                totalImagenes: 1 
             };
         }).filter(p => {
-            // Filtro: Debe tener código y NO estar marcado como vendido (Status vacío o false)
+            // Filtro: Debe tener código y NO estar marcado como vendido
             const tieneCodigo = p.codigo && p.codigo.length > 1;
+            // Detecta si está marcado en verde (true, 1, vendido)
             const estaVendido = p.status === 'true' || p.status === '1' || p.status === 'vendido' || p.status === 'vrai';
             return tieneCodigo && !estaVendido;
         });
