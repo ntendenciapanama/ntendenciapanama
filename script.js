@@ -208,7 +208,7 @@ function quitarDelCarrito(i) {
     dibujarCarrito();
 }
 
-// --- FUNCIÓN REPARADA: MENSAJE PROFESIONAL DE WHATSAPP ---
+// --- MENSAJE WHATSAPP (VERSIÓN LIMPIA) ---
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
 
@@ -227,10 +227,6 @@ function enviarPedidoWhatsApp() {
     txt += "━━━━━━━━━━━━━━━━━━━━\n";
     txt += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
-    
-    txt += "📝 *MIS DATOS:* \n";
-    txt += "👤 Nombre: \n";
-    txt += "📍 Ubicación: \n\n";
     
     txt += "🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
 
