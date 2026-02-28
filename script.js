@@ -1,63 +1,27 @@
 let todosLosProductos = [];
 let productosFiltrados = [];
 let carrito = [];
-
-// Variables dinámicas
-let productosPorPagina = 12; 
+const productosPorPagina = 12;
 let paginaActual = 1;
 
 let imgIndex = 1;
 let totalImg = 1;
 let codActual = "";
 
+// URL BASE de tu HOJA VISUAL
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
+
+// ANTI-CACHE: Forzamos carga fresca
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
 
-// --- FUNCIÓN MATEMÁTICA PARA CALCULAR BLOQUES PERFECTOS ---
-function calcularBloquesPerfectos() {
-    const contenedor = document.getElementById('productos');
-    if (!contenedor) return;
-
-    // 1. Medimos el ancho disponible del contenedor
-    const anchoContenedor = contenedor.offsetWidth;
-
-    // 2. Definimos cuánto mide UN producto (Ajusta estos números según tu CSS)
-    const anchoProducto = 280; // El ancho que definiste en el CSS para .producto
-    const gap = 20;            // El espacio (grid-gap) entre productos
-
-    // 3. Calculamos cuántas columnas caben físicamente
-    // Fórmula: (AnchoTotal + Espacio) / (AnchoProducto + Espacio)
-    let columnas = Math.floor((anchoContenedor + gap) / (anchoProducto + gap));
-    
-    // Evitamos que sea 0 en pantallas mini
-    if (columnas < 1) columnas = 1;
-
-    // 4. Decidimos cuántas FILAS queremos mostrar (ejemplo: 4 filas)
-    const filasDeseadas = 4;
-
-    // 5. El número perfecto es Columnas * Filas
-    productosPorPagina = columnas * filasDeseadas;
-
-    console.log(`Pantalla detectada: ${columnas} columnas. Mostrando ${productosPorPagina} productos para llenar ${filasDeseadas} filas.`);
-}
-
-// Escuchar cambios de tamaño de pantalla
-window.addEventListener('resize', () => {
-    const paginaAnterior = productosPorPagina;
-    calcularBloquesPerfectos();
-    // Solo recargamos si el cálculo cambió para evitar parpadeos innecesarios
-    if (paginaAnterior !== productosPorPagina) {
-        mostrarProductos();
-    }
-});
-
-// --- CARGAR DATOS ---
+// --- CARGAR DATOS DESDE GOOGLE SHEETS ---
 fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
         const todasLasFilas = csvText.split(/\r?\n/);
         const filasDeProductos = todasLasFilas.slice(2);
         
+        // Mapeamos los productos
         const productosMapeados = filasDeProductos.map(fila => {
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
@@ -78,18 +42,16 @@ fetch(URL_SHEET)
             return tieneCodigo && !estaVendido;
         });
 
+        // --- REVERSA PARA MOSTRAR LO NUEVO PRIMERO ---
         todosLosProductos = productosMapeados.reverse();
+
         productosFiltrados = todosLosProductos;
-        
-        // Calculamos antes de mostrar por primera vez
-        calcularBloquesPerfectos();
-        
         generarCategorias();
         mostrarProductos();
     })
-    .catch(err => console.error("Error:", err));
+    .catch(err => console.error("Error cargando Google Sheets:", err));
 
-// --- MOSTRAR PRODUCTOS ---
+// --- MOSTRAR CUADRÍCULA DE PRODUCTOS ---
 function mostrarProductos() {
     const contenedor = document.getElementById('productos');
     if (!contenedor) return;
@@ -102,10 +64,12 @@ function mostrarProductos() {
     lista.forEach(p => {
         const div = document.createElement('div');
         div.className = 'producto';
+        
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
                 <img src="images/${p.codigo}/1.jpg?t=${new Date().getTime()}" 
-                     alt="${p.nombre}" loading="lazy" 
+                     alt="${p.nombre}" 
+                     loading="lazy" 
                      onerror="this.onerror=null; this.src='images/${p.codigo}/1.png'; this.setAttribute('onerror', 'this.src=\'logo.png\'')">
             </div>
             <div class="producto-info">
@@ -113,7 +77,7 @@ function mostrarProductos() {
                 <h3>${p.nombre}</h3>
                 <div class="descripcion">${p.descripcion}</div>
                 <div class="contenedor-botones">
-                    <a href="https://wa.me/50767710645?text=Hola! Me interesa: ${p.nombre}" class="whatsapp-btn" target="_blank">WhatsApp</a>
+                    <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
                 </div>
             </div>
@@ -123,7 +87,7 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- GALERÍA ---
+// --- LÓGICA DE GALERÍA ---
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -142,9 +106,11 @@ function actualizarVistaGaleria() {
             this.src = `images/${codActual}/${imgIndex}.png`;
         };
     }
+    
     const nav = document.getElementById('lightbox-nav');
     if (!nav) return;
     nav.innerHTML = "";
+    
     if (totalImg > 1) {
         for (let i = 1; i <= totalImg; i++) {
             verificarYCrearMiniatura(i, nav);
@@ -187,13 +153,16 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- CARRITO ---
+// --- CARRITO (CON VALIDACIÓN DE DUPLICADOS) ---
 function añadirAlCarrito(codigo) {
+    // Verificar si ya existe en la lista
     const yaExiste = carrito.find(x => x.codigo === codigo);
+    
     if (yaExiste) {
         alert("✨ Este producto ya está en tu lista de pedido.");
         return;
     }
+
     const p = todosLosProductos.find(x => x.codigo === codigo);
     if (p) { 
         carrito.push(p); 
@@ -251,20 +220,32 @@ function quitarDelCarrito(i) {
     dibujarCarrito();
 }
 
-// --- WHATSAPP ---
+// --- MENSAJE WHATSAPP ---
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
-    let txt = "✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n\n";
+
+    let txt = "✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n";
+    txt += "Me encantaron estos productos de su catálogo y me gustaría consultar disponibilidad: \n";
+    txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
+    
     let total = 0;
     carrito.forEach((p, index) => {
-        txt += `*${index + 1}.* ${p.nombre.toUpperCase()} (Cód: ${p.codigo}) - *$${p.precio.toFixed(2)}*\n`;
+        txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
+        txt += `    🏷️ _Cód: ${p.codigo}_\n`;
+        txt += `    💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
-    txt += `\n💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*`;
+
+    txt += "━━━━━━━━━━━━━━━━━━━━\n";
+    txt += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
+    txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
+    
+    txt += "🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
+
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
-// --- BUSCADOR ---
+// --- BUSCADOR Y CATEGORIAS ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
