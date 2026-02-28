@@ -23,7 +23,7 @@ body {
     background-image: radial-gradient(#e1e1db 0.8px, transparent 0.8px);
     background-size: 24px 24px;
     color: var(--primario); 
-    padding-bottom: 100px; 
+    padding-bottom: 0px; 
 }
 
 /* --- HEADER BOUTIQUE --- */
