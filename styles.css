@@ -30,10 +30,11 @@ body {
 header { 
     background: var(--primario); 
     color: var(--blanco); 
-    padding: 25px 20px 8px;
+    padding: 25px 20px 15px;
     display: flex;
+    flex-direction: column; /* Forzamos columna para orden móvil */
     align-items: center;
-    justify-content: space-between;
+    text-align: center;
     position: sticky; 
     top: 0; 
     z-index: 1000; 
@@ -41,35 +42,18 @@ header {
     border-bottom: 4px solid var(--dorado);
 }
 
-.logo-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    align-self: flex-start;
-    margin-top: -10px;
-}
-
 .logo-imagen {
-    max-width: 500px; 
+    max-width: 280px; 
     width: auto;
     height: auto;
-    margin: 0;
-    display: block;
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-}
-
-.search-container {
-    margin: 0 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin-bottom: 15px;
 }
 
 #buscador { 
-    width: 500px;
-    max-width: 90%; 
-    padding: 8px 24px; 
+    width: 90%;
+    max-width: 500px; 
+    padding: 10px 24px; 
     border-radius: 25px; 
     border: 1px solid rgba(255,255,255,0.3); 
     background: rgba(255,255,255,0.12);
@@ -77,81 +61,66 @@ header {
     text-align: center;
     outline: none; 
     font-size: 16px; 
-    transition: all 0.3s ease;
     backdrop-filter: blur(5px);
 }
 
-.search-container .slogan-marca {
-    margin-top: 12px;
+.slogan-marca {
+    margin-top: 10px;
     font-size: 0.7rem;
-    line-height: 1.2;
     color: #fff;
-    text-align: center;
-    width: 500px;
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     opacity: 0.8;
 }
 
 .contact-icons {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-left: 20px;
-    align-self: flex-start;
-    margin-top: -10px;
+    gap: 20px;
+    margin-top: 15px;
 }
 
-.contact-icons svg.icon {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-}
+.icon { width: 26px; height: 26px; }
+.icon-whatsapp { color: var(--whatsapp) !important; fill: var(--whatsapp) !important; }
+.icon-instagram { color: #E1306C; }
+.icon-facebook { color: #4267B2; }
 
-/* --- CATEGORÍAS --- */
+/* --- CATEGORÍAS (Barra Negra) --- */
 #categorias { 
     display: flex; 
     gap: 12px; 
-    padding: 10px 15px;
+    padding: 12px 15px;
     overflow-x: auto; 
     background: #000;
     scrollbar-width: none; 
-    border-bottom: 1px solid #333;
-    justify-content: flex-start;
     position: sticky;
-    top: 75px; /* Ajuste para que no se esconda tras el header */
+    top: 175px; /* Ajusta según el alto de tu header */
     z-index: 900; 
 }
 
-#categorias::-webkit-scrollbar { display: none; }
-
 .categoria-btn { 
-    padding: 6px 16px;
+    padding: 8px 18px;
     border-radius: 20px; 
-    border: 1.5px solid #fff;
+    border: 1px solid #fff;
     background: transparent;
-    cursor: pointer; 
-    white-space: nowrap; 
+    color: #fff;
     font-weight: 600; 
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: 0.3s; 
-    color: #fff;
+    white-space: nowrap;
 }
 
-.categoria-btn.activa { 
-    background: var(--primario); 
-    color: var(--blanco); 
-    border-color: var(--primario);
-}
+.categoria-btn.activa { background: var(--primario); border-color: var(--primario); }
 
 /* --- GRID DE PRODUCTOS --- */
 #productos { 
     display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
-    gap: 25px; 
-    padding: 25px; 
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil por defecto */
+    gap: 15px; 
+    padding: 15px; 
+}
+
+@media (min-width: 768px) {
+    #productos { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
 }
 
 .producto { 
@@ -162,230 +131,84 @@ header {
     display: flex; 
     flex-direction: column; 
     height: 100%; 
-    transition: all 0.4s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.producto:hover { 
-    transform: translateY(-8px); 
-    border-color: var(--dorado);
-}
+.main-img-container { height: 200px; padding: 10px; display: flex; align-items: center; justify-content: center; }
+.main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-.main-img-container { 
-    height: 300px; 
-    cursor: pointer; 
+.producto-info { padding: 15px; text-align: center; flex-grow: 1; }
+.precio { font-size: 1.3rem; font-weight: 800; color: var(--primario); }
+h3 { font-size: 0.85rem; min-height: 2.5em; display: flex; align-items: center; justify-content: center; }
+
+.contenedor-botones { display: flex; flex-direction: column; gap: 8px; padding: 0 10px 15px; }
+.whatsapp-btn, .btn-añadir-lista { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; text-align: center; cursor: pointer; color: white; text-decoration: none; }
+.whatsapp-btn { background: var(--whatsapp); }
+.btn-añadir-lista { background: var(--primario); }
+
+/* --- PAGINACIÓN (Círculos Perfectos Corregidos) --- */
+#paginacion { 
     display: flex; 
-    align-items: center; 
     justify-content: center; 
-    background: #fff; 
-    padding: 15px;
+    gap: 8px; 
+    padding: 40px 10px; 
+    flex-wrap: wrap; 
 }
 
-.main-img-container img { 
-    max-width: 100%; 
-    max-height: 100%; 
-    object-fit: contain; 
-}
-
-.producto-info { 
-    padding: 20px; 
-    text-align: center; 
-    display: flex; 
-    flex-direction: column; 
-    flex-grow: 1; 
-}
-
-.precio { 
-    font-size: 1.6rem; 
-    font-weight: 800; 
-    color: var(--primario); 
-}
-
-h3 { 
-    font-size: 1rem; 
-    min-height: 2.4em; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-weight: 600;
-}
-
-.descripcion { 
-    font-size: 0.85rem; 
-    color: var(--texto-suave); 
-    background: #fdfaf2; 
-    padding: 12px; 
-    border-radius: 10px; 
-    margin-bottom: 18px; 
-    text-align: left;
-    border-left: 4px solid var(--dorado);
-}
-
-.contenedor-botones { display: flex; gap: 10px; margin-top: auto; }
-
-.whatsapp-btn, .btn-añadir-lista { 
-    flex: 1; 
-    padding: 14px 5px; 
-    border-radius: 10px; 
-    border: none; 
+.pag-btn { 
+    width: 40px !important; 
+    height: 40px !important; 
+    min-width: 40px !important; /* Evita que se aplasten */
+    border-radius: 50% !important; 
+    border: 2px solid var(--primario); 
+    background: white; 
+    color: var(--primario);
     font-weight: 700; 
-    cursor: pointer; 
-    font-size: 0.85rem; 
-    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-.whatsapp-btn { background: var(--whatsapp); color: white; text-decoration: none; }
-.btn-añadir-lista { background: var(--primario); color: white; }
+.pag-btn.activa { background: var(--primario); color: white; }
 
 /* --- CARRITO FLOTANTE --- */
 #btn-carrito { 
-    position: fixed; bottom: 30px; right: 30px; 
+    position: fixed; bottom: 25px; right: 25px; 
     background: var(--primario); color: white; 
-    width: 65px; height: 65px; border-radius: 50%; 
+    width: 60px; height: 60px; border-radius: 50%; 
     display: flex; justify-content: center; align-items: center; 
-    font-size: 26px; cursor: pointer; z-index: 2000; 
+    font-size: 24px; z-index: 2000; 
     box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
     border: 2px solid var(--dorado);
 }
 
-#contador-carrito { 
-    position: absolute; top: -5px; right: -5px; 
-    background: #ff4757; width: 26px; height: 26px; 
-    border-radius: 50%; font-size: 12px; 
-    display: flex; justify-content: center; align-items: center; 
-    border: 2px solid var(--primario); font-weight: 800; 
+#contador-carrito { position: absolute; top: -5px; right: -5px; background: #ff4757; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; justify-content: center; align-items: center; font-weight: bold; }
+
+/* --- ELIMINAR TEXTO DUPLICADO AL FINAL (IMPORTANTE) --- */
+body > #lista-pedido-directa, 
+body > .Mi-Lista-De-Pedido-Falsa { 
+    display: none !important; 
 }
 
-/* --- PAGINACIÓN --- */
-#paginacion { 
-    display: flex; 
-    justify-content: center; 
-    gap: 12px; 
-    padding: 50px 20px; 
-    flex-wrap: wrap; /* Evita que se amontonen en el celular */
-}
-
-.pag-btn { 
-    width: 45px; height: 45px; 
-    border-radius: 50%; 
-    border: 2px solid var(--primario); 
-    background: white; 
-    cursor: pointer; 
-    font-weight: 700; 
-    transition: 0.3s;
-    display: flex;
-    align-items: center;
+/* --- MODAL CARRITO (El que se abre al dar clic) --- */
+.modal-carrito {
+    display: none; 
+    position: fixed; 
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+    z-index: 5000;
     justify-content: center;
+    align-items: center;
 }
 
-.pag-btn.activa { 
-    background: var(--primario); 
-    color: white; 
-}
-
-/* --- MODAL CARRITO --- */
-.modal-carrito { 
-    display: none; 
-    position: fixed; 
-    top: 0; left: 0; 
-    width: 100%; height: 100%; 
-    background: rgba(0,0,0,0.75); 
-    backdrop-filter: blur(8px);
-    z-index: 5000; 
-    justify-content: center; 
-    align-items: center; 
-}
-
-.contenido-carrito { 
-    background: var(--blanco); 
-    width: 95%; 
-    max-width: 480px; 
-    border-radius: 25px; 
+.contenido-carrito {
+    background: white;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 20px;
     overflow: hidden;
-}
-
-/* --- LIGHTBOX --- */
-.lightbox { 
-    display: none; 
-    position: fixed; 
-    top: 0; left: 0; 
-    width: 100%; height: 100%; 
-    background: rgba(0,0,0,0.96); 
-    z-index: 6000; 
-    justify-content: center; 
-    align-items: center; 
-}
-
-.galeria-wrapper { width: 95%; max-width: 550px; }
-
-/* --- RESPONSIVE CORREGIDO --- */
-@media (max-width: 600px) {
-    header {
-        flex-direction: column;
-        padding: 15px 10px;
-        gap: 10px;
-    }
-
-    /* Logo más visible y centrado */
-    .logo-wrapper {
-        margin-top: 0;
-        align-self: center;
-    }
-    .logo-imagen { 
-        max-width: 280px !important; 
-    }
-
-    /* Buscador estético */
-    .search-container {
-        width: 100%;
-        margin: 0;
-    }
-    #buscador {
-        width: 85% !important;
-        font-size: 14px;
-        padding: 6px 15px;
-    }
-    .search-container .slogan-marca {
-        width: 85%;
-        letter-spacing: 1px;
-        margin-top: 5px;
-    }
-
-    /* Iconos alineados */
-    .contact-icons {
-        margin-left: 0;
-        margin-top: 5px;
-        align-self: center;
-    }
-
-    /* Grid de productos */
-    #productos { 
-        grid-template-columns: repeat(2, 1fr); 
-        gap: 10px; 
-        padding: 10px; 
-    }
-    .main-img-container { height: 180px; }
-    h3 { font-size: 0.8rem; }
-    .precio { font-size: 1.2rem; }
-
-    /* Botones apilados para mejor click */
-    .contenedor-botones {
-        flex-direction: column;
-        gap: 5px;
-    }
-    .whatsapp-btn, .btn-añadir-lista {
-        padding: 10px 5px;
-        font-size: 0.75rem;
-    }
-
-    /* Paginación corregida (Círculos perfectos) */
-    #paginacion {
-        padding: 30px 10px;
-        gap: 8px;
-    }
-    .pag-btn {
-        width: 38px !important;
-        height: 38px !important;
-        font-size: 12px;
-        padding: 0; /* Elimina deformación */
-    }
+    position: relative;
 }
