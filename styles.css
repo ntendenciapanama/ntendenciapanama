@@ -20,7 +20,6 @@
 
 body { 
     background-color: var(--fondo-crema); 
-    /* Patrón sutil de puntos para dar textura al fondo */
     background-image: radial-gradient(#e1e1db 0.8px, transparent 0.8px);
     background-size: 24px 24px;
     color: var(--primario); 
@@ -31,7 +30,7 @@ body {
 header { 
     background: var(--primario); 
     color: var(--blanco); 
-    padding: 25px 20px 8px; /* más arriba, menos abajo */
+    padding: 25px 20px 8px; 
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -42,34 +41,20 @@ header {
     border-bottom: 4px solid var(--dorado);
 }
 
-/* slogan dentro del contenedor de búsqueda */
-.search-container .slogan-marca {
-    margin-top: 4px;
-    font-size: 0.7rem; /* más pequeño para no agrandar el header */
-    line-height: 1.2;
-    color: #fff;
-    text-align: left;
-}
-
-/* AJUSTE DEL LOGO PNG */
 .logo-wrapper {
     display: flex;
     align-items: center;
     gap: 10px;
-    /* desplazar hacia arriba para alinear con el buscador */
     align-self: flex-start;
     margin-top: -10px;
 }
 .logo-imagen {
-    max-width: 500px; /* aún más grande */
+    max-width: 500px; 
     width: auto;
     height: auto;
     margin: 0;
     display: block;
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-}
-.slogan-marca {
-    margin: 0; /* ahora en línea con logo */
 }
 
 .slogan-marca {
@@ -82,125 +67,82 @@ header {
 }
 
 #buscador { 
-    width: 500px; /* mucho más largo */
+    width: 500px; 
     max-width: 90%; 
-    padding: 8px 24px; /* más delgado verticalmente */
+    padding: 8px 24px; 
     border-radius: 25px; 
     border: 1px solid rgba(255,255,255,0.3); 
     background: rgba(255,255,255,0.12);
     color: white;
-    text-align: center; /* centrar texto/placeholder */
+    text-align: center; 
     outline: none; 
     font-size: 16px; 
     transition: all 0.3s ease;
     backdrop-filter: blur(5px);
 }
 
-#buscador::placeholder {
-    color: rgba(255,255,255,0.9);
-}
-
-/* contenedor de búsqueda centrado entre logo e íconos */
 .search-container {
-    margin: 0 20px; /* espacio a ambos lados */
-    flex: 1; /* ocupa espacio disponible */
+    margin: 0 20px; 
+    flex: 1; 
     display: flex;
     flex-direction: column;
-    align-items: center; /* centrar contenido */
+    align-items: center; 
 }
-
-.search-container input {
-    width: 500px; /* coincide con #buscador */
-}
-
-
-.search-container .slogan-marca {
-    margin-top: 12px; /* más abajo para que el buscador quede alineado con el logo */
-    font-size: 0.7rem;
-    line-height: 1.2;
-    color: #fff;
-    text-align: center;
-    width: 500px; /* igual que el input */
-}
-
 
 .contact-icons {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-left: 20px;
-    align-self: flex-start; /* eleva los íconos */
+    align-self: flex-start; 
     margin-top: -10px;
 }
 
 .contact-icons svg.icon {
     width: 24px;
     height: 24px;
-    transition: opacity 0.2s;
     cursor: pointer;
 }
 
-.contact-icons svg.icon:hover {
-    opacity: 0.7;
-}
-
-/* brand colors */
 .icon-instagram { color: #E1306C; }
 .icon-facebook { color: #4267B2; }
 .icon-whatsapp { color: #25D366; }
-
-.contact-text {
-    font-size: 0.9rem;
-    color: white;
-    font-weight: 300;
-}
-
-
-#buscador:focus {
-    background: rgba(255,255,255,0.15);
-    border-color: var(--dorado);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-}
 
 /* --- CATEGORÍAS --- */
 #categorias { 
     display: flex; 
     gap: 12px; 
-    padding: 10px 15px; /* un poco más alta */
+    padding: 10px 15px; 
     overflow-x: auto; 
-    background: #000; /* barra negra */
+    background: #000; 
     scrollbar-width: none; 
     border-bottom: 1px solid #333;
     justify-content: flex-start;
-    position: sticky; /* permanece visible */
+    position: sticky; 
     top: 0; 
     z-index: 900; 
 }
 
-/* botones en fondo oscuro, texto claro */
-
 #categorias::-webkit-scrollbar { display: none; }
 
 .categoria-btn { 
-    padding: 6px 16px; /* más compactas */
+    padding: 6px 16px; 
     border-radius: 20px; 
-    border: 1.5px solid #fff; /* borde claro sobre negro */
-    background: transparent; /* deja ver el fondo negro de la barra */
+    border: 1.5px solid #fff; 
+    background: transparent; 
     cursor: pointer; 
     white-space: nowrap; 
     font-weight: 600; 
-    font-size: 0.75rem; /* texto ligeramente más pequeño */
+    font-size: 0.75rem; 
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: 0.3s; 
-    color: #fff; /* texto blanco */
+    color: #fff;
 }
 
 .categoria-btn.activa { 
     background: var(--primario); 
     color: var(--blanco); 
     border-color: var(--primario);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 /* --- GRID DE PRODUCTOS --- */
@@ -222,262 +164,18 @@ header {
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-.producto:hover { 
-    transform: translateY(-8px); 
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
-    border-color: var(--dorado);
-}
+.main-img-container { height: 300px; cursor: pointer; display: flex; align-items: center; justify-content: center; background: #fff; padding: 15px; }
+.main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-.main-img-container { 
-    height: 300px; 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    background: #fff; 
-    padding: 15px;
-}
+.producto-info { padding: 20px; text-align: center; display: flex; flex-direction: column; flex-grow: 1; }
+.precio { font-size: 1.6rem; font-weight: 800; color: var(--primario); }
 
-.main-img-container img { 
-    max-width: 100%; 
-    max-height: 100%; 
-    object-fit: contain; 
-}
-
-/* INFO DEL PRODUCTO */
-.producto-info { 
-    padding: 20px; 
-    text-align: center; 
-    display: flex; 
-    flex-direction: column; 
-    flex-grow: 1; 
-}
-
-.precio { 
-    font-size: 1.6rem; 
-    font-weight: 800; 
-    margin-bottom: 8px; 
-    color: var(--primario); 
-}
-
-h3 { 
-    font-size: 1rem; 
-    margin-bottom: 12px; 
-    min-height: 2.4em; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    line-height: 1.3;
-    font-weight: 600;
-    color: #333;
-}
-
-.descripcion { 
-    font-size: 0.85rem; 
-    color: var(--texto-suave); 
-    background: #fdfaf2; 
-    padding: 12px; 
-    border-radius: 10px; 
-    margin-bottom: 18px; 
-    text-align: left;
-    flex-grow: 1;
-    border-left: 4px solid var(--dorado);
-    line-height: 1.4;
-}
-
-/* --- BOTONES ALINEADOS --- */
 .contenedor-botones { display: flex; gap: 10px; margin-top: auto; }
-
-.whatsapp-btn, .btn-añadir-lista { 
-    flex: 1; 
-    padding: 14px 5px; 
-    border-radius: 10px; 
-    border: none; 
-    font-weight: 700; 
-    cursor: pointer; 
-    font-size: 0.85rem; 
-    text-align: center; 
-    transition: all 0.3s ease;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
+.whatsapp-btn, .btn-añadir-lista { flex: 1; padding: 14px 5px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; font-size: 0.85rem; text-align: center; text-decoration: none; text-transform: uppercase; }
 .whatsapp-btn { background: var(--whatsapp); color: white; }
-.whatsapp-btn:hover { 
-    background: #1eb954; 
-    transform: translateY(-3px); 
-    box-shadow: 0 6px 15px rgba(37,211,102,0.3); 
-}
-
 .btn-añadir-lista { background: var(--primario); color: white; }
-.btn-añadir-lista:hover { 
-    background: #333; 
-    transform: translateY(-3px); 
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2); 
-}
 
-/* --- CARRITO PROFESIONAL (MODAL) --- */
-.modal-carrito { 
-    display: none; 
-    position: fixed; 
-    top: 0; left: 0; 
-    width: 100%; height: 100%; 
-    background: rgba(0,0,0,0.75); 
-    backdrop-filter: blur(8px);
-    z-index: 5000; 
-    justify-content: center; 
-    align-items: center; 
-}
-
-.contenido-carrito { 
-    background: var(--blanco); 
-    width: 95%; 
-    max-width: 480px; 
-    border-radius: 25px; 
-    display: flex; 
-    flex-direction: column; 
-    box-shadow: 0 25px 50px rgba(0,0,0,0.4);
-    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    overflow: hidden;
-}
-
-.header-carrito { 
-    padding: 25px; 
-    background: var(--primario); 
-    color: var(--blanco); 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    border-bottom: 3px solid var(--dorado);
-}
-
-.titulo-carrito h2 { font-size: 1.3rem; margin-bottom: 4px; }
-.titulo-carrito p { font-size: 0.75rem; opacity: 0.7; font-weight: 300; }
-
-.cerrar-carrito { font-size: 32px; cursor: pointer; line-height: 1; transition: 0.3s; }
-.cerrar-carrito:hover { color: var(--dorado); }
-
-.cuerpo-carrito { 
-    padding: 25px; 
-    max-height: 55vh; 
-    overflow-y: auto; 
-}
-
-.item-carrito { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 15px 0; 
-    border-bottom: 1px solid #f0f0f0; 
-}
-
-.btn-quitar { 
-    background: #fff0f0; 
-    color: #ff4757; 
-    border: none; 
-    width: 32px; 
-    height: 32px; 
-    border-radius: 50%; 
-    cursor: pointer; 
-    font-weight: bold; 
-    transition: 0.2s;
-}
-.btn-quitar:hover { background: #ff4757; color: white; }
-
-.footer-carrito { padding: 25px; background: #fafafa; border-top: 1px solid #eee; }
-
-.total-contenedor { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 20px; 
-}
-
-.monto-total { font-size: 1.8rem; font-weight: 900; color: var(--primario); }
-
-.btn-enviar-pedido { 
-    width: 100%; 
-    background: var(--whatsapp); 
-    color: white; 
-    padding: 18px; 
-    border-radius: 15px; 
-    border: none; 
-    font-size: 1rem; 
-    font-weight: 800; 
-    cursor: pointer; 
-    transition: 0.3s;
-    box-shadow: 0 5px 15px rgba(37,211,102,0.3);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.btn-enviar-pedido:hover { 
-    background: #1eb954; 
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(37,211,102,0.4);
-}
-
-.nota-seguridad { text-align: center; font-size: 0.7rem; color: #999; margin-top: 12px; }
-
-/* --- GALERÍA LIGHTBOX --- */
-.lightbox { 
-    display: none; 
-    position: fixed; 
-    top: 0; left: 0; 
-    width: 100%; height: 100%; 
-    background: rgba(0,0,0,0.96); 
-    z-index: 6000; 
-    justify-content: center; 
-    align-items: center; 
-}
-
-.galeria-wrapper { width: 95%; max-width: 550px; }
-
-.galeria-container { 
-    position: relative; 
-    background: var(--blanco); 
-    border-radius: 20px; 
-    overflow: hidden; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-}
-
-.lightbox-img { max-width: 100%; max-height: 75vh; object-fit: contain; display: block; padding: 10px; }
-
-.flecha-incrustada { 
-    position: absolute; top: 50%; transform: translateY(-50%); 
-    background: rgba(0,0,0,0.6); color: white; border: none; 
-    width: 50px; height: 50px; border-radius: 50%; 
-    cursor: pointer; font-size: 22px; z-index: 10;
-    transition: 0.3s;
-}
-
-.flecha-incrustada:hover { background: var(--dorado); }
-.flecha-incrustada.prev { left: 20px; }
-.flecha-incrustada.next { right: 20px; }
-
-.cerrar-lightbox { position: absolute; top: 25px; right: 35px; color: white; font-size: 50px; cursor: pointer; opacity: 0.7; transition: 0.3s; }
-.cerrar-lightbox:hover { opacity: 1; color: var(--dorado); }
-
-.lightbox-nav { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-
-.thumb-galeria { 
-    width: 60px; height: 60px; object-fit: cover; 
-    border-radius: 10px; cursor: pointer; border: 2px solid transparent; 
-    transition: 0.3s; opacity: 0.6;
-}
-
-.thumb-galeria.activa { 
-    border-color: var(--dorado); 
-    transform: scale(1.15); 
-    opacity: 1;
-    box-shadow: 0 5px 15px rgba(212,175,55,0.4);
-}
-
-/* --- CARRITO BOTÓN FLOTANTE --- */
+/* --- CARRITO BOTÓN --- */
 #btn-carrito { 
     position: fixed; bottom: 30px; right: 30px; 
     background: var(--primario); color: white; 
@@ -485,60 +183,71 @@ h3 {
     display: flex; justify-content: center; align-items: center; 
     font-size: 26px; cursor: pointer; z-index: 2000; 
     box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border: 2px solid var(--dorado);
 }
 
-#btn-carrito:hover { transform: scale(1.1) rotate(5deg); }
+#contador-carrito { position: absolute; top: -5px; right: -5px; background: #ff4757; width: 26px; height: 26px; border-radius: 50%; font-size: 12px; display: flex; justify-content: center; align-items: center; border: 2px solid var(--primario); font-weight: 800; }
 
-#contador-carrito { 
-    position: absolute; top: -5px; right: -5px; 
-    background: #ff4757; width: 26px; height: 26px; 
-    border-radius: 50%; font-size: 12px; 
-    display: flex; justify-content: center; align-items: center; 
-    border: 2px solid var(--primario); font-weight: 800; 
-}
-
-/* --- PAGINACIÓN --- */
-#paginacion { display: flex; justify-content: center; gap: 12px; padding: 50px 20px; }
+/* --- PAGINACIÓN (Círculos Reparados) --- */
+#paginacion { display: flex; justify-content: center; gap: 12px; padding: 50px 20px; flex-wrap: wrap; }
 
 .pag-btn { 
-    width: 45px; height: 45px; border-radius: 50%; 
-    border: 2px solid var(--primario); background: white; 
-    cursor: pointer; font-weight: 700; transition: 0.3s;
+    width: 45px; 
+    height: 45px; 
+    aspect-ratio: 1/1;
+    flex-shrink: 0;
+    border-radius: 50%; 
+    border: 2px solid var(--primario); 
+    background: white; 
+    cursor: pointer; 
+    font-weight: 700; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.pag-btn:hover { background: #f0f0f0; border-color: var(--dorado); }
+.pag-btn.activa { background: var(--primario); color: white; }
 
-.pag-btn.activa { 
-    background: var(--primario); 
-    color: white; 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-/* --- RESPONSIVE --- */
+/* --- RESPONSIVE REPARADO --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
         align-items: center;
         text-align: center;
-        gap: 12px;
+        gap: 15px; /* Más espacio entre logo y buscador */
+        padding: 20px 10px;
     }
-    .logo-imagen { max-width: 220px; }
-    .slogan-marca { font-size: 0.65rem; letter-spacing: 2px; }
-    .search-container { justify-content: center; }
+    .logo-wrapper {
+        align-self: center;
+        margin-top: 0;
+    }
+    .logo-imagen { 
+        max-width: 300px !important; /* LOGO MÁS GRANDE */
+    }
+    .search-container { 
+        width: 100%;
+        margin: 0;
+    }
     #buscador {
-        width: 90%;
-        max-width: 320px;
+        width: 80% !important; /* BUSCADOR MÁS ESTILIZADO */
+        font-size: 14px;
+    }
+    .contact-icons {
+        margin-left: 0;
+        align-self: center;
+        margin-top: 5px;
     }
     #productos { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
-    .main-img-container { height: 200px; padding: 8px; }
-    .producto-info { padding: 12px; }
-    .precio { font-size: 1.3rem; }
-    h3 { font-size: 0.85rem; min-height: 2.8em; }
-    .descripcion { font-size: 0.75rem; padding: 8px; margin-bottom: 12px; }
+    .main-img-container { height: 180px; }
+    .precio { font-size: 1.2rem; }
+    h3 { font-size: 0.8rem; min-height: 2.5em; }
+    .descripcion { display: none; } /* Limpieza visual en móvil */
     .contenedor-botones { flex-direction: column; gap: 6px; }
-    .whatsapp-btn, .btn-añadir-lista { padding: 10px 2px; font-size: 0.7rem; }
-    .monto-total { font-size: 1.5rem; }
-    header { padding: 20px 15px; }
+    .whatsapp-btn, .btn-añadir-lista { padding: 10px 2px; font-size: 0.75rem; }
+    
+    /* Círculos perfectos en móvil */
+    .pag-btn {
+        width: 40px !important;
+        height: 40px !important;
+    }
 }
