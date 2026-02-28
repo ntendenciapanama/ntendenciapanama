@@ -233,9 +233,11 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     padding: 15px 0; border-bottom: 1px solid #f0f0f0; 
 }
 
+/* REPARACIÓN: Icono de quitar corregido para que no sea un cuadrado */
 .btn-quitar { 
     background: #fff0f0; color: #ff4757; border: none; width: 32px; height: 32px; 
     border-radius: 50%; cursor: pointer; font-weight: bold; 
+    display: flex; align-items: center; justify-content: center;
 }
 
 .footer-carrito { padding: 25px; background: #fafafa; border-top: 1px solid #eee; }
@@ -289,56 +291,80 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     border-radius: 50%; font-size: 12px; display: flex; justify-content: center; align-items: center; 
 }
 
-#paginacion { display: flex; justify-content: center; gap: 12px; padding: 50px 20px; }
+/* REPARACIÓN: Contenedor de paginación para evitar estiramiento */
+#paginacion { 
+    display: flex; 
+    justify-content: center; 
+    gap: 8px; 
+    padding: 50px 10px; 
+    flex-wrap: wrap; /* Permite que bajen si no caben, evitando que se aplasten */
+}
 
-/* REPARACIÓN: Círculos de paginación perfectos */
+/* REPARACIÓN FINAL: Círculos de paginación perfectos e inamovibles */
 .pag-btn { 
-    width: 45px; 
-    height: 45px; 
-    min-width: 45px; /* Evita que se aplaste */
+    width: 42px; 
+    height: 42px; 
+    min-width: 42px; /* IMPORTANTE: Evita que el flexbox lo aplaste */
+    min-height: 42px;
     border-radius: 50%; 
     border: 2px solid var(--primario); 
+    background: white;
+    color: var(--primario);
     cursor: pointer; 
     font-weight: 700; 
     display: flex; 
     align-items: center; 
     justify-content: center; 
+    flex-shrink: 0; /* Prohíbe que el botón se reduzca de tamaño */
+    transition: 0.2s;
 }
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL (REPARADO) --- */
+/* --- RESPONSIVE MÓVIL (CORRECCIONES VISUALES) --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
-        padding: 20px 15px;
+        padding: 20px 15px 12px;
         gap: 15px;
     }
-    /* REPARACIÓN: Logo más grande */
+    
+    /* REPARACIÓN: Logo mucho más grande y centrado */
     .logo-imagen { 
-        max-width: 300px; 
-        width: 90%; 
+        max-width: 280px; 
+        width: 85%; 
+        margin: 0 auto;
     }
-    .logo-wrapper { align-self: center; }
-    .contact-icons { align-self: center; }
+    .logo-wrapper { align-self: center; width: 100%; justify-content: center; }
+    .contact-icons { align-self: center; margin-bottom: 5px; }
     
     .search-container { width: 100%; margin: 0; }
     
-    /* REPARACIÓN: Buscador más estilizado */
+    /* REPARACIÓN: Buscador no tan alto, más estilizado */
     #buscador { 
         width: 100%; 
         max-width: 100%; 
         padding: 10px 15px; 
-        font-size: 15px; 
+        font-size: 15px;
+        height: 45px; /* Altura controlada */
     }
     
     #categorias {
-        top: 195px; /* Ajuste para el header más alto */
+        top: 205px; /* Ajuste preciso para el nuevo header */
     }
 
     #productos { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
-    .main-img-container { height: 180px; }
-    h3 { font-size: 0.85rem; }
-    .precio { font-size: 1.3rem; }
+    .main-img-container { height: 160px; }
+    h3 { font-size: 0.8rem; min-height: 3em; }
+    .precio { font-size: 1.2rem; }
     .descripcion { display: none; }
     .contenedor-botones { flex-direction: column; gap: 6px; }
+    
+    /* Ajuste de botones en móvil para que no se peguen al borde */
+    .pag-btn {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        min-height: 38px;
+        font-size: 14px;
+    }
 }
