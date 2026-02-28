@@ -21,7 +21,8 @@ fetch(URL_SHEET)
         const todasLasFilas = csvText.split(/\r?\n/);
         const filasDeProductos = todasLasFilas.slice(2);
         
-        todosLosProductos = filasDeProductos.map(fila => {
+        // Mapeamos los productos
+        const productosMapeados = filasDeProductos.map(fila => {
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
@@ -40,6 +41,9 @@ fetch(URL_SHEET)
             const estaVendido = p.status === 'true' || p.status === '1' || p.status === 'vendido' || p.status === 'vrai';
             return tieneCodigo && !estaVendido;
         });
+
+        // --- AQUÍ ESTÁ EL TRUCO: REVERSA PARA MOSTRAR LO NUEVO PRIMERO ---
+        todosLosProductos = productosMapeados.reverse();
 
         productosFiltrados = todosLosProductos;
         generarCategorias();
@@ -219,8 +223,8 @@ function enviarPedidoWhatsApp() {
     let total = 0;
     carrito.forEach((p, index) => {
         txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
-        txt += `   🏷️ _Cód: ${p.codigo}_\n`;
-        txt += `   💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
+        txt += `    🏷️ _Cód: ${p.codigo}_\n`;
+        txt += `    💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
 
