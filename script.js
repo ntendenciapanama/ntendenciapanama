@@ -33,7 +33,7 @@ function calcularBloquesPerfectos() {
     if (columnas < 1) columnas = 1;
 
     // 4. Decidimos cuántas FILAS queremos mostrar (ejemplo: 4 filas)
-    const filasDeseadas = 10;
+    const filasDeseadas = 3;
 
     // 5. El número perfecto es Columnas * Filas
     productosPorPagina = columnas * filasDeseadas;
