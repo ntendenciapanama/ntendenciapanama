@@ -233,7 +233,6 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     padding: 15px 0; border-bottom: 1px solid #f0f0f0; 
 }
 
-/* REPARACIÓN: Icono de quitar corregido para que no sea un cuadrado */
 .btn-quitar { 
     background: #fff0f0; color: #ff4757; border: none; width: 32px; height: 32px; 
     border-radius: 50%; cursor: pointer; font-weight: bold; 
@@ -291,20 +290,18 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     border-radius: 50%; font-size: 12px; display: flex; justify-content: center; align-items: center; 
 }
 
-/* REPARACIÓN: Contenedor de paginación para evitar estiramiento */
 #paginacion { 
     display: flex; 
     justify-content: center; 
     gap: 8px; 
     padding: 50px 10px; 
-    flex-wrap: wrap; /* Permite que bajen si no caben, evitando que se aplasten */
+    flex-wrap: wrap; 
 }
 
-/* REPARACIÓN FINAL: Círculos de paginación perfectos e inamovibles */
 .pag-btn { 
     width: 42px; 
     height: 42px; 
-    min-width: 42px; /* IMPORTANTE: Evita que el flexbox lo aplaste */
+    min-width: 42px; 
     min-height: 42px;
     border-radius: 50%; 
     border: 2px solid var(--primario); 
@@ -315,12 +312,12 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    flex-shrink: 0; /* Prohíbe que el botón se reduzca de tamaño */
+    flex-shrink: 0; 
     transition: 0.2s;
 }
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL (CORRECCIONES VISUALES) --- */
+/* --- RESPONSIVE MÓVIL (CORRECCIONES VISUALES FINALIZADAS) --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
@@ -328,7 +325,6 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
         gap: 15px;
     }
     
-    /* REPARACIÓN: Logo mucho más grande y centrado */
     .logo-imagen { 
         max-width: 280px; 
         width: 85%; 
@@ -339,27 +335,42 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     
     .search-container { width: 100%; margin: 0; }
     
-    /* REPARACIÓN: Buscador no tan alto, más estilizado */
     #buscador { 
         width: 100%; 
         max-width: 100%; 
         padding: 10px 15px; 
         font-size: 15px;
-        height: 45px; /* Altura controlada */
+        height: 45px; 
     }
     
     #categorias {
-        top: 205px; /* Ajuste preciso para el nuevo header */
+        top: 205px; 
     }
 
     #productos { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
-    .main-img-container { height: 160px; }
-    h3 { font-size: 0.8rem; min-height: 3em; }
-    .precio { font-size: 1.2rem; }
-    .descripcion { display: none; }
-    .contenedor-botones { flex-direction: column; gap: 6px; }
     
-    /* Ajuste de botones en móvil para que no se peguen al borde */
+    /* MEJORA VISUAL DE PRODUCTOS EN MÓVIL */
+    .producto { border-radius: 12px; }
+    .producto-info { padding: 10px; } /* Menos relleno interno */
+    
+    .main-img-container { height: 160px; padding: 8px; }
+    
+    /* Texto de título más compacto */
+    h3 { font-size: 0.75rem; min-height: 2.2em; margin-bottom: 2px; }
+    
+    /* Precio más pegado a la imagen */
+    .precio { font-size: 1.1rem; margin-bottom: 4px; margin-top: -5px; }
+    
+    .descripcion { display: none; } /* Mantiene la descripción oculta en móvil para ahorrar espacio */
+    
+    /* BOTONES MÁS PEQUEÑOS Y ESTILIZADOS */
+    .contenedor-botones { flex-direction: column; gap: 5px; }
+    .whatsapp-btn, .btn-añadir-lista { 
+        padding: 8px 2px; /* Mucho más delgados */
+        font-size: 0.7rem; /* Letra más pequeña para que no se amontone */
+        border-radius: 6px;
+    }
+    
     .pag-btn {
         width: 38px;
         height: 38px;
