@@ -317,7 +317,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 }
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL (CORRECCIONES VISUALES FINALIZADAS) --- */
+/* --- RESPONSIVE MÓVIL (AJUSTES FINALES) --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
@@ -349,9 +349,8 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 
     #productos { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
     
-    /* MEJORA VISUAL DE PRODUCTOS EN MÓVIL */
     .producto { border-radius: 12px; }
-    .producto-info { padding: 10px; } /* Menos relleno interno */
+    .producto-info { padding: 10px 8px; } 
     
     .main-img-container { height: 160px; padding: 8px; }
     
@@ -361,13 +360,21 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     /* Precio más pegado a la imagen */
     .precio { font-size: 1.1rem; margin-bottom: 4px; margin-top: -5px; }
     
-    .descripcion { display: none; } /* Mantiene la descripción oculta en móvil para ahorrar espacio */
+    /* REPARACIÓN: Descripción ahora visible y estilizada en móvil */
+    .descripcion { 
+        display: block !important; 
+        font-size: 0.65rem; 
+        padding: 8px; 
+        margin-bottom: 10px; 
+        border-left: 3px solid var(--dorado);
+        line-height: 1.2;
+    } 
     
     /* BOTONES MÁS PEQUEÑOS Y ESTILIZADOS */
     .contenedor-botones { flex-direction: column; gap: 5px; }
     .whatsapp-btn, .btn-añadir-lista { 
-        padding: 8px 2px; /* Mucho más delgados */
-        font-size: 0.7rem; /* Letra más pequeña para que no se amontone */
+        padding: 8px 2px; 
+        font-size: 0.7rem; 
         border-radius: 6px;
     }
     
