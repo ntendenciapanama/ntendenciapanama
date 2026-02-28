@@ -121,7 +121,7 @@ header {
     scrollbar-width: none; 
     border-bottom: 1px solid #333;
     position: sticky; 
-    top: 104px; /* Ajuste dinámico para que se vea bajo el header */
+    top: 104px; 
     z-index: 900; 
 }
 #categorias::-webkit-scrollbar { display: none; }
@@ -290,25 +290,49 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 }
 
 #paginacion { display: flex; justify-content: center; gap: 12px; padding: 50px 20px; }
-.pag-btn { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primario); cursor: pointer; font-weight: 700; }
+
+/* REPARACIÓN: Círculos de paginación perfectos */
+.pag-btn { 
+    width: 45px; 
+    height: 45px; 
+    min-width: 45px; /* Evita que se aplaste */
+    border-radius: 50%; 
+    border: 2px solid var(--primario); 
+    cursor: pointer; 
+    font-weight: 700; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL (CORREGIDO) --- */
+/* --- RESPONSIVE MÓVIL (REPARADO) --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
         padding: 20px 15px;
         gap: 15px;
     }
-    .logo-imagen { max-width: 200px; }
+    /* REPARACIÓN: Logo más grande */
+    .logo-imagen { 
+        max-width: 300px; 
+        width: 90%; 
+    }
     .logo-wrapper { align-self: center; }
     .contact-icons { align-self: center; }
     
     .search-container { width: 100%; margin: 0; }
-    #buscador { width: 100%; max-width: 100%; }
+    
+    /* REPARACIÓN: Buscador más estilizado */
+    #buscador { 
+        width: 100%; 
+        max-width: 100%; 
+        padding: 10px 15px; 
+        font-size: 15px; 
+    }
     
     #categorias {
-        top: 195px; /* Ajustado para que no se pierda en el scroll */
+        top: 195px; /* Ajuste para el header más alto */
     }
 
     #productos { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
