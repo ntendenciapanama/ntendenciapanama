@@ -2,7 +2,7 @@ let todosLosProductos = [];
 let productosFiltrados = [];
 let carrito = [];
 
-// Cambiamos const por let para que pueda variar
+// Variables dinámicas
 let productosPorPagina = 12; 
 let paginaActual = 1;
 
@@ -10,34 +10,45 @@ let imgIndex = 1;
 let totalImg = 1;
 let codActual = "";
 
-// URL BASE de tu HOJA VISUAL
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
-
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
 
-// --- FUNCIÓN PARA AJUSTAR CANTIDAD POR PANTALLA ---
-function ajustarProductosPorPagina() {
-    const ancho = window.innerWidth;
+// --- FUNCIÓN MATEMÁTICA PARA CALCULAR BLOQUES PERFECTOS ---
+function calcularBloquesPerfectos() {
+    const contenedor = document.getElementById('productos');
+    if (!contenedor) return;
+
+    // 1. Medimos el ancho disponible del contenedor
+    const anchoContenedor = contenedor.offsetWidth;
+
+    // 2. Definimos cuánto mide UN producto (Ajusta estos números según tu CSS)
+    const anchoProducto = 270; // El ancho que definiste en el CSS para .producto
+    const gap = 25;            // El espacio (grid-gap) entre productos
+
+    // 3. Calculamos cuántas columnas caben físicamente
+    // Fórmula: (AnchoTotal + Espacio) / (AnchoProducto + Espacio)
+    let columnas = Math.floor((anchoContenedor + gap) / (anchoProducto + gap));
     
-    if (ancho > 1200) {
-        // Escritorio grande (Ej: 4 columnas -> 12 o 16 productos)
-        productosPorPagina = 15; 
-    } else if (ancho > 800) {
-        // Tablet / Laptop pequeña (Ej: 3 columnas -> 9 o 12 productos)
-        productosPorPagina = 12;
-    } else {
-        // Móvil (2 columnas -> queremos un número par para que no sobre uno)
-        productosPorPagina = 12; 
-    }
+    // Evitamos que sea 0 en pantallas mini
+    if (columnas < 1) columnas = 1;
+
+    // 4. Decidimos cuántas FILAS queremos mostrar (ejemplo: 4 filas)
+    const filasDeseadas = 4;
+
+    // 5. El número perfecto es Columnas * Filas
+    productosPorPagina = columnas * filasDeseadas;
+
+    console.log(`Pantalla detectada: ${columnas} columnas. Mostrando ${productosPorPagina} productos para llenar ${filasDeseadas} filas.`);
 }
 
-// Ejecutar al cargar
-ajustarProductosPorPagina();
-
-// Ejecutar si el usuario gira el celular o cambia el tamaño de ventana
+// Escuchar cambios de tamaño de pantalla
 window.addEventListener('resize', () => {
-    ajustarProductosPorPagina();
-    mostrarProductos(); 
+    const paginaAnterior = productosPorPagina;
+    calcularBloquesPerfectos();
+    // Solo recargamos si el cálculo cambió para evitar parpadeos innecesarios
+    if (paginaAnterior !== productosPorPagina) {
+        mostrarProductos();
+    }
 });
 
 // --- CARGAR DATOS ---
@@ -69,12 +80,16 @@ fetch(URL_SHEET)
 
         todosLosProductos = productosMapeados.reverse();
         productosFiltrados = todosLosProductos;
+        
+        // Calculamos antes de mostrar por primera vez
+        calcularBloquesPerfectos();
+        
         generarCategorias();
         mostrarProductos();
     })
-    .catch(err => console.error("Error cargando Google Sheets:", err));
+    .catch(err => console.error("Error:", err));
 
-// --- MOSTRAR CUADRÍCULA ---
+// --- MOSTRAR PRODUCTOS ---
 function mostrarProductos() {
     const contenedor = document.getElementById('productos');
     if (!contenedor) return;
@@ -87,12 +102,10 @@ function mostrarProductos() {
     lista.forEach(p => {
         const div = document.createElement('div');
         div.className = 'producto';
-        
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
                 <img src="images/${p.codigo}/1.jpg?t=${new Date().getTime()}" 
-                     alt="${p.nombre}" 
-                     loading="lazy" 
+                     alt="${p.nombre}" loading="lazy" 
                      onerror="this.onerror=null; this.src='images/${p.codigo}/1.png'; this.setAttribute('onerror', 'this.src=\'logo.png\'')">
             </div>
             <div class="producto-info">
@@ -100,7 +113,7 @@ function mostrarProductos() {
                 <h3>${p.nombre}</h3>
                 <div class="descripcion">${p.descripcion}</div>
                 <div class="contenedor-botones">
-                    <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
+                    <a href="https://wa.me/50767710645?text=Hola! Me interesa: ${p.nombre}" class="whatsapp-btn" target="_blank">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
                 </div>
             </div>
@@ -129,11 +142,9 @@ function actualizarVistaGaleria() {
             this.src = `images/${codActual}/${imgIndex}.png`;
         };
     }
-    
     const nav = document.getElementById('lightbox-nav');
     if (!nav) return;
     nav.innerHTML = "";
-    
     if (totalImg > 1) {
         for (let i = 1; i <= totalImg; i++) {
             verificarYCrearMiniatura(i, nav);
@@ -183,7 +194,6 @@ function añadirAlCarrito(codigo) {
         alert("✨ Este producto ya está en tu lista de pedido.");
         return;
     }
-
     const p = todosLosProductos.find(x => x.codigo === codigo);
     if (p) { 
         carrito.push(p); 
@@ -244,24 +254,13 @@ function quitarDelCarrito(i) {
 // --- WHATSAPP ---
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
-
-    let txt = "✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n";
-    txt += "Me encantaron estos productos de su catálogo: \n";
-    txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
-    
+    let txt = "✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n\n";
     let total = 0;
     carrito.forEach((p, index) => {
-        txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
-        txt += `    🏷️ _Cód: ${p.codigo}_\n`;
-        txt += `    💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
+        txt += `*${index + 1}.* ${p.nombre.toUpperCase()} (Cód: ${p.codigo}) - *$${p.precio.toFixed(2)}*\n`;
         total += p.precio;
     });
-
-    txt += "━━━━━━━━━━━━━━━━━━━━\n";
-    txt += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
-    txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
-    txt += "🙏 _Quedo atento(a) a su respuesta._";
-
+    txt += `\n💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*`;
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
