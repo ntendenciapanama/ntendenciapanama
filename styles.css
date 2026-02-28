@@ -1,254 +1,42 @@
-/* --- VARIABLES DE MARCA --- */
-:root {
-    --primario: #004131;
-    --dorado: #d4af37;
-    --dorado-brillante: #f1c40f;
-    --fondo-crema: #f9f9f7;
-    --blanco: #ffffff;
-    --texto-suave: #555555;
-    --whatsapp: #25D366; /* Verde oficial de WhatsApp */
-}
-
-/* --- RESET Y BASE --- */
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-    font-family: 'Poppins', sans-serif; 
-    -webkit-tap-highlight-color: transparent; 
-}
-
-body { 
-    background-color: var(--fondo-crema); 
-    background-image: radial-gradient(#e1e1db 0.8px, transparent 0.8px);
-    background-size: 24px 24px;
-    color: var(--primario); 
-    padding-bottom: 100px; 
-}
-
-/* --- HEADER BOUTIQUE --- */
-header { 
-    background: var(--primario); 
-    color: var(--blanco); 
-    padding: 25px 20px 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; 
-    top: 0; 
-    z-index: 1000; 
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-    border-bottom: 4px solid var(--dorado);
-}
-
-.logo-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    align-self: flex-start;
-    margin-top: -10px;
-}
-
-.logo-imagen {
-    max-width: 500px; 
-    width: auto;
-    height: auto;
-    display: block;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-}
-
-.search-container {
-    margin: 0 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#buscador { 
-    width: 500px;
-    max-width: 95%; 
-    padding: 10px 24px; 
-    border-radius: 25px; 
-    border: 1px solid rgba(255,255,255,0.3); 
-    background: rgba(255,255,255,0.12);
-    color: white;
-    text-align: center;
-    outline: none; 
-    font-size: 16px; 
-    transition: all 0.3s ease;
-    backdrop-filter: blur(5px);
-}
-
-.search-container .slogan-marca {
-    margin-top: 12px;
-    font-size: 0.7rem;
-    color: #fff;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    opacity: 0.8;
-}
-
-/* --- ICONOS DE CONTACTO CORREGIDOS --- */
-.contact-icons {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-left: 20px;
-    align-self: flex-start;
-    margin-top: -5px;
-}
-
-.contact-icons svg.icon {
-    width: 26px;
-    height: 26px;
-    transition: transform 0.2s;
-}
-
-.contact-icons svg.icon:hover { transform: scale(1.1); }
-
-/* Colores específicos de redes */
-.icon-instagram { color: #E1306C; }
-.icon-facebook { color: #4267B2; }
-.icon-whatsapp { color: #25D366 !important; } /* FORZAMOS EL VERDE AQUÍ */
-
-/* --- CATEGORÍAS --- */
-#categorias { 
-    display: flex; 
-    gap: 10px; 
-    padding: 12px 15px;
-    overflow-x: auto; 
-    background: #000;
-    scrollbar-width: none; 
-    position: sticky;
-    top: 75px; 
-    z-index: 900; 
-}
-
-#categorias::-webkit-scrollbar { display: none; }
-
-.categoria-btn { 
-    padding: 8px 18px;
-    border-radius: 20px; 
-    border: 1px solid #fff;
-    background: transparent;
-    color: #fff;
-    font-weight: 600; 
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-.categoria-btn.activa { 
-    background: var(--primario); 
-    border-color: var(--primario);
-}
-
-/* --- GRID DE PRODUCTOS --- */
-#productos { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
-    gap: 25px; 
-    padding: 25px; 
-}
-
-.producto { 
-    background: var(--blanco); 
-    border-radius: 15px; 
-    border: 1px solid rgba(0,0,0,0.05); 
-    overflow: hidden; 
-    display: flex; 
-    flex-direction: column; 
-    height: 100%; 
-    transition: transform 0.3s ease;
-}
-
-.producto:hover { transform: translateY(-5px); border-color: var(--dorado); }
-
-.main-img-container { height: 300px; padding: 15px; display: flex; align-items: center; justify-content: center; }
-.main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
-.producto-info { padding: 20px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; }
-.precio { font-size: 1.6rem; font-weight: 800; color: var(--primario); margin-bottom: 5px; }
-h3 { font-size: 1rem; color: #333; min-height: 2.5em; display: flex; align-items: center; justify-content: center; }
-
-.descripcion { 
-    font-size: 0.85rem; 
-    color: var(--texto-suave); 
-    background: #fdfaf2; 
-    padding: 12px; 
-    border-radius: 10px; 
-    margin: 15px 0;
-    border-left: 4px solid var(--dorado);
-    text-align: left;
-}
-
-.contenedor-botones { display: flex; gap: 10px; margin-top: auto; }
-.whatsapp-btn, .btn-añadir-lista { flex: 1; padding: 12px 5px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; font-size: 0.8rem; text-transform: uppercase; text-decoration: none; text-align: center; }
-.whatsapp-btn { background: var(--whatsapp); color: white; }
-.btn-añadir-lista { background: var(--primario); color: white; }
-
-/* --- BOTÓN CARRITO FLOTANTE --- */
-#btn-carrito { 
-    position: fixed; bottom: 30px; right: 30px; 
-    background: var(--primario); color: white; 
-    width: 65px; height: 65px; border-radius: 50%; 
-    display: flex; justify-content: center; align-items: center; 
-    font-size: 26px; z-index: 2000; 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
-    border: 2px solid var(--dorado);
-}
-
-#contador-carrito { position: absolute; top: -5px; right: -5px; background: #ff4757; width: 25px; height: 25px; border-radius: 50%; font-size: 12px; display: flex; justify-content: center; align-items: center; border: 2px solid var(--primario); }
-
-/* --- PAGINACIÓN CORREGIDA --- */
-#paginacion { 
-    display: flex; 
-    justify-content: center; 
-    gap: 10px; 
-    padding: 40px 20px; 
-    flex-wrap: wrap; 
-}
-
-.pag-btn { 
-    width: 42px; height: 42px; 
-    border-radius: 50%; 
-    border: 2px solid var(--primario); 
-    background: white; 
-    font-weight: 700; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.pag-btn.activa { background: var(--primario); color: white; }
-
-/* --- AJUSTES MÓVILES FINALES --- */
+/* --- AJUSTES EXCLUSIVOS PARA MÓVILES --- */
 @media (max-width: 600px) {
-    header {
-        flex-direction: column;
-        padding: 15px 10px;
+    
+    /* 1. Agranda el Logo */
+    header img {
+        max-width: 220px !important; /* Ajusta este número según prefieras */
+        height: auto;
+        margin-bottom: 15px;
     }
-    .logo-wrapper { align-self: center; margin-top: 0; }
-    .logo-imagen { max-width: 260px !important; }
-    
-    .search-container { width: 100%; margin: 10px 0; }
-    #buscador { width: 90% !important; font-size: 14px; padding: 8px; }
-    
-    .contact-icons { align-self: center; margin-left: 0; margin-top: 5px; gap: 20px; }
-    
-    #productos { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
-    .main-img-container { height: 180px; }
-    .precio { font-size: 1.1rem; }
-    h3 { font-size: 0.8rem; }
-    
-    .contenedor-botones { flex-direction: column; }
-    
+
+    /* 2. Reduce el Buscador */
+    .buscador-container {
+        width: 90%; /* Que no toque los bordes */
+        max-width: 300px; /* Limita el ancho máximo */
+        margin: 0 auto 20px auto;
+    }
+
+    #buscador {
+        padding: 10px 15px;
+        font-size: 14px; /* Texto más pequeño para que no se vea tosco */
+    }
+
+    /* 3. Repara los Círculos de Paginación */
+    #paginacion {
+        display: flex;
+        flex-wrap: wrap; /* Si hay muchos, que bajen al siguiente renglón */
+        justify-content: center;
+        gap: 8px; /* Espacio entre círculos */
+        padding: 20px 10px;
+    }
+
     .pag-btn {
-        width: 36px !important;
-        height: 36px !important;
-        font-size: 11px;
+        width: 35px !important; /* Tamaño fijo para que sean círculos perfectos */
+        height: 35px !important;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        padding: 0 !important; /* Quita paddings que deforman el círculo */
     }
 }
