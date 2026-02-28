@@ -22,8 +22,8 @@ function calcularBloquesPerfectos() {
     const anchoContenedor = contenedor.offsetWidth;
 
     // 2. Definimos cuánto mide UN producto (Ajusta estos números según tu CSS)
-    const anchoProducto = 270; // El ancho que definiste en el CSS para .producto
-    const gap = 25;            // El espacio (grid-gap) entre productos
+    const anchoProducto = 280; // El ancho que definiste en el CSS para .producto
+    const gap = 20;            // El espacio (grid-gap) entre productos
 
     // 3. Calculamos cuántas columnas caben físicamente
     // Fórmula: (AnchoTotal + Espacio) / (AnchoProducto + Espacio)
@@ -33,7 +33,7 @@ function calcularBloquesPerfectos() {
     if (columnas < 1) columnas = 1;
 
     // 4. Decidimos cuántas FILAS queremos mostrar (ejemplo: 4 filas)
-    const filasDeseadas = 4;
+    const filasDeseadas = 10;
 
     // 5. El número perfecto es Columnas * Filas
     productosPorPagina = columnas * filasDeseadas;
