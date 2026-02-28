@@ -1,7 +1,7 @@
 let todosLosProductos = [];
 let productosFiltrados = [];
 let carrito = [];
-const productosPorPagina = 12;
+const productosPorPagina = 15;
 let paginaActual = 1;
 
 let imgIndex = 1;
