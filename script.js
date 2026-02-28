@@ -42,7 +42,7 @@ fetch(URL_SHEET)
             return tieneCodigo && !estaVendido;
         });
 
-        // --- AQUÍ ESTÁ EL TRUCO: REVERSA PARA MOSTRAR LO NUEVO PRIMERO ---
+        // --- REVERSA PARA MOSTRAR LO NUEVO PRIMERO ---
         todosLosProductos = productosMapeados.reverse();
 
         productosFiltrados = todosLosProductos;
@@ -153,8 +153,16 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- CARRITO ---
+// --- CARRITO (CON VALIDACIÓN DE DUPLICADOS) ---
 function añadirAlCarrito(codigo) {
+    // Verificar si ya existe en la lista
+    const yaExiste = carrito.find(x => x.codigo === codigo);
+    
+    if (yaExiste) {
+        alert("✨ Este producto ya está en tu lista de pedido.");
+        return;
+    }
+
     const p = todosLosProductos.find(x => x.codigo === codigo);
     if (p) { 
         carrito.push(p); 
@@ -212,7 +220,7 @@ function quitarDelCarrito(i) {
     dibujarCarrito();
 }
 
-// --- MENSAJE WHATSAPP (VERSIÓN LIMPIA) ---
+// --- MENSAJE WHATSAPP ---
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
 
