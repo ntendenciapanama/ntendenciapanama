@@ -1,7 +1,9 @@
 let todosLosProductos = [];
 let productosFiltrados = [];
 let carrito = [];
-const productosPorPagina = 15;
+
+// Cambiamos const por let para que pueda variar
+let productosPorPagina = 12; 
 let paginaActual = 1;
 
 let imgIndex = 1;
@@ -11,17 +13,40 @@ let codActual = "";
 // URL BASE de tu HOJA VISUAL
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
 
-// ANTI-CACHE: Forzamos carga fresca
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
 
-// --- CARGAR DATOS DESDE GOOGLE SHEETS ---
+// --- FUNCIÓN PARA AJUSTAR CANTIDAD POR PANTALLA ---
+function ajustarProductosPorPagina() {
+    const ancho = window.innerWidth;
+    
+    if (ancho > 1200) {
+        // Escritorio grande (Ej: 4 columnas -> 12 o 16 productos)
+        productosPorPagina = 15; 
+    } else if (ancho > 800) {
+        // Tablet / Laptop pequeña (Ej: 3 columnas -> 9 o 12 productos)
+        productosPorPagina = 12;
+    } else {
+        // Móvil (2 columnas -> queremos un número par para que no sobre uno)
+        productosPorPagina = 12; 
+    }
+}
+
+// Ejecutar al cargar
+ajustarProductosPorPagina();
+
+// Ejecutar si el usuario gira el celular o cambia el tamaño de ventana
+window.addEventListener('resize', () => {
+    ajustarProductosPorPagina();
+    mostrarProductos(); 
+});
+
+// --- CARGAR DATOS ---
 fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
         const todasLasFilas = csvText.split(/\r?\n/);
         const filasDeProductos = todasLasFilas.slice(2);
         
-        // Mapeamos los productos
         const productosMapeados = filasDeProductos.map(fila => {
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
@@ -42,16 +67,14 @@ fetch(URL_SHEET)
             return tieneCodigo && !estaVendido;
         });
 
-        // --- REVERSA PARA MOSTRAR LO NUEVO PRIMERO ---
         todosLosProductos = productosMapeados.reverse();
-
         productosFiltrados = todosLosProductos;
         generarCategorias();
         mostrarProductos();
     })
     .catch(err => console.error("Error cargando Google Sheets:", err));
 
-// --- MOSTRAR CUADRÍCULA DE PRODUCTOS ---
+// --- MOSTRAR CUADRÍCULA ---
 function mostrarProductos() {
     const contenedor = document.getElementById('productos');
     if (!contenedor) return;
@@ -87,7 +110,7 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- LÓGICA DE GALERÍA ---
+// --- GALERÍA ---
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -153,11 +176,9 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- CARRITO (CON VALIDACIÓN DE DUPLICADOS) ---
+// --- CARRITO ---
 function añadirAlCarrito(codigo) {
-    // Verificar si ya existe en la lista
     const yaExiste = carrito.find(x => x.codigo === codigo);
-    
     if (yaExiste) {
         alert("✨ Este producto ya está en tu lista de pedido.");
         return;
@@ -220,12 +241,12 @@ function quitarDelCarrito(i) {
     dibujarCarrito();
 }
 
-// --- MENSAJE WHATSAPP ---
+// --- WHATSAPP ---
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
 
     let txt = "✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n";
-    txt += "Me encantaron estos productos de su catálogo y me gustaría consultar disponibilidad: \n";
+    txt += "Me encantaron estos productos de su catálogo: \n";
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
     
     let total = 0;
@@ -239,13 +260,12 @@ function enviarPedidoWhatsApp() {
     txt += "━━━━━━━━━━━━━━━━━━━━\n";
     txt += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
-    
-    txt += "🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
+    txt += "🙏 _Quedo atento(a) a su respuesta._";
 
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
-// --- BUSCADOR Y CATEGORIAS ---
+// --- BUSCADOR ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
