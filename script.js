@@ -14,6 +14,42 @@ const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_
 // ANTI-CACHE: Forzamos carga fresca
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
 
+// --- FUNCIÓN POR BREAKPOINTS ESTÁNDAR ---
+function calcularBloquesStandard() {
+    const ancho = window.innerWidth;
+
+    if (ancho < 600) {
+        // MÓVIL (Generalmente 2 columnas)
+        // 10 productos = 5 filas completas
+        productosPorPagina = 10;
+    } 
+    else if (ancho >= 600 && ancho < 1024) {
+        // TABLET (Generalmente 3 columnas)
+        // 12 productos = 4 filas completas
+        productosPorPagina = 12;
+    } 
+    else if (ancho >= 1024 && ancho < 1440) {
+        // LAPTOP / DESKTOP (Generalmente 4 columnas)
+        // 12 productos = 3 filas completas
+        productosPorPagina = 12;
+    } 
+    else {
+        // MONITOR GRANDE (Generalmente 5 o 6 columnas)
+        // 15 o 18 productos para llenar filas de 5 o 6
+        productosPorPagina = 15; 
+    }
+}
+
+// Escuchar cambios de tamaño (por si giran el móvil)
+window.addEventListener('resize', () => {
+    const previo = productosPorPagina;
+    calcularBloquesStandard();
+    if (previo !== productosPorPagina) {
+        paginaActual = 1; // Reiniciamos a pág 1 para evitar errores de índice
+        mostrarProductos();
+    }
+});
+
 // --- CARGAR DATOS DESDE GOOGLE SHEETS ---
 fetch(URL_SHEET)
     .then(res => res.text())
@@ -44,8 +80,8 @@ fetch(URL_SHEET)
 
         // --- REVERSA PARA MOSTRAR LO NUEVO PRIMERO ---
         todosLosProductos = productosMapeados.reverse();
-
         productosFiltrados = todosLosProductos;
+        calcularBloquesStandard(); // Calculamos antes de mostrar
         generarCategorias();
         mostrarProductos();
     })
