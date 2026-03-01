@@ -1,7 +1,9 @@
 let todosLosProductos = [];
 let productosFiltrados = [];
 let carrito = [];
-const productosPorPagina = 12;
+
+// 1. Cambiamos a 'let' para permitir que el cálculo dinámico lo modifique
+let productosPorPagina = 12; 
 let paginaActual = 1;
 
 let imgIndex = 1;
@@ -13,6 +15,31 @@ const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_
 
 // ANTI-CACHE: Forzamos carga fresca
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
+
+// --- NUEVA FUNCIÓN: AJUSTE POR MEDIA QUERY ---
+function ajustarPaginacionDinamica() {
+    const ancho = window.innerWidth;
+
+    if (ancho < 600) {
+        // MÓVIL (2 columnas): 10 productos = 5 filas exactas
+        productosPorPagina = 10;
+    } 
+    else if (ancho >= 600 && ancho < 1024) {
+        // TABLET (3 columnas): 12 productos = 4 filas exactas
+        productosPorPagina = 12;
+    } 
+    else if (ancho >= 1024 && ancho < 1440) {
+        // DESKTOP (4 columnas): 12 productos = 3 filas exactas
+        productosPorPagina = 12;
+    } 
+    else {
+        // MONITOR GRANDE (5 o 6 columnas): 15 o 18 productos
+        productosPorPagina = 15; 
+    }
+}
+
+// Ejecutamos el primer cálculo antes de cargar nada
+ajustarPaginacionDinamica();
 
 // --- CARGAR DATOS DESDE GOOGLE SHEETS ---
 fetch(URL_SHEET)
@@ -293,3 +320,14 @@ function actualizarPaginacion() {
         cont.appendChild(b);
     }
 }
+
+// --- ESCUCHAR CAMBIO DE PANTALLA ---
+window.addEventListener('resize', () => {
+    const previo = productosPorPagina;
+    ajustarPaginacionDinamica();
+    // Solo refrescamos si el número de productos por página cambió
+    if (previo !== productosPorPagina) {
+        paginaActual = 1; 
+        mostrarProductos();
+    }
+});
