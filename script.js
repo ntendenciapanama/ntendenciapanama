@@ -2,7 +2,6 @@ let todosLosProductos = [];
 let productosFiltrados = [];
 let carrito = [];
 
-// 1. Cambiamos a 'let' para permitir que el cálculo dinámico lo modifique
 let productosPorPagina = 12; 
 let paginaActual = 1;
 
@@ -10,53 +9,43 @@ let imgIndex = 1;
 let totalImg = 1;
 let codActual = "";
 
-// URL BASE de tu HOJA VISUAL
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
-
-// ANTI-CACHE: Forzamos carga fresca
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
 
-// --- NUEVA FUNCIÓN: AJUSTE POR MEDIA QUERY ---
 function ajustarPaginacionDinamica() {
     const ancho = window.innerWidth;
-
-    if (ancho < 600) {
-        // MÓVIL (2 columnas): 10 productos = 5 filas exactas
-        productosPorPagina = 10;
-    } 
-    else if (ancho >= 600 && ancho < 1024) {
-        // TABLET (3 columnas): 12 productos = 4 filas exactas
-        productosPorPagina = 12;
-    } 
-    else if (ancho >= 1024 && ancho < 1440) {
-        // DESKTOP (4 columnas): 12 productos = 3 filas exactas
-        productosPorPagina = 12;
-    } 
-    else {
-        // MONITOR GRANDE (5 o 6 columnas): 15 o 18 productos
-        productosPorPagina = 18; 
-    }
+    if (ancho < 600) { productosPorPagina = 10; } 
+    else if (ancho >= 600 && ancho < 1024) { productosPorPagina = 12; } 
+    else if (ancho >= 1024 && ancho < 1440) { productosPorPagina = 12; } 
+    else { productosPorPagina = 18; }
 }
 
-// Ejecutamos el primer cálculo antes de cargar nada
 ajustarPaginacionDinamica();
 
-// --- CARGAR DATOS DESDE GOOGLE SHEETS ---
 fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
         const todasLasFilas = csvText.split(/\r?\n/);
         const filasDeProductos = todasLasFilas.slice(2);
         
-        // Mapeamos los productos
         const productosMapeados = filasDeProductos.map(fila => {
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
+            // LÓGICA REPARADA:
+            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0; // Columna C
+            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0; // Columna I
+
+            // Si hay algo en la I, el precio de venta es ese. Si no, es el de la C.
+            const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
+
             return {
                 codigo: limpiar(columnas[0]),
                 nombre: limpiar(columnas[1]),
-                precio: parseFloat(limpiar(columnas[2]).replace('$', '')) || 0,
+                precio: precioVentaHoy,
+                precioOriginal: precioBase,
+                // Solo muestra oferta si la I es menor que la C y tiene un valor
+                esOferta: precioOferta > 0 && precioOferta < precioBase,
                 stock: limpiar(columnas[3]),
                 descripcion: limpiar(columnas[4]) || "",
                 status: limpiar(columnas[5])?.toLowerCase(),
@@ -69,16 +58,13 @@ fetch(URL_SHEET)
             return tieneCodigo && !estaVendido;
         });
 
-        // --- REVERSA PARA MOSTRAR LO NUEVO PRIMERO ---
         todosLosProductos = productosMapeados.reverse();
-
         productosFiltrados = todosLosProductos;
         generarCategorias();
         mostrarProductos();
     })
     .catch(err => console.error("Error cargando Google Sheets:", err));
 
-// --- MOSTRAR CUADRÍCULA DE PRODUCTOS ---
 function mostrarProductos() {
     const contenedor = document.getElementById('productos');
     if (!contenedor) return;
@@ -92,15 +78,21 @@ function mostrarProductos() {
         const div = document.createElement('div');
         div.className = 'producto';
         
+        const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
+        const precioHTML = p.esOferta 
+            ? `<p class="precio"><span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> $${p.precio.toFixed(2)}</p>`
+            : `<p class="precio">$${p.precio.toFixed(2)}</p>`;
+
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
+                ${badgeHTML}
                 <img src="images/${p.codigo}/1.jpg?t=${new Date().getTime()}" 
                      alt="${p.nombre}" 
                      loading="lazy" 
                      onerror="this.onerror=null; this.src='images/${p.codigo}/1.png'; this.setAttribute('onerror', 'this.src=\'logo.png\'')">
             </div>
             <div class="producto-info">
-                <p class="precio">$${p.precio.toFixed(2)}</p>
+                ${precioHTML}
                 <h3>${p.nombre}</h3>
                 <div class="descripcion">${p.descripcion}</div>
                 <div class="contenedor-botones">
@@ -114,7 +106,7 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- LÓGICA DE GALERÍA ---
+// --- LÓGICA DE GALERÍA (Sin cambios) ---
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -133,11 +125,9 @@ function actualizarVistaGaleria() {
             this.src = `images/${codActual}/${imgIndex}.png`;
         };
     }
-    
     const nav = document.getElementById('lightbox-nav');
     if (!nav) return;
     nav.innerHTML = "";
-    
     if (totalImg > 1) {
         for (let i = 1; i <= totalImg; i++) {
             verificarYCrearMiniatura(i, nav);
@@ -180,16 +170,13 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- CARRITO (CON VALIDACIÓN DE DUPLICADOS) ---
+// --- CARRITO (Sin cambios) ---
 function añadirAlCarrito(codigo) {
-    // Verificar si ya existe en la lista
     const yaExiste = carrito.find(x => x.codigo === codigo);
-    
     if (yaExiste) {
         alert("✨ Este producto ya está en tu lista de pedido.");
         return;
     }
-
     const p = todosLosProductos.find(x => x.codigo === codigo);
     if (p) { 
         carrito.push(p); 
@@ -247,14 +234,11 @@ function quitarDelCarrito(i) {
     dibujarCarrito();
 }
 
-// --- MENSAJE WHATSAPP ---
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
-
     let txt = "✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n";
     txt += "Me encantaron estos productos de su catálogo y me gustaría consultar disponibilidad: \n";
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
-    
     let total = 0;
     carrito.forEach((p, index) => {
         txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
@@ -262,17 +246,14 @@ function enviarPedidoWhatsApp() {
         txt += `    💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
-
     txt += "━━━━━━━━━━━━━━━━━━━━\n";
     txt += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
-    
     txt += "🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
-
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
-// --- BUSCADOR Y CATEGORIAS ---
+// --- BUSCADOR Y CATEGORIAS (Sin cambios) ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
@@ -321,11 +302,9 @@ function actualizarPaginacion() {
     }
 }
 
-// --- ESCUCHAR CAMBIO DE PANTALLA ---
 window.addEventListener('resize', () => {
     const previo = productosPorPagina;
     ajustarPaginacionDinamica();
-    // Solo refrescamos si el número de productos por página cambió
     if (previo !== productosPorPagina) {
         paginaActual = 1; 
         mostrarProductos();
