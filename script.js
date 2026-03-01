@@ -32,15 +32,20 @@ fetch(URL_SHEET)
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
-            const pActual = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
-            const pOriginal = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0; // Capturamos Columna 8
+            // LÓGICA REPARADA:
+            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0; // Columna C
+            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0; // Columna I
+
+            // Si hay algo en la I, el precio de venta es ese. Si no, es el de la C.
+            const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
 
             return {
                 codigo: limpiar(columnas[0]),
                 nombre: limpiar(columnas[1]),
-                precio: pActual,
-                precioOriginal: pOriginal,
-                esOferta: pOriginal > pActual, // Lógica de detección
+                precio: precioVentaHoy,
+                precioOriginal: precioBase,
+                // Solo muestra oferta si la I es menor que la C y tiene un valor
+                esOferta: precioOferta > 0 && precioOferta < precioBase,
                 stock: limpiar(columnas[3]),
                 descripcion: limpiar(columnas[4]) || "",
                 status: limpiar(columnas[5])?.toLowerCase(),
@@ -73,7 +78,6 @@ function mostrarProductos() {
         const div = document.createElement('div');
         div.className = 'producto';
         
-        // --- LÓGICA DE PRECIO Y ETIQUETA ---
         const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
         const precioHTML = p.esOferta 
             ? `<p class="precio"><span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> $${p.precio.toFixed(2)}</p>`
