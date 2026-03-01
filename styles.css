@@ -39,6 +39,8 @@ header {
     z-index: 1000; 
     box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     border-bottom: 4px solid var(--dorado);
+    /* Altura mínima para asegurar que el cálculo de categorías no falle */
+    min-height: 100px; 
 }
 
 .logo-wrapper {
@@ -49,7 +51,7 @@ header {
 }
 
 .logo-imagen {
-    max-width: 500px;
+    max-width: 180px; /* Ajustado para que no rompa el diseño en pantallas medianas */
     width: auto;
     height: auto;
     display: block;
@@ -121,7 +123,7 @@ header {
     scrollbar-width: none; 
     border-bottom: 1px solid #333;
     position: sticky; 
-    top: 104px; 
+    top: 104px; /* Ajustado al header en PC */
     z-index: 900; 
 }
 #categorias::-webkit-scrollbar { display: none; }
@@ -141,9 +143,9 @@ header {
 }
 
 .categoria-btn.activa { 
-    background: var(--primario); 
-    color: var(--blanco); 
-    border-color: var(--primario);
+    background: var(--dorado); 
+    color: var(--primario); 
+    border-color: var(--dorado);
 }
 
 /* --- PRODUCTOS --- */
@@ -196,6 +198,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 .whatsapp-btn, .btn-añadir-lista { 
     flex: 1; padding: 14px 5px; border-radius: 10px; border: none;
     font-weight: 700; font-size: 0.85rem; text-transform: uppercase; text-align: center; text-decoration: none; transition: 0.3s;
+    cursor: pointer;
 }
 .whatsapp-btn { background: var(--whatsapp); color: white; }
 .btn-añadir-lista { background: var(--primario); color: white; }
@@ -254,7 +257,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
     background: rgba(0,0,0,0.96); z-index: 6000; justify-content: center; align-items: center; 
 }
-.galeria-wrapper { width: 95%; max-width: 550px; }
+.galeria-wrapper { width: 95%; max-width: 550px; position: relative; }
 .galeria-container { 
     position: relative; background: var(--blanco); border-radius: 20px; 
     overflow: hidden; display: flex; align-items: center; justify-content: center;
@@ -267,7 +270,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 }
 .flecha-incrustada.prev { left: 20px; }
 .flecha-incrustada.next { right: 20px; }
-.cerrar-lightbox { position: absolute; top: 25px; right: 35px; color: white; font-size: 50px; cursor: pointer; }
+.cerrar-lightbox { position: absolute; top: -50px; right: 0; color: white; font-size: 50px; cursor: pointer; }
 .lightbox-nav { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 .thumb-galeria { 
     width: 60px; height: 60px; object-fit: cover; border-radius: 10px; 
@@ -317,17 +320,18 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 }
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL (AJUSTES FINALES) --- */
+/* --- RESPONSIVE MÓVIL REPARADO --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
         padding: 20px 15px 12px;
         gap: 15px;
+        height: auto;
     }
     
     .logo-imagen { 
-        max-width: 280px; 
-        width: 85%; 
+        max-width: 240px; 
+        width: 80%; 
         margin: 0 auto;
     }
     .logo-wrapper { align-self: center; width: 100%; justify-content: center; }
@@ -343,6 +347,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
         height: 45px; 
     }
     
+    /* REPARACIÓN CLAVE: Este valor debe ser dinámico o ajustado a la altura real */
     #categorias {
         top: 205px; 
     }
@@ -354,13 +359,9 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     
     .main-img-container { height: 160px; padding: 8px; }
     
-    /* Texto de título más compacto */
     h3 { font-size: 0.75rem; min-height: 2.2em; margin-bottom: 2px; }
-    
-    /* Precio más pegado a la imagen */
     .precio { font-size: 1.1rem; margin-bottom: 4px; margin-top: -5px; }
     
-    /* REPARACIÓN: Descripción ahora visible y estilizada en móvil */
     .descripcion { 
         display: block !important; 
         font-size: 0.65rem; 
@@ -370,7 +371,6 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
         line-height: 1.2;
     } 
     
-    /* BOTONES MÁS PEQUEÑOS Y ESTILIZADOS */
     .contenedor-botones { flex-direction: column; gap: 5px; }
     .whatsapp-btn, .btn-añadir-lista { 
         padding: 8px 2px; 
