@@ -104,13 +104,25 @@ header {
 .contact-icons svg.icon {
     width: 24px;
     height: 24px;
-    transition: opacity 0.2s;
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
+/* Colores de Iconos */
 .icon-instagram { color: #E1306C; }
 .icon-facebook { color: #4267B2; }
 .icon-whatsapp { color: #25D366; }
+.icon-tiktok { color: #ffffff; } /* Blanco por defecto sobre fondo oscuro */
+
+.contact-icons a:hover .icon-instagram { filter: drop-shadow(0 0 5px #E1306C); }
+.contact-icons a:hover .icon-facebook { color: #3b5998; }
+.contact-icons a:hover .icon-whatsapp { color: #1ebea5; }
+
+/* Efecto especial para TikTok */
+.contact-icons a:hover .icon-tiktok { 
+    color: #00f2ea !important; 
+    filter: drop-shadow(2px 0px 0px #ff0050);
+}
 
 /* --- CATEGORÍAS --- */
 #categorias { 
@@ -172,7 +184,6 @@ header {
     border-color: var(--dorado);
 }
 
-/* MODIFICACIÓN: Contenedor de imagen ahora relativo para la etiqueta de oferta */
 .main-img-container { 
     position: relative;
     height: 300px; 
@@ -186,7 +197,7 @@ header {
 
 .main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-/* --- ESTILOS DE OFERTA (NUEVO) --- */
+/* --- ESTILOS DE OFERTA --- */
 .badge-oferta {
     position: absolute;
     top: 15px;
@@ -351,7 +362,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 }
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL (AJUSTES FINALES) --- */
+/* --- RESPONSIVE MÓVIL --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
@@ -388,7 +399,6 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     
     .main-img-container { height: 160px; padding: 8px; }
 
-    /* Ajuste de etiqueta de oferta en móvil */
     .badge-oferta {
         top: 8px;
         left: 8px;
