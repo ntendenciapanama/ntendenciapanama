@@ -144,9 +144,9 @@ header {
 }
 
 .categoria-btn.activa { 
-    background: var(--primario); 
+    background: var(--dorado);    /* Cambiado de vino a dorado */
     color: var(--blanco); 
-    border-color: var(--primario);
+    border-color: var(--dorado);  /* Cambiado para que el borde también sea dorado */
 }
 
 /* --- PRODUCTOS --- */
