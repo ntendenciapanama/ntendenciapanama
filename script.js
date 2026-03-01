@@ -34,7 +34,7 @@ function ajustarPaginacionDinamica() {
     } 
     else {
         // MONITOR GRANDE (5 o 6 columnas): 15 o 18 productos
-        productosPorPagina = 15; 
+        productosPorPagina = 18; 
     }
 }
 
