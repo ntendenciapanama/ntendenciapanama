@@ -111,6 +111,8 @@ header {
 .icon-instagram { color: #E1306C; }
 .icon-facebook { color: #4267B2; }
 .icon-whatsapp { color: #25D366; }
+/* NUEVA REGLA TIKTOK MANTENIENDO EL ESTILO ORIGINAL */
+.icon-tiktok { color: #ffffff; }
 
 /* --- CATEGORÍAS --- */
 #categorias { 
