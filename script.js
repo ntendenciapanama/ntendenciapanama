@@ -33,19 +33,26 @@ fetch(URL_SHEET)
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
             const catRaw = limpiar(columnas[6]) || "General";
-            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
-            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
+            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '').replace(',', '')) || 0;
+            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '').replace(',', '')) || 0;
             
-            // Si es SALDOS, forzamos el precio a 1.00 para la dinámica
-            let precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
-            if (catRaw.toUpperCase() === "SALDOS") { precioVentaHoy = 1.00; }
+            // CORRECCIÓN DE LÓGICA DE PRECIOS
+            let precioVentaHoy;
+            let esSaldos = catRaw.toUpperCase() === "SALDOS";
+
+            if (esSaldos) {
+                precioVentaHoy = 1.00; // Forzamos 1.00 para Saldos
+            } else {
+                // Si hay precio de oferta (Columna 8) se usa, si no, el precio base
+                precioVentaHoy = (precioOferta > 0) ? precioOferta : precioBase;
+            }
 
             return {
                 codigo: limpiar(columnas[0]),
                 nombre: limpiar(columnas[1]),
                 precio: precioVentaHoy,
                 precioOriginal: precioBase,
-                esOferta: (precioOferta > 0 && precioOferta < precioBase) || catRaw.toUpperCase() === "SALDOS",
+                esOferta: (precioOferta > 0 && precioOferta < precioBase) || esSaldos,
                 stock: limpiar(columnas[3]),
                 descripcion: limpiar(columnas[4]) || "",
                 status: limpiar(columnas[5])?.toLowerCase(),
@@ -86,11 +93,15 @@ function mostrarProductos() {
         const badgeHTML = esSaldos ? "" : (p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "");
         const selloSaldo = esSaldos ? `<span class="badge-saldo">DETALLE LEVE</span>` : "";
 
-        const precioHTML = esSaldos 
-            ? `<p class="precio" style="color:#ff4757; font-size:1.8rem;">$${p.precio.toFixed(2)}</p>`
-            : (p.esOferta 
-                ? `<p class="precio"><span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> $${p.precio.toFixed(2)}</p>`
-                : `<p class="precio">$${p.precio.toFixed(2)}</p>`);
+        // Formato de precio corregido para mostrar tachado solo si NO es saldo y es oferta
+        let precioHTML;
+        if (esSaldos) {
+            precioHTML = `<p class="precio" style="color:#ff4757; font-size:1.8rem;">$${p.precio.toFixed(2)}</p>`;
+        } else if (p.esOferta && p.precio < p.precioOriginal) {
+            precioHTML = `<p class="precio"><span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> $${p.precio.toFixed(2)}</p>`;
+        } else {
+            precioHTML = `<p class="precio">$${p.precio.toFixed(2)}</p>`;
+        }
 
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
@@ -116,7 +127,6 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- LÓGICA DE GALERÍA COMPLETA ---
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -180,7 +190,6 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- CARRITO COMPLETO ---
 function añadirAlCarrito(codigo) {
     const yaExiste = carrito.find(x => x.codigo === codigo);
     if (yaExiste) {
@@ -263,7 +272,6 @@ function enviarPedidoWhatsApp() {
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
-// --- BUSCADOR ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
@@ -273,7 +281,6 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
     mostrarProductos();
 });
 
-// --- GENERAR CATEGORÍAS CON PRIORIDAD SALDOS ---
 function generarCategorias() {
     const cont = document.getElementById('categorias');
     if (!cont) return;
@@ -282,7 +289,6 @@ function generarCategorias() {
     cats = cats.filter(c => c.toUpperCase() !== "TODAS" && c.toUpperCase() !== "SALDOS");
     cats.sort();
     
-    // El orden: "Todas" (0), "SALDOS" (1), y luego el resto
     const ordenFinal = ["Todas", "SALDOS", ...cats];
     
     cont.innerHTML = "";
