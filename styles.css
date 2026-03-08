@@ -249,7 +249,7 @@ header {
 
 /* Etiqueta de la talla en amarillo */
 .seccion-saldos-activa .main-img-container::before {
-    content: "";
+    content: "OUTLET";
     position: absolute;
     top: 10px;
     right: 10px;
