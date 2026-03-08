@@ -32,20 +32,24 @@ fetch(URL_SHEET)
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
+            const catRaw = limpiar(columnas[6]) || "General";
             const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
             const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
-            const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
+            
+            // Si es SALDOS, forzamos el precio a 1.00 para la dinámica
+            let precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
+            if (catRaw.toUpperCase() === "SALDOS") { precioVentaHoy = 1.00; }
 
             return {
                 codigo: limpiar(columnas[0]),
                 nombre: limpiar(columnas[1]),
                 precio: precioVentaHoy,
                 precioOriginal: precioBase,
-                esOferta: precioOferta > 0 && precioOferta < precioBase,
+                esOferta: (precioOferta > 0 && precioOferta < precioBase) || catRaw.toUpperCase() === "SALDOS",
                 stock: limpiar(columnas[3]),
                 descripcion: limpiar(columnas[4]) || "",
                 status: limpiar(columnas[5])?.toLowerCase(),
-                categoria: limpiar(columnas[6]) || "General",
+                categoria: catRaw,
                 totalImagenes: parseInt(limpiar(columnas[7])) || 1 
             };
         }).filter(p => {
@@ -56,8 +60,8 @@ fetch(URL_SHEET)
 
         todosLosProductos = productosMapeados.reverse();
         
-        // --- REPARACIÓN 1: Al inicio NO mostrar los que son SALDOS ---
-        productosFiltrados = todosLosProductos.filter(x => x.categoria !== "SALDOS");
+        // Al inicio NO mostrar los que son SALDOS en la vista general
+        productosFiltrados = todosLosProductos.filter(x => x.categoria.toUpperCase() !== "SALDOS");
         
         generarCategorias();
         mostrarProductos();
@@ -75,16 +79,18 @@ function mostrarProductos() {
 
     lista.forEach(p => {
         const div = document.createElement('div');
-        // REPARACIÓN 2: Si es saldo, le ponemos una clase distinta para diseño
-        div.className = p.categoria === "SALDOS" ? 'producto tarjeta-saldo' : 'producto';
+        const esSaldos = p.categoria.toUpperCase() === "SALDOS";
         
-        const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
-        // Sello automático si es de la categoría SALDOS
-        const selloSaldo = p.categoria === "SALDOS" ? `<span class="badge-saldo">DETALLE LEVE</span>` : "";
+        div.className = esSaldos ? 'producto tarjeta-saldo' : 'producto';
+        
+        const badgeHTML = esSaldos ? "" : (p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "");
+        const selloSaldo = esSaldos ? `<span class="badge-saldo">DETALLE LEVE</span>` : "";
 
-        const precioHTML = p.esOferta 
-            ? `<p class="precio"><span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> $${p.precio.toFixed(2)}</p>`
-            : `<p class="precio">$${p.precio.toFixed(2)}</p>`;
+        const precioHTML = esSaldos 
+            ? `<p class="precio" style="color:#ff4757; font-size:1.8rem;">$${p.precio.toFixed(2)}</p>`
+            : (p.esOferta 
+                ? `<p class="precio"><span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> $${p.precio.toFixed(2)}</p>`
+                : `<p class="precio">$${p.precio.toFixed(2)}</p>`);
 
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
@@ -100,7 +106,7 @@ function mostrarProductos() {
                 <h3>${p.nombre}</h3>
                 <div class="descripcion">${p.descripcion}</div>
                 <div class="contenedor-botones">
-                    <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
+                    <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa esta pieza de ${p.categoria}: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
                 </div>
             </div>
@@ -110,7 +116,7 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- LÓGICA DE GALERÍA (Sin cambios) ---
+// --- LÓGICA DE GALERÍA COMPLETA ---
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -174,7 +180,7 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- CARRITO (Sin cambios) ---
+// --- CARRITO COMPLETO ---
 function añadirAlCarrito(codigo) {
     const yaExiste = carrito.find(x => x.codigo === codigo);
     if (yaExiste) {
@@ -257,7 +263,7 @@ function enviarPedidoWhatsApp() {
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
-// --- BUSCADOR (Busca en todo incluyendo saldos) ---
+// --- BUSCADOR ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
@@ -267,32 +273,44 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
     mostrarProductos();
 });
 
-// --- REPARACIÓN 3: Lógica para separar el botón de SALDOS ---
+// --- GENERAR CATEGORÍAS CON PRIORIDAD SALDOS ---
 function generarCategorias() {
     const cont = document.getElementById('categorias');
     if (!cont) return;
-    const cats = ["Todas", ...new Set(todosLosProductos.map(p => p.categoria))];
+    
+    let cats = [...new Set(todosLosProductos.map(p => p.categoria))];
+    cats = cats.filter(c => c.toUpperCase() !== "TODAS" && c.toUpperCase() !== "SALDOS");
+    cats.sort();
+    
+    // El orden: "Todas" (0), "SALDOS" (1), y luego el resto
+    const ordenFinal = ["Todas", "SALDOS", ...cats];
+    
     cont.innerHTML = "";
-    cats.forEach(c => {
+    ordenFinal.forEach(c => {
+        const tieneProductos = (c === "Todas") || todosLosProductos.some(p => p.categoria.toUpperCase() === c.toUpperCase());
+        if (!tieneProductos) return;
+
         const b = document.createElement('button');
         b.className = `categoria-btn ${c === "Todas" ? "activa" : ""}`;
         b.innerText = c;
+        
+        if(c.toUpperCase() === "SALDOS") {
+            b.setAttribute('data-categoria', 'saldos');
+        }
+
         b.onclick = () => {
             document.querySelectorAll('.categoria-btn').forEach(x => x.classList.remove('activa'));
             b.classList.add('activa');
             
             if (c === "Todas") {
-                // Al tocar "Todas", ocultamos los saldos de la vista principal
-                productosFiltrados = todosLosProductos.filter(x => x.categoria !== "SALDOS");
-                document.body.style.backgroundColor = "#fff"; // Fondo normal
-            } else if (c === "SALDOS") {
-                // Al tocar "SALDOS", mostramos SOLO saldos
-                productosFiltrados = todosLosProductos.filter(x => x.categoria === "SALDOS");
-                document.body.style.backgroundColor = "#f7f7f7"; // FONDO DIFERENTE PARA SALDOS
+                productosFiltrados = todosLosProductos.filter(x => x.categoria.toUpperCase() !== "SALDOS");
+                document.body.style.backgroundColor = ""; 
+            } else if (c.toUpperCase() === "SALDOS") {
+                productosFiltrados = todosLosProductos.filter(x => x.categoria.toUpperCase() === "SALDOS");
+                document.body.style.backgroundColor = "#fff5f5";
             } else {
-                // En cualquier otra categoría, ocultamos los saldos
-                productosFiltrados = todosLosProductos.filter(x => x.categoria === c && x.categoria !== "SALDOS");
-                document.body.style.backgroundColor = "#fff"; // Fondo normal
+                productosFiltrados = todosLosProductos.filter(x => x.categoria === c);
+                document.body.style.backgroundColor = "";
             }
 
             paginaActual = 1;
