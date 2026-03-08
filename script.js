@@ -32,9 +32,11 @@ fetch(URL_SHEET)
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
-            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0; 
-            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0; 
+            // LÓGICA REPARADA:
+            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0; // Columna C
+            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0; // Columna I
 
+            // Si hay algo en la I, el precio de venta es ese. Si no, es el de la C.
             const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
 
             return {
@@ -42,6 +44,7 @@ fetch(URL_SHEET)
                 nombre: limpiar(columnas[1]),
                 precio: precioVentaHoy,
                 precioOriginal: precioBase,
+                // Solo muestra oferta si la I es menor que la C y tiene un valor
                 esOferta: precioOferta > 0 && precioOferta < precioBase,
                 stock: limpiar(columnas[3]),
                 descripcion: limpiar(columnas[4]) || "",
@@ -73,9 +76,7 @@ function mostrarProductos() {
 
     lista.forEach(p => {
         const div = document.createElement('div');
-        // Si es categoría Saldos, le ponemos la clase especial
-        const esSaldos = p.categoria.toLowerCase() === 'saldos';
-        div.className = `producto ${esSaldos ? 'tarjeta-saldo' : ''}`;
+        div.className = 'producto';
         
         const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
         const precioHTML = p.esOferta 
@@ -105,6 +106,7 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
+// --- LÓGICA DE GALERÍA (Sin cambios) ---
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -168,6 +170,7 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
+// --- CARRITO (Sin cambios) ---
 function añadirAlCarrito(codigo) {
     const yaExiste = carrito.find(x => x.codigo === codigo);
     if (yaExiste) {
@@ -250,6 +253,7 @@ function enviarPedidoWhatsApp() {
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
+// --- BUSCADOR Y CATEGORIAS (Sin cambios) ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
@@ -268,20 +272,9 @@ function generarCategorias() {
         const b = document.createElement('button');
         b.className = `categoria-btn ${c === "Todas" ? "activa" : ""}`;
         b.innerText = c;
-        // Atributo para CSS
-        b.setAttribute('data-categoria', c.toLowerCase());
-        
         b.onclick = () => {
             document.querySelectorAll('.categoria-btn').forEach(x => x.classList.remove('activa'));
             b.classList.add('activa');
-            
-            // Lógica de cambio de fondo (Modo Saldos)
-            if(c.toLowerCase() === 'saldos') {
-                document.body.classList.add('modo-saldos');
-            } else {
-                document.body.classList.remove('modo-saldos');
-            }
-
             productosFiltrados = (c === "Todas") ? todosLosProductos : todosLosProductos.filter(x => x.categoria === c);
             paginaActual = 1;
             mostrarProductos();

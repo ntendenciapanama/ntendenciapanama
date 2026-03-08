@@ -25,17 +25,6 @@ body {
     background-size: 24px 24px;
     color: var(--primario); 
     padding-bottom: 0px; 
-    transition: background-color 0.4s ease; /* Transición suave para el cambio de sección */
-}
-
-/* --- MODO SALDOS (NUEVO LOOK PROFESIONAL) --- */
-body.modo-saldos {
-    background-color: #1a1a1a !important; /* Fondo gris casi negro */
-    background-image: radial-gradient(#333 0.8px, transparent 0.8px); /* Patrón de puntos sutil */
-}
-
-body.modo-saldos header {
-    border-bottom: 4px solid var(--oferta-rojo);
 }
 
 /* --- HEADER BOUTIQUE --- */
@@ -122,6 +111,7 @@ header {
 .icon-instagram { color: #E1306C; }
 .icon-facebook { color: #4267B2; }
 .icon-whatsapp { color: #25D366; }
+/* NUEVA REGLA TIKTOK MANTENIENDO EL ESTILO ORIGINAL */
 .icon-tiktok { color: #ffffff; }
 
 /* --- CATEGORÍAS --- */
@@ -154,21 +144,9 @@ header {
 }
 
 .categoria-btn.activa { 
-    background: var(--dorado); 
+    background: var(--dorado);    /* Cambiado de vino a dorado */
     color: var(--blanco); 
-    border-color: var(--dorado); 
-}
-
-/* BOTÓN ESPECIAL DE SALDOS CON ANIMACIÓN DE PULSO ROJO */
-.categoria-btn[data-categoria="saldos"] {
-    background: var(--oferta-rojo) !important;
-    border-color: var(--oferta-rojo) !important;
-    animation: flash-saldos 1.5s infinite alternate;
-}
-
-@keyframes flash-saldos {
-    from { opacity: 1; transform: scale(1); box-shadow: 0 0 5px rgba(255, 71, 87, 0.5); }
-    to { opacity: 0.8; transform: scale(1.05); box-shadow: 0 0 15px rgba(255, 71, 87, 0.8); }
+    border-color: var(--dorado);  /* Cambiado para que el borde también sea dorado */
 }
 
 /* --- PRODUCTOS --- */
@@ -190,6 +168,12 @@ header {
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
+.producto:hover { 
+    transform: translateY(-8px); 
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
+    border-color: var(--dorado);
+}
+
 /* MODIFICACIÓN: Contenedor de imagen ahora relativo para la etiqueta de oferta */
 .main-img-container { 
     position: relative;
@@ -204,44 +188,7 @@ header {
 
 .main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-/* --- ESTILOS DE TARJETA DE SALDOS --- */
-.producto.tarjeta-saldo {
-    background: #262626 !important; /* Fondo gris oscuro de la tarjeta */
-    border: 2px solid var(--oferta-rojo) !important; /* Borde rojo neón */
-    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.2);
-}
-
-.tarjeta-saldo h3 { 
-    color: white !important; /* Título en blanco para contraste */
-}
-
-.tarjeta-saldo .precio { 
-    color: var(--oferta-rojo) !important; /* Precio en rojo neón */
-    font-size: 1.8rem !important;
-    font-weight: 800 !important;
-}
-
-.tarjeta-saldo .descripcion { 
-    background: #333 !important; /* Fondo de descripción más oscuro */
-    color: #ccc !important; /* Texto de descripción gris claro */
-    border-left: 4px solid var(--oferta-rojo); /* Borde lateral rojo */
-}
-
-/* Botón de WhatsApp especial en Saldos */
-.tarjeta-saldo .whatsapp-btn {
-    background-color: var(--oferta-rojo) !important;
-    border: none;
-    color: white !important;
-}
-
-/* Hover de tarjeta de saldo */
-.producto.tarjeta-saldo:hover { 
-    transform: translateY(-8px); 
-    box-shadow: 0 15px 30px rgba(255, 71, 87, 0.4); 
-    border-color: var(--blanco) !important;
-}
-
-/* --- ESTILOS DE OFERTA (PARA MODO NORMAL) --- */
+/* --- ESTILOS DE OFERTA (NUEVO) --- */
 .badge-oferta {
     position: absolute;
     top: 15px;
