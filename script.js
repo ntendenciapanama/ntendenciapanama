@@ -32,31 +32,24 @@ fetch(URL_SHEET)
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
-            const catRaw = limpiar(columnas[6]) || "General";
-            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '').replace(',', '')) || 0;
-            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '').replace(',', '')) || 0;
-            
-            // CORRECCIÓN DE LÓGICA DE PRECIOS
-            let precioVentaHoy;
-            let esSaldos = catRaw.toUpperCase() === "SALDOS";
+            // LÓGICA REPARADA:
+            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0; // Columna C
+            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0; // Columna I
 
-            if (esSaldos) {
-                precioVentaHoy = 1.00; // Forzamos 1.00 para Saldos
-            } else {
-                // Si hay precio de oferta (Columna 8) se usa, si no, el precio base
-                precioVentaHoy = (precioOferta > 0) ? precioOferta : precioBase;
-            }
+            // Si hay algo en la I, el precio de venta es ese. Si no, es el de la C.
+            const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
 
             return {
                 codigo: limpiar(columnas[0]),
                 nombre: limpiar(columnas[1]),
                 precio: precioVentaHoy,
                 precioOriginal: precioBase,
-                esOferta: (precioOferta > 0 && precioOferta < precioBase) || esSaldos,
+                // Solo muestra oferta si la I es menor que la C y tiene un valor
+                esOferta: precioOferta > 0 && precioOferta < precioBase,
                 stock: limpiar(columnas[3]),
                 descripcion: limpiar(columnas[4]) || "",
                 status: limpiar(columnas[5])?.toLowerCase(),
-                categoria: catRaw,
+                categoria: limpiar(columnas[6]) || "General",
                 totalImagenes: parseInt(limpiar(columnas[7])) || 1 
             };
         }).filter(p => {
@@ -66,10 +59,7 @@ fetch(URL_SHEET)
         });
 
         todosLosProductos = productosMapeados.reverse();
-        
-        // Al inicio NO mostrar los que son SALDOS en la vista general
-        productosFiltrados = todosLosProductos.filter(x => x.categoria.toUpperCase() !== "SALDOS");
-        
+        productosFiltrados = todosLosProductos;
         generarCategorias();
         mostrarProductos();
     })
@@ -86,27 +76,16 @@ function mostrarProductos() {
 
     lista.forEach(p => {
         const div = document.createElement('div');
-        const esSaldos = p.categoria.toUpperCase() === "SALDOS";
+        div.className = 'producto';
         
-        div.className = esSaldos ? 'producto tarjeta-saldo' : 'producto';
-        
-        const badgeHTML = esSaldos ? "" : (p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "");
-        const selloSaldo = esSaldos ? `<span class="badge-saldo">DETALLE LEVE</span>` : "";
-
-        // Formato de precio corregido para mostrar tachado solo si NO es saldo y es oferta
-        let precioHTML;
-        if (esSaldos) {
-            precioHTML = `<p class="precio" style="color:#ff4757; font-size:1.8rem;">$${p.precio.toFixed(2)}</p>`;
-        } else if (p.esOferta && p.precio < p.precioOriginal) {
-            precioHTML = `<p class="precio"><span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> $${p.precio.toFixed(2)}</p>`;
-        } else {
-            precioHTML = `<p class="precio">$${p.precio.toFixed(2)}</p>`;
-        }
+        const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
+        const precioHTML = p.esOferta 
+            ? `<p class="precio"><span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> $${p.precio.toFixed(2)}</p>`
+            : `<p class="precio">$${p.precio.toFixed(2)}</p>`;
 
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
                 ${badgeHTML}
-                ${selloSaldo}
                 <img src="images/${p.codigo}/1.jpg?t=${new Date().getTime()}" 
                      alt="${p.nombre}" 
                      loading="lazy" 
@@ -117,7 +96,7 @@ function mostrarProductos() {
                 <h3>${p.nombre}</h3>
                 <div class="descripcion">${p.descripcion}</div>
                 <div class="contenedor-botones">
-                    <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa esta pieza de ${p.categoria}: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
+                    <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
                 </div>
             </div>
@@ -127,6 +106,7 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
+// --- LÓGICA DE GALERÍA (Sin cambios) ---
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -190,6 +170,7 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
+// --- CARRITO (Sin cambios) ---
 function añadirAlCarrito(codigo) {
     const yaExiste = carrito.find(x => x.codigo === codigo);
     if (yaExiste) {
@@ -272,6 +253,7 @@ function enviarPedidoWhatsApp() {
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
+// --- BUSCADOR Y CATEGORIAS (Sin cambios) ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
@@ -284,41 +266,16 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
 function generarCategorias() {
     const cont = document.getElementById('categorias');
     if (!cont) return;
-    
-    let cats = [...new Set(todosLosProductos.map(p => p.categoria))];
-    cats = cats.filter(c => c.toUpperCase() !== "TODAS" && c.toUpperCase() !== "SALDOS");
-    cats.sort();
-    
-    const ordenFinal = ["Todas", "SALDOS", ...cats];
-    
+    const cats = ["Todas", ...new Set(todosLosProductos.map(p => p.categoria))];
     cont.innerHTML = "";
-    ordenFinal.forEach(c => {
-        const tieneProductos = (c === "Todas") || todosLosProductos.some(p => p.categoria.toUpperCase() === c.toUpperCase());
-        if (!tieneProductos) return;
-
+    cats.forEach(c => {
         const b = document.createElement('button');
         b.className = `categoria-btn ${c === "Todas" ? "activa" : ""}`;
         b.innerText = c;
-        
-        if(c.toUpperCase() === "SALDOS") {
-            b.setAttribute('data-categoria', 'saldos');
-        }
-
         b.onclick = () => {
             document.querySelectorAll('.categoria-btn').forEach(x => x.classList.remove('activa'));
             b.classList.add('activa');
-            
-            if (c === "Todas") {
-                productosFiltrados = todosLosProductos.filter(x => x.categoria.toUpperCase() !== "SALDOS");
-                document.body.style.backgroundColor = ""; 
-            } else if (c.toUpperCase() === "SALDOS") {
-                productosFiltrados = todosLosProductos.filter(x => x.categoria.toUpperCase() === "SALDOS");
-                document.body.style.backgroundColor = "#fff5f5";
-            } else {
-                productosFiltrados = todosLosProductos.filter(x => x.categoria === c);
-                document.body.style.backgroundColor = "";
-            }
-
+            productosFiltrados = (c === "Todas") ? todosLosProductos : todosLosProductos.filter(x => x.categoria === c);
             paginaActual = 1;
             mostrarProductos();
         };
