@@ -1,13 +1,18 @@
-/* --- VARIABLES DE MARCA --- */
+/* --- VARIABLES DE MARCA (CON NUEVO AMARILLO OFERTA) --- */
 :root {
     --primario: #410020;
     --dorado: #E0C080;
-    --dorado-brillante: #f1c40f;
+    --dorado-brillante: #f1c40f; /* Amarillo para el modo normal */
+    
+    /* NUEVO AMARILLO VIBRANTE PARA SALDOS/OFERTAS */
+    --amarillo-oferta: #FFD700; /* Un dorado intenso, tipo lingote */
+    --fondo-saldos: #f0f0f0;    /* Un gris muy claro para el fondo */
+    
     --fondo-crema: #f9f9f7;
     --blanco: #ffffff;
     --texto-suave: #555555;
     --whatsapp: #25D366;
-    --oferta-rojo: #ff4757; 
+    --oferta-rojo: #ff4757;
 }
 
 /* --- RESET Y BASE --- */
@@ -25,16 +30,22 @@ body {
     background-size: 24px 24px;
     color: var(--primario); 
     padding-bottom: 0px; 
-    transition: background-color 0.4s ease; /* Transición suave para el cambio a saldos */
+    transition: all 0.5s ease;
 }
 
-/* --- ESTILO SECCIÓN SALDOS (LOOK OUTLET) --- */
+/* --- MODO SALDOS (CAMBIO DE LOOK TOTAL A AMARILLO) --- */
 body.seccion-saldos-activa {
-    background-color: #1a1a1a !important; /* Fondo oscuro tipo industrial */
-    background-image: radial-gradient(#333 0.8px, transparent 0.8px);
+    background-color: var(--fondo-saldos) !important;
+    background-image: none; /* Quitamos los puntitos para que se vea más limpio */
 }
 
-/* HEADER BOUTIQUE */
+/* El header cambia de color en modo saldos */
+body.seccion-saldos-activa header {
+    border-bottom: 4px solid var(--amarillo-oferta);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+}
+
+/* --- HEADER BOUTIQUE --- */
 header { 
     background: var(--primario); 
     color: var(--blanco); 
@@ -155,10 +166,17 @@ header {
     border-color: var(--dorado); 
 }
 
-/* Botón especial para Saldos */
+/* BOTÓN ESPECIAL DE SALDOS CON ANIMACIÓN DE PULSO AMARILLO */
 .categoria-btn:last-child {
-    border: 1.5px dashed var(--oferta-rojo);
-    color: var(--oferta-rojo);
+    border: 2px dashed var(--amarillo-oferta);
+    color: var(--amarillo-oferta);
+    animation: pulseAmarillo 1.5s infinite;
+}
+
+@keyframes pulseAmarillo {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 /* --- PRODUCTOS --- */
@@ -186,16 +204,6 @@ header {
     border-color: var(--dorado);
 }
 
-/* TARJETAS EN MODO SALDOS */
-.seccion-saldos-activa .producto {
-    background: #262626 !important;
-    border: 1px solid var(--oferta-rojo) !important;
-}
-
-.seccion-saldos-activa .producto:hover {
-    box-shadow: 0 10px 25px rgba(255, 71, 87, 0.3);
-}
-
 .main-img-container { 
     position: relative;
     height: 300px; 
@@ -209,7 +217,52 @@ header {
 
 .main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-/* --- OFERTA Y SALDOS TAGS --- */
+/* --- ESTILOS DE TARJETA DE SALDOS (NUEVO AMARILLO OFERTA) --- */
+.seccion-saldos-activa .producto {
+    background: #fff !important; /* Mantenemos el fondo blanco de la tarjeta */
+    border: 3px solid var(--amarillo-oferta) !important; /* Borde amarillo grueso de oferta */
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.seccion-saldos-activa h3 {
+    color: #333 !important; /* Texto oscuro para el nombre */
+}
+
+/* Bloque del precio en AMARILLO VIBRANTE */
+.seccion-saldos-activa .precio {
+    background: var(--amarillo-oferta) !important; 
+    color: #333 !important; /* Texto oscuro sobre amarillo */
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 1.8rem !important;
+    font-weight: 900;
+    width: 90%;
+    margin: 0 auto 10px;
+}
+
+/* Bloque de la descripción en AMARILLO SUAVE */
+.seccion-saldos-activa .descripcion {
+    background: rgba(255, 215, 0, 0.08) !important; /* Un amarillo sutil de fondo */
+    color: #555 !important;
+    border-left-color: var(--amarillo-oferta);
+}
+
+/* Etiqueta de la talla en amarillo */
+.seccion-saldos-activa .main-img-container::before {
+    content: "OFERTA";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--amarillo-oferta);
+    color: #333;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+/* --- ESTILOS DE OFERTA (PARA MODO NORMAL) --- */
 .badge-oferta {
     position: absolute;
     top: 15px;
@@ -242,16 +295,6 @@ header {
 /* --- INFO PRODUCTO --- */
 .producto-info { padding: 20px; text-align: center; display: flex; flex-direction: column; flex-grow: 1; }
 .precio { font-size: 1.6rem; font-weight: 800; color: var(--primario); margin-bottom: 8px; }
-
-/* Colores especiales en Modo Saldos */
-.seccion-saldos-activa .precio { color: var(--oferta-rojo) !important; }
-.seccion-saldos-activa h3 { color: #fff !important; }
-.seccion-saldos-activa .descripcion { 
-    background: #333 !important; 
-    color: #ccc !important; 
-    border-left-color: var(--oferta-rojo) !important; 
-}
-
 h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; justify-content: center; color: #333; font-weight: 600; }
 .descripcion { 
     font-size: 0.85rem; color: var(--texto-suave); background: #fdfaf2; 
@@ -267,7 +310,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 .whatsapp-btn { background: var(--whatsapp); color: white; }
 .btn-añadir-lista { background: var(--primario); color: white; }
 
-/* --- CARRITO --- */
+/* --- CARRITO (MODAL COMPLETO) --- */
 .modal-carrito {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 5000;
@@ -288,7 +331,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 .header-carrito { 
     padding: 25px; background: var(--primario); color: var(--blanco); 
     display: flex; justify-content: space-between; align-items: center; 
-    border-bottom: 4px solid var(--dorado);
+    border-bottom: 3px solid var(--dorado);
 }
 
 .titulo-carrito h2 { font-size: 1.3rem; }
@@ -316,7 +359,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     text-transform: uppercase;
 }
 
-/* --- LIGHTBOX --- */
+/* --- LIGHTBOX (GALERÍA COMPLETA) --- */
 .lightbox { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
     background: rgba(0,0,0,0.96); z-index: 6000; justify-content: center; align-items: center; 
@@ -384,7 +427,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 }
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL --- */
+/* --- RESPONSIVE MÓVIL (AJUSTES FINALES) --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
@@ -421,6 +464,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     
     .main-img-container { height: 160px; padding: 8px; }
 
+    /* Ajuste de etiqueta de oferta en móvil */
     .badge-oferta {
         top: 8px;
         left: 8px;
