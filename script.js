@@ -32,11 +32,8 @@ fetch(URL_SHEET)
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
-            // LÓGICA REPARADA:
-            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0; // Columna C
-            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0; // Columna I
-
-            // Si hay algo en la I, el precio de venta es ese. Si no, es el de la C.
+            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
+            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
             const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
 
             return {
@@ -44,7 +41,6 @@ fetch(URL_SHEET)
                 nombre: limpiar(columnas[1]),
                 precio: precioVentaHoy,
                 precioOriginal: precioBase,
-                // Solo muestra oferta si la I es menor que la C y tiene un valor
                 esOferta: precioOferta > 0 && precioOferta < precioBase,
                 stock: limpiar(columnas[3]),
                 descripcion: limpiar(columnas[4]) || "",
@@ -59,7 +55,10 @@ fetch(URL_SHEET)
         });
 
         todosLosProductos = productosMapeados.reverse();
-        productosFiltrados = todosLosProductos;
+        
+        // --- REPARACIÓN 1: Al inicio NO mostrar los que son SALDOS ---
+        productosFiltrados = todosLosProductos.filter(x => x.categoria !== "SALDOS");
+        
         generarCategorias();
         mostrarProductos();
     })
@@ -76,9 +75,13 @@ function mostrarProductos() {
 
     lista.forEach(p => {
         const div = document.createElement('div');
-        div.className = 'producto';
+        // REPARACIÓN 2: Si es saldo, le ponemos una clase distinta para diseño
+        div.className = p.categoria === "SALDOS" ? 'producto tarjeta-saldo' : 'producto';
         
         const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
+        // Sello automático si es de la categoría SALDOS
+        const selloSaldo = p.categoria === "SALDOS" ? `<span class="badge-saldo">DETALLE LEVE</span>` : "";
+
         const precioHTML = p.esOferta 
             ? `<p class="precio"><span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> $${p.precio.toFixed(2)}</p>`
             : `<p class="precio">$${p.precio.toFixed(2)}</p>`;
@@ -86,6 +89,7 @@ function mostrarProductos() {
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
                 ${badgeHTML}
+                ${selloSaldo}
                 <img src="images/${p.codigo}/1.jpg?t=${new Date().getTime()}" 
                      alt="${p.nombre}" 
                      loading="lazy" 
@@ -253,7 +257,7 @@ function enviarPedidoWhatsApp() {
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
-// --- BUSCADOR Y CATEGORIAS (Sin cambios) ---
+// --- BUSCADOR (Busca en todo incluyendo saldos) ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     productosFiltrados = todosLosProductos.filter(p => 
@@ -263,6 +267,7 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
     mostrarProductos();
 });
 
+// --- REPARACIÓN 3: Lógica para separar el botón de SALDOS ---
 function generarCategorias() {
     const cont = document.getElementById('categorias');
     if (!cont) return;
@@ -275,7 +280,21 @@ function generarCategorias() {
         b.onclick = () => {
             document.querySelectorAll('.categoria-btn').forEach(x => x.classList.remove('activa'));
             b.classList.add('activa');
-            productosFiltrados = (c === "Todas") ? todosLosProductos : todosLosProductos.filter(x => x.categoria === c);
+            
+            if (c === "Todas") {
+                // Al tocar "Todas", ocultamos los saldos de la vista principal
+                productosFiltrados = todosLosProductos.filter(x => x.categoria !== "SALDOS");
+                document.body.style.backgroundColor = "#fff"; // Fondo normal
+            } else if (c === "SALDOS") {
+                // Al tocar "SALDOS", mostramos SOLO saldos
+                productosFiltrados = todosLosProductos.filter(x => x.categoria === "SALDOS");
+                document.body.style.backgroundColor = "#f7f7f7"; // FONDO DIFERENTE PARA SALDOS
+            } else {
+                // En cualquier otra categoría, ocultamos los saldos
+                productosFiltrados = todosLosProductos.filter(x => x.categoria === c && x.categoria !== "SALDOS");
+                document.body.style.backgroundColor = "#fff"; // Fondo normal
+            }
+
             paginaActual = 1;
             mostrarProductos();
         };
