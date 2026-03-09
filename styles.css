@@ -36,9 +36,10 @@ body {
 /* --- MODO SALDOS (CAMBIO DE LOOK TOTAL A AMARILLO) --- */
 body.seccion-saldos-activa {
     background-color: var(--fondo-saldos) !important;
-    background-image: none; 
+    background-image: none; /* Quitamos los puntitos para que se vea más limpio */
 }
 
+/* El header cambia de color en modo saldos */
 body.seccion-saldos-activa header {
     border-bottom: 4px solid var(--amarillo-oferta);
     box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
@@ -130,11 +131,12 @@ header {
 .icon-whatsapp { color: #25D366; }
 .icon-tiktok { color: #ffffff; }
 
-/* --- CATEGORÍAS (DISEÑO BASE) --- */
+/* --- CATEGORÍAS --- */
 #categorias { 
     display: flex; 
     gap: 12px; 
     padding: 10px 15px;
+    overflow-x: auto; 
     background: #000;
     scrollbar-width: none; 
     border-bottom: 1px solid #333;
@@ -164,6 +166,7 @@ header {
     border-color: var(--dorado); 
 }
 
+/* BOTÓN ESPECIAL DE SALDOS CON ANIMACIÓN DE PULSO AMARILLO */
 .categoria-btn:last-child {
     border: 2px dashed var(--amarillo-oferta);
     color: var(--amarillo-oferta);
@@ -214,20 +217,21 @@ header {
 
 .main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-/* --- ESTILOS DE TARJETA DE SALDOS --- */
+/* --- ESTILOS DE TARJETA DE SALDOS (NUEVO AMARILLO OFERTA) --- */
 .seccion-saldos-activa .producto {
-    background: #fff !important; 
-    border: 3px solid var(--amarillo-oferta) !important; 
+    background: #fff !important; /* Mantenemos el fondo blanco de la tarjeta */
+    border: 3px solid var(--amarillo-oferta) !important; /* Borde amarillo grueso de oferta */
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
 }
 
 .seccion-saldos-activa h3 {
-    color: #333 !important; 
+    color: #333 !important; /* Texto oscuro para el nombre */
 }
 
+/* Bloque del precio en AMARILLO VIBRANTE */
 .seccion-saldos-activa .precio {
     background: var(--amarillo-oferta) !important; 
-    color: #333 !important; 
+    color: #333 !important; /* Texto oscuro sobre amarillo */
     padding: 10px;
     border-radius: 8px;
     font-size: 1.8rem !important;
@@ -236,12 +240,14 @@ header {
     margin: 0 auto 10px;
 }
 
+/* Bloque de la descripción en AMARILLO SUAVE */
 .seccion-saldos-activa .descripcion {
-    background: rgba(255, 215, 0, 0.08) !important; 
+    background: rgba(255, 215, 0, 0.08) !important; /* Un amarillo sutil de fondo */
     color: #555 !important;
     border-left-color: var(--amarillo-oferta);
 }
 
+/* Etiqueta de la talla en amarillo */
 .seccion-saldos-activa .main-img-container::before {
     content: "OUTLET";
     position: absolute;
@@ -256,7 +262,7 @@ header {
     text-transform: uppercase;
 }
 
-/* --- ESTILOS DE OFERTA --- */
+/* --- ESTILOS DE OFERTA (PARA MODO NORMAL) --- */
 .badge-oferta {
     position: absolute;
     top: 15px;
@@ -304,17 +310,22 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 .whatsapp-btn { background: var(--whatsapp); color: white; }
 .btn-añadir-lista { background: var(--primario); color: white; }
 
-/* --- CARRITO --- */
+/* --- CARRITO (MODAL COMPLETO) --- */
 .modal-carrito {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 5000;
     justify-content: center; align-items: center;
 }
 
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
 .contenido-carrito { 
     background: var(--blanco); width: 95%; max-width: 480px; border-radius: 25px; 
     display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.4);
-    overflow: hidden;
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden;
 }
 
 .header-carrito { 
@@ -323,9 +334,24 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     border-bottom: 3px solid var(--dorado);
 }
 
+.titulo-carrito h2 { font-size: 1.3rem; }
+.cerrar-carrito { font-size: 32px; cursor: pointer; transition: 0.3s; }
 .cuerpo-carrito { padding: 25px; max-height: 55vh; overflow-y: auto; }
 
+.item-carrito { 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 15px 0; border-bottom: 1px solid #f0f0f0; 
+}
+
+.btn-quitar { 
+    background: #fff0f0; color: #ff4757; border: none; width: 32px; height: 32px; 
+    border-radius: 50%; cursor: pointer; font-weight: bold; 
+    display: flex; align-items: center; justify-content: center;
+}
+
 .footer-carrito { padding: 25px; background: #fafafa; border-top: 1px solid #eee; }
+.total-contenedor { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.monto-total { font-size: 1.8rem; font-weight: 900; color: var(--primario); }
 
 .btn-enviar-pedido { 
     width: 100%; background: var(--whatsapp); color: white; padding: 18px; 
@@ -333,7 +359,33 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     text-transform: uppercase;
 }
 
-/* --- LIGHTBOX Y PAGINACIÓN --- */
+/* --- LIGHTBOX (GALERÍA COMPLETA) --- */
+.lightbox { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.96); z-index: 6000; justify-content: center; align-items: center; 
+}
+.galeria-wrapper { width: 95%; max-width: 550px; }
+.galeria-container { 
+    position: relative; background: var(--blanco); border-radius: 20px; 
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+.lightbox-img { max-width: 100%; max-height: 70vh; object-fit: contain; padding: 10px; }
+.flecha-incrustada { 
+    position: absolute; top: 50%; transform: translateY(-50%); 
+    background: rgba(0,0,0,0.6); color: white; border: none; 
+    width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 22px; 
+}
+.flecha-incrustada.prev { left: 20px; }
+.flecha-incrustada.next { right: 20px; }
+.cerrar-lightbox { position: absolute; top: 25px; right: 35px; color: white; font-size: 50px; cursor: pointer; }
+.lightbox-nav { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.thumb-galeria { 
+    width: 60px; height: 60px; object-fit: cover; border-radius: 10px; 
+    cursor: pointer; border: 2px solid transparent; opacity: 0.6; 
+}
+.thumb-galeria.activa { border-color: var(--dorado); transform: scale(1.1); opacity: 1; }
+
+/* --- BOTÓN FLOTANTE Y PAGINACIÓN --- */
 #btn-carrito { 
     position: fixed; bottom: 30px; right: 30px; 
     background: var(--primario); color: white; 
@@ -357,53 +409,99 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 }
 
 .pag-btn { 
-    width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primario); 
-    background: white; color: var(--primario); cursor: pointer; font-weight: 700; 
-    display: flex; align-items: center; justify-content: center; transition: 0.2s;
+    width: 42px; 
+    height: 42px; 
+    min-width: 42px; 
+    min-height: 42px;
+    border-radius: 50%; 
+    border: 2px solid var(--primario); 
+    background: white;
+    color: var(--primario);
+    cursor: pointer; 
+    font-weight: 700; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    flex-shrink: 0; 
+    transition: 0.2s;
 }
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL (MENU EN FILAS) --- */
+/* --- RESPONSIVE MÓVIL (AJUSTES FINALES) --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
-        padding: 15px 15px 10px;
-        gap: 12px;
+        padding: 20px 15px 12px;
+        gap: 15px;
     }
     
-    .logo-imagen { max-width: 250px; width: 80%; margin: 0 auto; }
+    .logo-imagen { 
+        max-width: 280px; 
+        width: 85%; 
+        margin: 0 auto;
+    }
     .logo-wrapper { align-self: center; width: 100%; justify-content: center; }
     .contact-icons { align-self: center; margin-bottom: 5px; }
+    
     .search-container { width: 100%; margin: 0; }
     
-    #buscador { width: 100%; height: 40px; font-size: 14px; padding: 5px 15px; }
+    #buscador { 
+        width: 100%; 
+        max-width: 100%; 
+        padding: 10px 15px; 
+        font-size: 15px;
+        height: 45px; 
+    }
     
-    /* CAMBIO CLAVE: Menú en varias filas para ver todas las categorías */
     #categorias {
-        top: 185px; 
-        flex-wrap: wrap; /* Permite saltos de línea */
-        justify-content: center; /* Centra los botones */
-        gap: 8px;
-        padding: 12px 10px;
-        height: auto;
-        overflow-x: hidden; /* Ya no hace falta el scroll lateral */
+        top: 205px; 
     }
 
-    .categoria-btn {
-        padding: 5px 12px;
-        font-size: 0.65rem; /* Ajuste para que quepan más por fila */
-        flex: 0 1 auto; 
-        border-radius: 15px;
-    }
+    #productos { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
+    
+    .producto { border-radius: 12px; }
+    .producto-info { padding: 10px 8px; } 
+    
+    .main-img-container { height: 160px; padding: 8px; }
 
-    #productos { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
-    .producto { border-radius: 10px; }
-    .main-img-container { height: 150px; padding: 5px; }
+    /* Ajuste de etiqueta de oferta en móvil */
+    .badge-oferta {
+        top: 8px;
+        left: 8px;
+        padding: 3px 8px;
+        font-size: 0.6rem;
+    }
     
-    h3 { font-size: 0.7rem; min-height: 2.2em; }
-    .precio { font-size: 1rem; margin-top: -5px; }
-    .descripcion { font-size: 0.6rem; padding: 6px; border-left-width: 2px; }
+    h3 { font-size: 0.75rem; min-height: 2.2em; margin-bottom: 2px; }
     
-    .whatsapp-btn, .btn-añadir-lista { padding: 6px 2px; font-size: 0.65rem; border-radius: 5px; }
-    .contenedor-botones { flex-direction: column; gap: 4px; }
+    .precio { font-size: 1.1rem; margin-bottom: 4px; margin-top: -5px; }
+
+    .precio-tachado {
+        font-size: 0.75rem;
+        margin-right: 4px;
+    }
+    
+    .descripcion { 
+        display: block !important; 
+        font-size: 0.65rem; 
+        padding: 8px; 
+        margin-bottom: 10px; 
+        border-left: 3px solid var(--dorado);
+        line-height: 1.2;
+    } 
+    
+    .contenedor-botones { flex-direction: column; gap: 5px; }
+    .whatsapp-btn, .btn-añadir-lista { 
+        padding: 8px 2px; 
+        font-size: 0.7rem; 
+        border-radius: 6px;
+    }
+    
+    .pag-btn {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        min-height: 38px;
+        font-size: 14px;
+    }
 }
