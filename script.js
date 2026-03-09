@@ -1,6 +1,5 @@
-let todosLosProductos = []; // Solo premium
+let todosLosProductos = [];
 let productosFiltrados = [];
-let catalogoCompleto = []; // Incluye saldos para el buscador
 let carrito = [];
 
 let productosPorPagina = 12; 
@@ -33,8 +32,11 @@ fetch(URL_SHEET)
             const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
-            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
-            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
+            // LÓGICA REPARADA:
+            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0; // Columna C
+            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0; // Columna I
+
+            // Si hay algo en la I, el precio de venta es ese. Si no, es el de la C.
             const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
 
             return {
@@ -42,6 +44,7 @@ fetch(URL_SHEET)
                 nombre: limpiar(columnas[1]),
                 precio: precioVentaHoy,
                 precioOriginal: precioBase,
+                // Solo muestra oferta si la I es menor que la C y tiene un valor
                 esOferta: precioOferta > 0 && precioOferta < precioBase,
                 stock: limpiar(columnas[3]),
                 descripcion: limpiar(columnas[4]) || "",
@@ -55,15 +58,7 @@ fetch(URL_SHEET)
             return tieneCodigo && !estaVendido;
         });
 
-        // REVERSE para ver lo nuevo primero
-        const listaInvertida = productosMapeados.reverse();
-        
-        // GUARDAMOS TODO para el buscador
-        catalogoCompleto = listaInvertida;
-
-        // FILTRAMOS: "todosLosProductos" NO tendrá saldos (para el inicio y categoría Todas)
-        todosLosProductos = listaInvertida.filter(p => p.categoria.toLowerCase() !== 'saldos');
-        
+        todosLosProductos = productosMapeados.reverse();
         productosFiltrados = todosLosProductos;
         generarCategorias();
         mostrarProductos();
@@ -81,9 +76,7 @@ function mostrarProductos() {
 
     lista.forEach(p => {
         const div = document.createElement('div');
-        // Si el producto es de la categoría saldos, le ponemos una clase extra
-        const claseSaldos = p.categoria.toLowerCase() === 'saldos' ? 'producto-saldo' : '';
-        div.className = `producto ${claseSaldos}`;
+        div.className = 'producto';
         
         const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
         const precioHTML = p.esOferta 
@@ -113,7 +106,7 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- LÓGICA DE GALERÍA ---
+// --- LÓGICA DE GALERÍA (Sin cambios) ---
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -177,14 +170,14 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- CARRITO ---
+// --- CARRITO (Sin cambios) ---
 function añadirAlCarrito(codigo) {
     const yaExiste = carrito.find(x => x.codigo === codigo);
     if (yaExiste) {
         alert("✨ Este producto ya está en tu lista de pedido.");
         return;
     }
-    const p = catalogoCompleto.find(x => x.codigo === codigo);
+    const p = todosLosProductos.find(x => x.codigo === codigo);
     if (p) { 
         carrito.push(p); 
         const contador = document.getElementById('contador-carrito');
@@ -260,19 +253,12 @@ function enviarPedidoWhatsApp() {
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
-// --- BUSCADOR ---
+// --- BUSCADOR Y CATEGORIAS (Sin cambios) ---
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
-    
-    if (term === "") {
-        // Si borra la búsqueda, vuelve a la lista limpia (sin saldos)
-        productosFiltrados = todosLosProductos;
-    } else {
-        // Busca en TODO (incluyendo saldos)
-        productosFiltrados = catalogoCompleto.filter(p => 
-            p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
-        );
-    }
+    productosFiltrados = todosLosProductos.filter(p => 
+        p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
+    );
     paginaActual = 1;
     mostrarProductos();
 });
@@ -280,14 +266,7 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
 function generarCategorias() {
     const cont = document.getElementById('categorias');
     if (!cont) return;
-
-    // Categorías normales (filtrando que no esté "Saldos")
     const cats = ["Todas", ...new Set(todosLosProductos.map(p => p.categoria))];
-    
-    // Agregamos botón de Saldos solo si existe algún producto marcado así en el Excel
-    const haySaldos = catalogoCompleto.some(p => p.categoria.toLowerCase() === 'saldos');
-    if (haySaldos) cats.push("Saldos");
-
     cont.innerHTML = "";
     cats.forEach(c => {
         const b = document.createElement('button');
@@ -296,17 +275,7 @@ function generarCategorias() {
         b.onclick = () => {
             document.querySelectorAll('.categoria-btn').forEach(x => x.classList.remove('activa'));
             b.classList.add('activa');
-            
-            if (c === "Saldos") {
-                // Filtramos solo saldos del catálogo completo
-                productosFiltrados = catalogoCompleto.filter(x => x.categoria.toLowerCase() === 'saldos');
-                document.body.classList.add('seccion-saldos-activa'); // Para cambiar color de web
-            } else {
-                // Volvemos a la lista premium limpia
-                document.body.classList.remove('seccion-saldos-activa');
-                productosFiltrados = (c === "Todas") ? todosLosProductos : todosLosProductos.filter(x => x.categoria === c);
-            }
-            
+            productosFiltrados = (c === "Todas") ? todosLosProductos : todosLosProductos.filter(x => x.categoria === c);
             paginaActual = 1;
             mostrarProductos();
         };
