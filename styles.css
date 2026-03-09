@@ -1,18 +1,13 @@
-/* --- VARIABLES DE MARCA (CON NUEVO AMARILLO OFERTA) --- */
+/* --- VARIABLES DE MARCA --- */
 :root {
     --primario: #410020;
     --dorado: #E0C080;
-    --dorado-brillante: #f1c40f; /* Amarillo para el modo normal */
-    
-    /* NUEVO AMARILLO VIBRANTE PARA SALDOS/OFERTAS */
-    --amarillo-oferta: #FFD700; /* Un dorado intenso, tipo lingote */
-    --fondo-saldos: #410020;    /* Un gris muy claro para el fondo */
-    
+    --dorado-brillante: #f1c40f;
     --fondo-crema: #f9f9f7;
     --blanco: #ffffff;
     --texto-suave: #555555;
     --whatsapp: #25D366;
-    --oferta-rojo: #ff4757;
+    --oferta-rojo: #ff4757; 
 }
 
 /* --- RESET Y BASE --- */
@@ -30,19 +25,6 @@ body {
     background-size: 24px 24px;
     color: var(--primario); 
     padding-bottom: 0px; 
-    transition: all 0.5s ease;
-}
-
-/* --- MODO SALDOS (CAMBIO DE LOOK TOTAL A AMARILLO) --- */
-body.seccion-saldos-activa {
-    background-color: var(--fondo-saldos) !important;
-    background-image: none; /* Quitamos los puntitos para que se vea más limpio */
-}
-
-/* El header cambia de color en modo saldos */
-body.seccion-saldos-activa header {
-    border-bottom: 4px solid var(--amarillo-oferta);
-    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
 }
 
 /* --- HEADER BOUTIQUE --- */
@@ -131,7 +113,7 @@ header {
 .icon-whatsapp { color: #25D366; }
 .icon-tiktok { color: #ffffff; }
 
-/* --- CATEGORÍAS --- */
+/* --- CATEGORÍAS (PC) --- */
 #categorias { 
     display: flex; 
     gap: 12px; 
@@ -164,19 +146,6 @@ header {
     background: var(--dorado); 
     color: var(--blanco); 
     border-color: var(--dorado); 
-}
-
-/* BOTÓN ESPECIAL DE SALDOS CON ANIMACIÓN DE PULSO AMARILLO */
-.categoria-btn:last-child {
-    border: 2px dashed var(--amarillo-oferta);
-    color: var(--amarillo-oferta);
-    animation: pulseAmarillo 1.5s infinite;
-}
-
-@keyframes pulseAmarillo {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
 }
 
 /* --- PRODUCTOS --- */
@@ -217,52 +186,6 @@ header {
 
 .main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-/* --- ESTILOS DE TARJETA DE SALDOS (NUEVO AMARILLO OFERTA) --- */
-.seccion-saldos-activa .producto {
-    background: #fff !important; /* Mantenemos el fondo blanco de la tarjeta */
-    border: 3px solid var(--amarillo-oferta) !important; /* Borde amarillo grueso de oferta */
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-}
-
-.seccion-saldos-activa h3 {
-    color: #333 !important; /* Texto oscuro para el nombre */
-}
-
-/* Bloque del precio en AMARILLO VIBRANTE */
-.seccion-saldos-activa .precio {
-    background: var(--amarillo-oferta) !important; 
-    color: #333 !important; /* Texto oscuro sobre amarillo */
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 1.8rem !important;
-    font-weight: 900;
-    width: 90%;
-    margin: 0 auto 10px;
-}
-
-/* Bloque de la descripción en AMARILLO SUAVE */
-.seccion-saldos-activa .descripcion {
-    background: rgba(255, 215, 0, 0.08) !important; /* Un amarillo sutil de fondo */
-    color: #555 !important;
-    border-left-color: var(--amarillo-oferta);
-}
-
-/* Etiqueta de la talla en amarillo */
-.seccion-saldos-activa .main-img-container::before {
-    content: "OUTLET";
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--amarillo-oferta);
-    color: #333;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
-}
-
-/* --- ESTILOS DE OFERTA (PARA MODO NORMAL) --- */
 .badge-oferta {
     position: absolute;
     top: 15px;
@@ -310,7 +233,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 .whatsapp-btn { background: var(--whatsapp); color: white; }
 .btn-añadir-lista { background: var(--primario); color: white; }
 
-/* --- CARRITO (MODAL COMPLETO) --- */
+/* --- CARRITO --- */
 .modal-carrito {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 5000;
@@ -359,7 +282,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     text-transform: uppercase;
 }
 
-/* --- LIGHTBOX (GALERÍA COMPLETA) --- */
+/* --- LIGHTBOX --- */
 .lightbox { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
     background: rgba(0,0,0,0.96); z-index: 6000; justify-content: center; align-items: center; 
@@ -385,7 +308,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 }
 .thumb-galeria.activa { border-color: var(--dorado); transform: scale(1.1); opacity: 1; }
 
-/* --- BOTÓN FLOTANTE Y PAGINACIÓN --- */
+/* --- BOTÓN FLOTANTE --- */
 #btn-carrito { 
     position: fixed; bottom: 30px; right: 30px; 
     background: var(--primario); color: white; 
@@ -427,59 +350,82 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 }
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL (AJUSTES FINALES) --- */
+/* --- RESPONSIVE MÓVIL (MENÚ ESTILO IMAGEN) --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
-        padding: 20px 15px 12px;
-        gap: 15px;
+        padding: 15px 15px 12px;
+        gap: 12px;
+        border-bottom: none; /* Quitamos borde para que el negro del menu se integre */
     }
     
     .logo-imagen { 
-        max-width: 280px; 
-        width: 85%; 
+        max-width: 240px; 
+        width: 75%; 
         margin: 0 auto;
     }
     .logo-wrapper { align-self: center; width: 100%; justify-content: center; }
-    .contact-icons { align-self: center; margin-bottom: 5px; }
     
     .search-container { width: 100%; margin: 0; }
     
     #buscador { 
         width: 100%; 
-        max-width: 100%; 
         padding: 10px 15px; 
         font-size: 15px;
-        height: 45px; 
+        height: 42px; 
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.4);
     }
     
+    .contact-icons { 
+        align-self: center; 
+        gap: 15px;
+        margin: 5px 0;
+    }
+
+    /* --- ESTILO DE MENÚ IGUAL A LA IMAGEN --- */
     #categorias {
-        top: 205px; 
+        top: 195px; /* Ajusta según tu header */
+        padding: 15px 10px;
+        gap: 8px;
+        background: #000; /* Fondo negro como la imagen */
+        justify-content: flex-start;
+        border-bottom: none;
     }
 
-    #productos { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
-    
-    .producto { border-radius: 12px; }
-    .producto-info { padding: 10px 8px; } 
-    
-    .main-img-container { height: 160px; padding: 8px; }
+    .categoria-btn {
+        padding: 8px 18px;
+        border-radius: 30px; /* Estilo cápsula */
+        border: 1.5px solid #fff;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
+    }
 
-    /* Ajuste de etiqueta de oferta en móvil */
+    .categoria-btn.activa {
+        background: #D4AF37; /* Dorado de la imagen */
+        border-color: #D4AF37;
+        color: #fff;
+    }
+
+    /* Estilo especial para el botón SALDOS (Dashed/Segmentado) */
+    .categoria-btn:last-child {
+        border: 2px dashed #D4AF37;
+        color: #D4AF37;
+    }
+
+    /* --- AJUSTES PRODUCTOS MÓVIL --- */
+    #productos { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
+    .producto { border-radius: 12px; }
+    .main-img-container { height: 180px; padding: 10px; }
+    
     .badge-oferta {
-        top: 8px;
-        left: 8px;
+        top: 8px; left: 8px;
         padding: 3px 8px;
         font-size: 0.6rem;
     }
     
-    h3 { font-size: 0.75rem; min-height: 2.2em; margin-bottom: 2px; }
-    
-    .precio { font-size: 1.1rem; margin-bottom: 4px; margin-top: -5px; }
-
-    .precio-tachado {
-        font-size: 0.75rem;
-        margin-right: 4px;
-    }
+    h3 { font-size: 0.75rem; min-height: 2.2em; margin-bottom: 2px; text-transform: uppercase; }
+    .precio { font-size: 1.2rem; margin-bottom: 4px; }
     
     .descripcion { 
         display: block !important; 
@@ -492,16 +438,6 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     
     .contenedor-botones { flex-direction: column; gap: 5px; }
     .whatsapp-btn, .btn-añadir-lista { 
-        padding: 8px 2px; 
-        font-size: 0.7rem; 
-        border-radius: 6px;
-    }
-    
-    .pag-btn {
-        width: 38px;
-        height: 38px;
-        min-width: 38px;
-        min-height: 38px;
-        font-size: 14px;
+        padding: 8px 2px; font-size: 0.7rem; border-radius: 6px;
     }
 }
