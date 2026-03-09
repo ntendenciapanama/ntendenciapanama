@@ -2,11 +2,11 @@
 :root {
     --primario: #410020;
     --dorado: #E0C080;
-    --dorado-brillante: #f1c40f; /* Amarillo para el modo normal */
+    --dorado-brillante: #f1c40f;
     
     /* NUEVO AMARILLO VIBRANTE PARA SALDOS/OFERTAS */
-    --amarillo-oferta: #FFD700; /* Un dorado intenso, tipo lingote */
-    --fondo-saldos: #410020;    /* Un gris muy claro para el fondo */
+    --amarillo-oferta: #FFD700; 
+    --fondo-saldos: #410020;   
     
     --fondo-crema: #f9f9f7;
     --blanco: #ffffff;
@@ -310,10 +310,9 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     text-align: center; 
     text-decoration: none; 
     transition: all 0.3s ease;
-    cursor: pointer; /* Añadida la manito */
+    cursor: pointer;
 }
 
-/* Efectos de interacción para los botones */
 .whatsapp-btn:hover, .btn-añadir-lista:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -348,7 +347,6 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 
 .cuerpo-carrito { padding: 20px; max-height: 55vh; overflow-y: auto; }
 
-/* NUEVOS ESTILOS PARA LOS ITEMS DEL CARRITO */
 .item-carrito {
     display: flex;
     justify-content: space-between;
@@ -360,12 +358,11 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 .info-item-carrito { flex-grow: 1; padding-right: 15px; }
 .info-item-carrito h4 { font-size: 0.95rem; margin-bottom: 4px; color: var(--primario); }
 
-/* MEJORA DE LA 'X' PARA CELULAR */
 .btn-quitar { 
     background: #fff0f0; 
     color: #ff4757; 
     border: none; 
-    width: 44px; /* Tamaño ideal para el dedo */
+    width: 44px; 
     height: 44px; 
     border-radius: 50%; 
     cursor: pointer; 
@@ -376,10 +373,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     justify-content: center;
     flex-shrink: 0;
     margin-left: 10px;
-    transition: background 0.2s;
 }
-
-.btn-quitar:active { background: #ffdbdb; }
 
 .footer-carrito { padding: 25px; background: #fafafa; border-top: 1px solid #eee; }
 
@@ -389,25 +383,25 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     text-transform: uppercase;
 }
 
-/* --- LIGHTBOX (CORREGIDO) --- */
+/* --- LIGHTBOX (RECTIFICADO PARA IMÁGENES GIGANTES) --- */
 .lightbox { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
     background: rgba(0,0,0,0.96); z-index: 6000; justify-content: center; align-items: center; 
 }
 
-div[style*="font-size: 24px"], 
-.vista-ampliada-container { 
-    display: none; 
-}
+.galeria-wrapper { width: 90%; max-width: 550px; height: 80vh; display: flex; align-items: center; justify-content: center; position: relative;}
 
-.lightbox div[style*="font-size: 24px"] { display: block !important; }
-
-.galeria-wrapper { width: 95%; max-width: 550px; }
 .galeria-container { 
-    position: relative; background: var(--blanco); border-radius: 20px; 
-    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: transparent;
 }
-.lightbox-img { max-width: 100%; max-height: 70vh; object-fit: contain; padding: 10px; }
+
+.lightbox-img { 
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain; 
+    padding: 10px; 
+}
+
 .flecha-incrustada { 
     position: absolute; top: 50%; transform: translateY(-50%); 
     background: rgba(0,0,0,0.6); color: white; border: none; 
@@ -479,12 +473,9 @@ div[style*="font-size: 24px"],
     .contenedor-botones { flex-direction: column; gap: 5px; }
     .whatsapp-btn, .btn-añadir-lista { padding: 10px 2px; font-size: 0.7rem; border-radius: 6px; }
     
-    .pag-btn { width: 38px; height: 38px; font-size: 14px; }
-
-    /* Ajuste extra para la X en pantallas muy pequeñas */
     .btn-quitar { width: 46px; height: 46px; font-size: 22px; }
 
-    /* Desactivar efectos hover en móvil para evitar que se queden "pegados" al tocar */
-    .whatsapp-btn:hover, .btn-añadir-lista:hover { transform: none; box-shadow: none; }
-    .whatsapp-btn:active, .btn-añadir-lista:active { transform: scale(0.92); background: rgba(0,0,0,0.1); }
+    /* Ajuste Lightbox para celular */
+    .galeria-wrapper { width: 85%; height: 60vh; }
+    .cerrar-lightbox { top: 15px; right: 20px; font-size: 40px; }
 }
