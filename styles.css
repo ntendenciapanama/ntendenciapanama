@@ -36,10 +36,9 @@ body {
 /* --- MODO SALDOS (CAMBIO DE LOOK TOTAL A AMARILLO) --- */
 body.seccion-saldos-activa {
     background-color: var(--fondo-saldos) !important;
-    background-image: none; /* Quitamos los puntitos para que se vea más limpio */
+    background-image: none; 
 }
 
-/* El header cambia de color en modo saldos */
 body.seccion-saldos-activa header {
     border-bottom: 4px solid var(--amarillo-oferta);
     box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
@@ -134,9 +133,9 @@ header {
 /* --- CATEGORÍAS (AJUSTADO PARA VISIBILIDAD TOTAL) --- */
 #categorias { 
     display: flex; 
-    flex-wrap: wrap;           /* Permite múltiples filas */
-    justify-content: center;    /* Centra los botones */
-    gap: 8px;                   /* Espacio entre botones */
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 8px; 
     padding: 12px 15px;
     background: #000;
     border-bottom: 1px solid #333;
@@ -165,7 +164,6 @@ header {
     border-color: var(--dorado); 
 }
 
-/* BOTÓN ESPECIAL DE SALDOS CON ANIMACIÓN DE PULSO AMARILLO */
 .categoria-btn:last-child {
     border: 2px dashed var(--amarillo-oferta);
     color: var(--amarillo-oferta);
@@ -298,11 +296,37 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     border-left: 4px solid var(--dorado); text-align: left; line-height: 1.4;
 }
 
+/* --- BOTONES CON ANIMACIÓN MEJORADA --- */
 .contenedor-botones { display: flex; gap: 10px; margin-top: auto; }
+
 .whatsapp-btn, .btn-añadir-lista { 
-    flex: 1; padding: 14px 5px; border-radius: 10px; border: none;
-    font-weight: 700; font-size: 0.85rem; text-transform: uppercase; text-align: center; text-decoration: none; transition: 0.3s;
+    flex: 1; 
+    padding: 14px 5px; 
+    border-radius: 10px; 
+    border: none;
+    font-weight: 700; 
+    font-size: 0.85rem; 
+    text-transform: uppercase; 
+    text-align: center; 
+    text-decoration: none; 
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    cursor: pointer;
 }
+
+/* Elevación al pasar el mouse (PC) */
+.whatsapp-btn:hover, .btn-añadir-lista:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    filter: brightness(1.1);
+}
+
+/* Efecto de hundimiento al hacer clic */
+.whatsapp-btn:active, .btn-añadir-lista:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    filter: brightness(0.9);
+}
+
 .whatsapp-btn { background: var(--whatsapp); color: white; }
 .btn-añadir-lista { background: var(--primario); color: white; }
 
@@ -449,7 +473,6 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
         height: 45px; 
     }
     
-    /* CATEGORÍAS EN MÓVIL: Ajuste de posición y padding */
     #categorias {
         top: 205px; 
         padding: 10px 8px;
@@ -489,9 +512,15 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     } 
     
     .contenedor-botones { flex-direction: column; gap: 5px; }
+    
+    /* En móvil se elimina la elevación para evitar bugs táctiles */
+    .whatsapp-btn:hover, .btn-añadir-lista:hover {
+        transform: none;
+    }
+    
     .whatsapp-btn, .btn-añadir-lista { 
-        padding: 8px 2px; 
-        font-size: 0.7rem; 
+        padding: 10px 2px; 
+        font-size: 0.75rem; 
         border-radius: 6px;
     }
     
