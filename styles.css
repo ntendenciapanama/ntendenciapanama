@@ -2,11 +2,10 @@
 :root {
     --primario: #410020;
     --dorado: #E0C080;
-    --dorado-brillante: #f1c40f; /* Amarillo para el modo normal */
+    --dorado-brillante: #f1c40f; 
     
-    /* NUEVO AMARILLO VIBRANTE PARA SALDOS/OFERTAS */
-    --amarillo-oferta: #FFD700; /* Un dorado intenso, tipo lingote */
-    --fondo-saldos: #410020;    /* Un gris muy claro para el fondo */
+    --amarillo-oferta: #FFD700; 
+    --fondo-saldos: #410020;    
     
     --fondo-crema: #f9f9f7;
     --blanco: #ffffff;
@@ -33,7 +32,7 @@ body {
     transition: all 0.5s ease;
 }
 
-/* --- MODO SALDOS (CAMBIO DE LOOK TOTAL A AMARILLO) --- */
+/* --- MODO SALDOS --- */
 body.seccion-saldos-activa {
     background-color: var(--fondo-saldos) !important;
     background-image: none; 
@@ -130,7 +129,7 @@ header {
 .icon-whatsapp { color: #25D366; }
 .icon-tiktok { color: #ffffff; }
 
-/* --- CATEGORÍAS (AJUSTADO PARA VISIBILIDAD TOTAL) --- */
+/* --- CATEGORÍAS --- */
 #categorias { 
     display: flex; 
     flex-wrap: wrap; 
@@ -193,6 +192,13 @@ header {
     flex-direction: column;
     height: 100%;
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+}
+
+/* REPARACIÓN: MARCO AMARILLO AUTOMÁTICO */
+.producto.tiene-oferta {
+    border: 3px solid var(--amarillo-oferta) !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
 .producto:hover { 
@@ -221,39 +227,26 @@ header {
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
 }
 
-.seccion-saldos-activa h3 {
-    color: #333 !important; 
-}
+.seccion-saldos-activa h3 { color: #333 !important; }
 
 .seccion-saldos-activa .precio {
     background: var(--amarillo-oferta) !important; 
     color: #333 !important; 
     padding: 10px;
     border-radius: 8px;
-    font-size: 1.8rem !important;
-    font-weight: 900;
     width: 90%;
     margin: 0 auto 10px;
+}
+
+.seccion-saldos-activa .precio .precio-actual {
+    font-size: 1.8rem !important;
+    font-weight: 900;
 }
 
 .seccion-saldos-activa .descripcion {
     background: rgba(255, 215, 0, 0.08) !important; 
     color: #555 !important;
     border-left-color: var(--amarillo-oferta);
-}
-
-.seccion-saldos-activa .main-img-container::before {
-    content: "OUTLET";
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--amarillo-oferta);
-    color: #333;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
 }
 
 /* --- ESTILOS DE OFERTA --- */
@@ -278,17 +271,34 @@ header {
     100% { transform: scale(1); }
 }
 
+/* REPARACIÓN: PRECIOS EN PILA (UNO DEBAJO DEL OTRO) */
+.precio { 
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    font-size: 1.6rem; 
+    font-weight: 800; 
+    color: var(--primario);
+}
+
+.precio-actual {
+    order: 2; /* El precio nuevo abajo */
+}
+
 .precio-tachado {
+    order: 1; /* El precio viejo arriba */
     text-decoration: line-through;
     color: #b0b0b0;
-    font-size: 0.8em;
+    font-size: 0.6em;
     font-weight: 400;
-    margin-right: 8px;
+    margin-right: 0;
+    margin-bottom: -5px;
 }
 
 /* --- INFO PRODUCTO --- */
 .producto-info { padding: 20px; text-align: center; display: flex; flex-direction: column; flex-grow: 1; }
-.precio { font-size: 1.6rem; font-weight: 800; color: var(--primario); margin-bottom: 8px; }
 h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; justify-content: center; color: #333; font-weight: 600; }
 .descripcion { 
     font-size: 0.85rem; color: var(--texto-suave); background: #fdfaf2; 
@@ -296,9 +306,8 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     border-left: 4px solid var(--dorado); text-align: left; line-height: 1.4;
 }
 
-/* --- BOTONES CON ANIMACIÓN MEJORADA --- */
+/* --- BOTONES --- */
 .contenedor-botones { display: flex; gap: 10px; margin-top: auto; }
-
 .whatsapp-btn, .btn-añadir-lista { 
     flex: 1; 
     padding: 14px 5px; 
@@ -313,18 +322,15 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     cursor: pointer;
 }
 
-/* Elevación al pasar el mouse (PC) */
 .whatsapp-btn:hover, .btn-añadir-lista:hover {
     transform: translateY(-4px);
     box-shadow: 0 6px 15px rgba(0,0,0,0.2);
     filter: brightness(1.1);
 }
 
-/* Efecto de hundimiento al hacer clic */
 .whatsapp-btn:active, .btn-añadir-lista:active {
     transform: translateY(1px);
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    filter: brightness(0.9);
 }
 
 .whatsapp-btn { background: var(--whatsapp); color: white; }
@@ -337,15 +343,15 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     justify-content: center; align-items: center;
 }
 
-@keyframes slideUp {
-    from { transform: translateY(50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
 .contenido-carrito { 
     background: var(--blanco); width: 95%; max-width: 480px; border-radius: 25px; 
     display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.4);
     animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 .header-carrito { 
@@ -354,83 +360,20 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     border-bottom: 3px solid var(--dorado);
 }
 
-.titulo-carrito h2 { font-size: 1.3rem; }
-.cerrar-carrito { font-size: 32px; cursor: pointer; transition: 0.3s; }
-.cuerpo-carrito { padding: 25px; max-height: 55vh; overflow-y: auto; }
-
-.item-carrito { 
-    display: flex; justify-content: space-between; align-items: center; 
-    padding: 15px 0; border-bottom: 1px solid #f0f0f0; 
-}
-
-.btn-quitar { 
-    background: #fff0f0; color: #ff4757; border: none; width: 32px; height: 32px; 
-    border-radius: 50%; cursor: pointer; font-weight: bold; 
-    display: flex; align-items: center; justify-content: center;
-}
-
-.footer-carrito { padding: 25px; background: #fafafa; border-top: 1px solid #eee; }
-.total-contenedor { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.monto-total { font-size: 1.8rem; font-weight: 900; color: var(--primario); }
-
-.btn-enviar-pedido { 
-    width: 100%; background: var(--whatsapp); color: white; padding: 18px; 
-    border-radius: 15px; border: none; font-size: 1rem; font-weight: 800; cursor: pointer;
-    text-transform: uppercase;
-}
-
 /* --- LIGHTBOX (REPARADO) --- */
 .lightbox { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
     background: rgba(0,0,0,0.96); z-index: 6000; justify-content: center; align-items: center; 
 }
-.galeria-wrapper { 
-    width: 95%; 
-    max-width: 550px; 
-    position: relative; /* Para que las flechas se posicionen respecto a este contenedor */
-}
-.galeria-container { 
-    position: relative; 
-    background: transparent; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-}
-.lightbox-img { 
-    max-width: 100%; 
-    max-height: 80vh; 
-    object-fit: contain; 
-    filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); 
-}
-
-/* REPARACIÓN DE FLECHAS */
+.galeria-wrapper { width: 95%; max-width: 550px; position: relative; }
 .flecha-incrustada { 
-    position: absolute; 
-    top: 50%; 
-    transform: translateY(-50%); 
-    background: rgba(0,0,0,0.6); 
-    color: white; 
-    border: none; 
-    width: 50px; 
-    height: 50px; 
-    border-radius: 50%; 
-    cursor: pointer; 
-    font-size: 22px; 
-    z-index: 7000; /* Asegura que estén por encima de la imagen */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute; top: 50%; transform: translateY(-50%); 
+    background: rgba(0,0,0,0.6); color: white; border: none; 
+    width: 50px; height: 50px; border-radius: 50%; cursor: pointer; 
+    font-size: 22px; z-index: 7000; display: flex; align-items: center; justify-content: center;
 }
 .flecha-incrustada.prev { left: 10px; }
 .flecha-incrustada.next { right: 10px; }
-
-.cerrar-lightbox { position: absolute; top: 25px; right: 35px; color: white; font-size: 50px; cursor: pointer; z-index: 7001; }
-.lightbox-nav { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.thumb-galeria { 
-    width: 60px; height: 60px; object-fit: cover; border-radius: 10px; 
-    cursor: pointer; border: 2px solid transparent; opacity: 0.6; 
-}
-.thumb-galeria.activa { border-color: var(--dorado); transform: scale(1.1); opacity: 1; }
 
 /* --- BOTÓN FLOTANTE Y PAGINACIÓN --- */
 #btn-carrito { 
@@ -441,127 +384,33 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     font-size: 26px; cursor: pointer; z-index: 2000; 
     box-shadow: 0 8px 25px rgba(0,0,0,0.4); border: 2px solid var(--dorado);
 }
-#contador-carrito { 
-    position: absolute; top: -5px; right: -5px; 
-    background: #ff4757; width: 26px; height: 26px; 
-    border-radius: 50%; font-size: 12px; display: flex; justify-content: center; align-items: center; 
-}
 
-#paginacion { 
-    display: flex; 
-    justify-content: center; 
-    gap: 8px; 
-    padding: 50px 10px; 
-    flex-wrap: wrap; 
-}
-
+#paginacion { display: flex; justify-content: center; gap: 8px; padding: 50px 10px; flex-wrap: wrap; }
 .pag-btn { 
-    width: 42px; 
-    height: 42px; 
-    min-width: 42px; 
-    min-height: 42px;
-    border-radius: 50%; 
-    border: 2px solid var(--primario); 
-    background: white;
-    color: var(--primario);
-    cursor: pointer; 
-    font-weight: 700; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    flex-shrink: 0; 
-    transition: 0.2s;
+    width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--primario); 
+    background: white; color: var(--primario); cursor: pointer; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; transition: 0.2s;
 }
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL --- */
+/* --- RESPONSIVE MÓVIL (TUS REGLAS ORIGINALES) --- */
 @media (max-width: 480px) {
-    header {
-        flex-direction: column;
-        padding: 20px 15px 12px;
-        gap: 15px;
-    }
-    
-    .logo-imagen { 
-        max-width: 280px; 
-        width: 85%; 
-        margin: 0 auto;
-    }
+    header { flex-direction: column; padding: 20px 15px 12px; gap: 15px; }
+    .logo-imagen { max-width: 280px; width: 85%; margin: 0 auto; }
     .logo-wrapper { align-self: center; width: 100%; justify-content: center; }
     .contact-icons { align-self: center; margin-bottom: 5px; }
-    
     .search-container { width: 100%; margin: 0; }
-    
-    #buscador { 
-        width: 100%; 
-        max-width: 100%; 
-        padding: 10px 15px; 
-        font-size: 15px;
-        height: 45px; 
-    }
-    
-    #categorias {
-        top: 205px; 
-        padding: 10px 8px;
-        gap: 6px;
-    }
-
+    #buscador { width: 100%; max-width: 100%; padding: 10px 15px; font-size: 15px; height: 45px; }
+    #categorias { top: 205px; padding: 10px 8px; gap: 6px; }
     #productos { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
-    
-    .producto { border-radius: 12px; }
-    .producto-info { padding: 10px 8px; } 
-    
     .main-img-container { height: 160px; padding: 8px; }
-
-    .badge-oferta {
-        top: 8px;
-        left: 8px;
-        padding: 3px 8px;
-        font-size: 0.6rem;
-    }
+    h3 { font-size: 0.75rem; min-height: 2.2em; }
     
-    h3 { font-size: 0.75rem; min-height: 2.2em; margin-bottom: 2px; }
-    
+    /* Precios en móvil */
     .precio { font-size: 1.1rem; margin-bottom: 4px; margin-top: -5px; }
+    .precio-tachado { font-size: 0.75rem; }
 
-    .precio-tachado {
-        font-size: 0.75rem;
-        margin-right: 4px;
-    }
-    
-    .descripcion { 
-        display: block !important; 
-        font-size: 0.65rem; 
-        padding: 8px; 
-        margin-bottom: 10px; 
-        border-left: 3px solid var(--dorado);
-        line-height: 1.2;
-    } 
-    
+    .descripcion { display: block !important; font-size: 0.65rem; padding: 8px; margin-bottom: 10px; } 
     .contenedor-botones { flex-direction: column; gap: 5px; }
-    
-    .whatsapp-btn:hover, .btn-añadir-lista:hover {
-        transform: none;
-    }
-    
-    .whatsapp-btn, .btn-añadir-lista { 
-        padding: 10px 2px; 
-        font-size: 0.75rem; 
-        border-radius: 6px;
-    }
-    
-    .pag-btn {
-        width: 38px;
-        height: 38px;
-        min-width: 38px;
-        min-height: 38px;
-        font-size: 14px;
-    }
-
-    /* Ajuste de flechas en móvil */
-    .flecha-incrustada {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
-    }
+    .whatsapp-btn, .btn-añadir-lista { padding: 10px 2px; font-size: 0.75rem; border-radius: 6px; }
 }
