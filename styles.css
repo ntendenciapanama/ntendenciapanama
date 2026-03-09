@@ -131,20 +131,19 @@ header {
 .icon-whatsapp { color: #25D366; }
 .icon-tiktok { color: #ffffff; }
 
-/* --- CATEGORÍAS --- */
+/* --- CATEGORÍAS (AJUSTADO PARA VISIBILIDAD TOTAL) --- */
 #categorias { 
     display: flex; 
-    gap: 12px; 
-    padding: 10px 15px;
-    overflow-x: auto; 
+    flex-wrap: wrap;           /* Permite múltiples filas */
+    justify-content: center;    /* Centra los botones */
+    gap: 8px;                   /* Espacio entre botones */
+    padding: 12px 15px;
     background: #000;
-    scrollbar-width: none; 
     border-bottom: 1px solid #333;
     position: sticky; 
     top: 104px; 
     z-index: 900; 
 }
-#categorias::-webkit-scrollbar { display: none; }
 
 .categoria-btn { 
     padding: 6px 16px;
@@ -217,21 +216,20 @@ header {
 
 .main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-/* --- ESTILOS DE TARJETA DE SALDOS (NUEVO AMARILLO OFERTA) --- */
+/* --- ESTILOS DE TARJETA DE SALDOS --- */
 .seccion-saldos-activa .producto {
-    background: #fff !important; /* Mantenemos el fondo blanco de la tarjeta */
-    border: 3px solid var(--amarillo-oferta) !important; /* Borde amarillo grueso de oferta */
+    background: #fff !important; 
+    border: 3px solid var(--amarillo-oferta) !important; 
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
 }
 
 .seccion-saldos-activa h3 {
-    color: #333 !important; /* Texto oscuro para el nombre */
+    color: #333 !important; 
 }
 
-/* Bloque del precio en AMARILLO VIBRANTE */
 .seccion-saldos-activa .precio {
     background: var(--amarillo-oferta) !important; 
-    color: #333 !important; /* Texto oscuro sobre amarillo */
+    color: #333 !important; 
     padding: 10px;
     border-radius: 8px;
     font-size: 1.8rem !important;
@@ -240,14 +238,12 @@ header {
     margin: 0 auto 10px;
 }
 
-/* Bloque de la descripción en AMARILLO SUAVE */
 .seccion-saldos-activa .descripcion {
-    background: rgba(255, 215, 0, 0.08) !important; /* Un amarillo sutil de fondo */
+    background: rgba(255, 215, 0, 0.08) !important; 
     color: #555 !important;
     border-left-color: var(--amarillo-oferta);
 }
 
-/* Etiqueta de la talla en amarillo */
 .seccion-saldos-activa .main-img-container::before {
     content: "OUTLET";
     position: absolute;
@@ -262,7 +258,7 @@ header {
     text-transform: uppercase;
 }
 
-/* --- ESTILOS DE OFERTA (PARA MODO NORMAL) --- */
+/* --- ESTILOS DE OFERTA --- */
 .badge-oferta {
     position: absolute;
     top: 15px;
@@ -310,7 +306,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 .whatsapp-btn { background: var(--whatsapp); color: white; }
 .btn-añadir-lista { background: var(--primario); color: white; }
 
-/* --- CARRITO (MODAL COMPLETO) --- */
+/* --- CARRITO --- */
 .modal-carrito {
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 5000;
@@ -359,7 +355,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     text-transform: uppercase;
 }
 
-/* --- LIGHTBOX (GALERÍA COMPLETA) --- */
+/* --- LIGHTBOX --- */
 .lightbox { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
     background: rgba(0,0,0,0.96); z-index: 6000; justify-content: center; align-items: center; 
@@ -427,7 +423,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 }
 .pag-btn.activa { background: var(--primario); color: white; }
 
-/* --- RESPONSIVE MÓVIL (AJUSTES FINALES) --- */
+/* --- RESPONSIVE MÓVIL --- */
 @media (max-width: 480px) {
     header {
         flex-direction: column;
@@ -453,8 +449,11 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
         height: 45px; 
     }
     
+    /* CATEGORÍAS EN MÓVIL: Ajuste de posición y padding */
     #categorias {
         top: 205px; 
+        padding: 10px 8px;
+        gap: 6px;
     }
 
     #productos { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
@@ -464,7 +463,6 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     
     .main-img-container { height: 160px; padding: 8px; }
 
-    /* Ajuste de etiqueta de oferta en móvil */
     .badge-oferta {
         top: 8px;
         left: 8px;
