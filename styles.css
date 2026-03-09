@@ -379,7 +379,7 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     text-transform: uppercase;
 }
 
-/* --- LIGHTBOX (ACTUALIZADO: SÓLO IMAGEN) --- */
+/* --- LIGHTBOX (REPARADO) --- */
 .lightbox { 
     display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
     background: rgba(0,0,0,0.96); z-index: 6000; justify-content: center; align-items: center; 
@@ -387,14 +387,11 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 .galeria-wrapper { 
     width: 95%; 
     max-width: 550px; 
-    background: transparent !important; /* BORDE BLANCO ELIMINADO */
-    box-shadow: none !important; /* SOMBRA ELIMINADA */
+    position: relative; /* Para que las flechas se posicionen respecto a este contenedor */
 }
 .galeria-container { 
     position: relative; 
-    background: transparent !important; /* FONTO INTERNO ELIMINADO */
-    border-radius: 0; 
-    overflow: hidden; 
+    background: transparent; 
     display: flex; 
     align-items: center; 
     justify-content: center;
@@ -403,17 +400,31 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     max-width: 100%; 
     max-height: 80vh; 
     object-fit: contain; 
-    padding: 0; /* ESPACIO BLANCO ELIMINADO */
-    filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); /* Sombras directo a la ropa */
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); 
 }
+
+/* REPARACIÓN DE FLECHAS */
 .flecha-incrustada { 
-    position: absolute; top: 50%; transform: translateY(-50%); 
-    background: rgba(0,0,0,0.6); color: white; border: none; 
-    width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 22px; 
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background: rgba(0,0,0,0.6); 
+    color: white; 
+    border: none; 
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    font-size: 22px; 
+    z-index: 7000; /* Asegura que estén por encima de la imagen */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.flecha-incrustada.prev { left: 20px; }
-.flecha-incrustada.next { right: 20px; }
-.cerrar-lightbox { position: absolute; top: 25px; right: 35px; color: white; font-size: 50px; cursor: pointer; }
+.flecha-incrustada.prev { left: 10px; }
+.flecha-incrustada.next { right: 10px; }
+
+.cerrar-lightbox { position: absolute; top: 25px; right: 35px; color: white; font-size: 50px; cursor: pointer; z-index: 7001; }
 .lightbox-nav { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 .thumb-galeria { 
     width: 60px; height: 60px; object-fit: cover; border-radius: 10px; 
@@ -529,7 +540,6 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     
     .contenedor-botones { flex-direction: column; gap: 5px; }
     
-    /* En móvil se elimina la elevación para evitar bugs táctiles */
     .whatsapp-btn:hover, .btn-añadir-lista:hover {
         transform: none;
     }
@@ -546,5 +556,12 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
         min-width: 38px;
         min-height: 38px;
         font-size: 14px;
+    }
+
+    /* Ajuste de flechas en móvil */
+    .flecha-incrustada {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
     }
 }
