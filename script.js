@@ -1,3 +1,4 @@
+/* --- VARIABLES GLOBALES --- */
 let todosLosProductos = []; // Solo premium
 let productosFiltrados = [];
 let catalogoCompleto = []; // Incluye saldos para el buscador
@@ -13,6 +14,7 @@ let codActual = "";
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
 
+/* --- RESPONSIVIDAD --- */
 function ajustarPaginacionDinamica() {
     const ancho = window.innerWidth;
     if (ancho < 600) { productosPorPagina = 10; } 
@@ -23,6 +25,7 @@ function ajustarPaginacionDinamica() {
 
 ajustarPaginacionDinamica();
 
+/* --- CARGA DE DATOS --- */
 fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
@@ -55,21 +58,17 @@ fetch(URL_SHEET)
             return tieneCodigo && !estaVendido;
         });
 
-        // REVERSE para ver lo nuevo primero
         const listaInvertida = productosMapeados.reverse();
-        
-        // GUARDAMOS TODO para el buscador
         catalogoCompleto = listaInvertida;
-
-        // FILTRAMOS: "todosLosProductos" NO tendrá saldos (para el inicio y categoría Todas)
         todosLosProductos = listaInvertida.filter(p => p.categoria.toLowerCase() !== 'saldos');
-        
         productosFiltrados = todosLosProductos;
+        
         generarCategorias();
         mostrarProductos();
     })
     .catch(err => console.error("Error cargando Google Sheets:", err));
 
+/* --- MOSTRAR PRODUCTOS EN GRILLA --- */
 function mostrarProductos() {
     const contenedor = document.getElementById('productos');
     if (!contenedor) return;
@@ -81,7 +80,6 @@ function mostrarProductos() {
 
     lista.forEach(p => {
         const div = document.createElement('div');
-        // Si el producto es de la categoría saldos, le ponemos una clase extra
         const claseSaldos = p.categoria.toLowerCase() === 'saldos' ? 'producto-saldo' : '';
         div.className = `producto ${claseSaldos}`;
         
@@ -93,7 +91,7 @@ function mostrarProductos() {
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
                 ${badgeHTML}
-                <img src="images/${p.codigo}/1.jpg?t=${new Date().getTime()}" 
+                <img src="images/${p.codigo}/1.jpg" 
                      alt="${p.nombre}" 
                      loading="lazy" 
                      onerror="this.onerror=null; this.src='images/${p.codigo}/1.png'; this.setAttribute('onerror', 'this.src=\'logo.png\'')">
@@ -113,7 +111,7 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
-// --- LÓGICA DE GALERÍA ---
+/* --- LÓGICA DE GALERÍA (LIGHTBOX) --- */
 function abrirGaleria(codigo, total) {
     codActual = codigo; 
     totalImg = total; 
@@ -126,15 +124,18 @@ function abrirGaleria(codigo, total) {
 function actualizarVistaGaleria() {
     const imgGrande = document.getElementById('img-grande');
     if (imgGrande) {
-        imgGrande.src = `images/${codActual}/${imgIndex}.jpg?t=${new Date().getTime()}`;
+        // Carga principal con fallback
+        imgGrande.src = `images/${codActual}/${imgIndex}.jpg`;
         imgGrande.onerror = function() {
             this.onerror = null; 
             this.src = `images/${codActual}/${imgIndex}.png`;
         };
     }
+
     const nav = document.getElementById('lightbox-nav');
     if (!nav) return;
     nav.innerHTML = "";
+    
     if (totalImg > 1) {
         for (let i = 1; i <= totalImg; i++) {
             verificarYCrearMiniatura(i, nav);
@@ -143,32 +144,23 @@ function actualizarVistaGaleria() {
 }
 
 function verificarYCrearMiniatura(i, nav) {
-    const rutaJpg = `images/${codActual}/${i}.jpg`;
-    const tempJpg = new Image();
-    tempJpg.src = rutaJpg;
-    tempJpg.onload = () => crearBotonMini(rutaJpg, i, nav);
-    tempJpg.onerror = () => {
-        const rutaPng = `images/${codActual}/${i}.png`;
-        const tempPng = new Image();
-        tempPng.src = rutaPng;
-        tempPng.onload = () => crearBotonMini(rutaPng, i, nav);
-    };
-}
-
-function crearBotonMini(ruta, i, nav) {
     const t = document.createElement('img');
-    t.src = ruta;
+    t.src = `images/${codActual}/${i}.jpg`;
     t.className = `thumb-galeria ${i === imgIndex ? 'activa' : ''}`;
+    // Si la miniatura no es jpg, intenta png
+    t.onerror = function() {
+        this.onerror = null;
+        this.src = `images/${codActual}/${i}.png`;
+    };
     t.onclick = () => { imgIndex = i; actualizarVistaGaleria(); };
     nav.appendChild(t);
 }
 
 function cambiarImagenNav(paso, event) {
-    if(event) event.stopPropagation();
-    let nuevoIndex = imgIndex + paso;
-    if (nuevoIndex > totalImg) nuevoIndex = 1;
-    if (nuevoIndex < 1) nuevoIndex = totalImg;
-    imgIndex = nuevoIndex;
+    if(event) event.stopPropagation(); 
+    imgIndex += paso;
+    if (imgIndex > totalImg) imgIndex = 1;
+    if (imgIndex < 1) imgIndex = totalImg;
     actualizarVistaGaleria();
 }
 
@@ -177,7 +169,7 @@ function cerrarImagen() {
     document.body.style.overflow = 'auto';
 }
 
-// --- CARRITO ---
+/* --- LÓGICA DEL CARRITO --- */
 function añadirAlCarrito(codigo) {
     const yaExiste = carrito.find(x => x.codigo === codigo);
     if (yaExiste) {
@@ -260,15 +252,12 @@ function enviarPedidoWhatsApp() {
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
-// --- BUSCADOR ---
+/* --- BUSCADOR --- */
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
-    
     if (term === "") {
-        // Si borra la búsqueda, vuelve a la lista limpia (sin saldos)
         productosFiltrados = todosLosProductos;
     } else {
-        // Busca en TODO (incluyendo saldos)
         productosFiltrados = catalogoCompleto.filter(p => 
             p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
         );
@@ -277,14 +266,12 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
     mostrarProductos();
 });
 
+/* --- CATEGORÍAS --- */
 function generarCategorias() {
     const cont = document.getElementById('categorias');
     if (!cont) return;
 
-    // Categorías normales (filtrando que no esté "Saldos")
     const cats = ["Todas", ...new Set(todosLosProductos.map(p => p.categoria))];
-    
-    // Agregamos botón de Saldos solo si existe algún producto marcado así en el Excel
     const haySaldos = catalogoCompleto.some(p => p.categoria.toLowerCase() === 'saldos');
     if (haySaldos) cats.push("Saldos");
 
@@ -298,11 +285,9 @@ function generarCategorias() {
             b.classList.add('activa');
             
             if (c === "Saldos") {
-                // Filtramos solo saldos del catálogo completo
                 productosFiltrados = catalogoCompleto.filter(x => x.categoria.toLowerCase() === 'saldos');
-                document.body.classList.add('seccion-saldos-activa'); // Para cambiar color de web
+                document.body.classList.add('seccion-saldos-activa');
             } else {
-                // Volvemos a la lista premium limpia
                 document.body.classList.remove('seccion-saldos-activa');
                 productosFiltrados = (c === "Todas") ? todosLosProductos : todosLosProductos.filter(x => x.categoria === c);
             }
@@ -314,6 +299,7 @@ function generarCategorias() {
     });
 }
 
+/* --- PAGINACIÓN --- */
 function actualizarPaginacion() {
     const cont = document.getElementById('paginacion');
     if (!cont) return;
