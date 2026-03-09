@@ -80,13 +80,20 @@ function mostrarProductos() {
 
     lista.forEach(p => {
         const div = document.createElement('div');
+        // REPARACIÓN: Se añade 'tiene-oferta' para activar el marco amarillo si es oferta
         const claseSaldos = p.categoria.toLowerCase() === 'saldos' ? 'producto-saldo' : '';
-        div.className = `producto ${claseSaldos}`;
+        const claseOferta = p.esOferta ? 'tiene-oferta' : '';
+        div.className = `producto ${claseSaldos} ${claseOferta}`;
         
         const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
+        
+        // REPARACIÓN: Estructura de precio ajustada para el CSS de columna
         const precioHTML = p.esOferta 
-            ? `<p class="precio"><span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> $${p.precio.toFixed(2)}</p>`
-            : `<p class="precio">$${p.precio.toFixed(2)}</p>`;
+            ? `<div class="precio">
+                <span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> 
+                <span class="precio-actual">$${p.precio.toFixed(2)}</span>
+               </div>`
+            : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
 
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
@@ -124,7 +131,6 @@ function abrirGaleria(codigo, total) {
 function actualizarVistaGaleria() {
     const imgGrande = document.getElementById('img-grande');
     if (imgGrande) {
-        // Carga principal con fallback
         imgGrande.src = `images/${codActual}/${imgIndex}.jpg`;
         imgGrande.onerror = function() {
             this.onerror = null; 
@@ -147,7 +153,6 @@ function verificarYCrearMiniatura(i, nav) {
     const t = document.createElement('img');
     t.src = `images/${codActual}/${i}.jpg`;
     t.className = `thumb-galeria ${i === imgIndex ? 'activa' : ''}`;
-    // Si la miniatura no es jpg, intenta png
     t.onerror = function() {
         this.onerror = null;
         this.src = `images/${codActual}/${i}.png`;
