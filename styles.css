@@ -1,13 +1,18 @@
-/* --- VARIABLES DE MARCA --- */
+/* --- VARIABLES DE MARCA (CON NUEVO AMARILLO OFERTA) --- */
 :root {
     --primario: #410020;
     --dorado: #E0C080;
-    --dorado-brillante: #f1c40f;
+    --dorado-brillante: #f1c40f; /* Amarillo para el modo normal */
+    
+    /* NUEVO AMARILLO VIBRANTE PARA SALDOS/OFERTAS */
+    --amarillo-oferta: #FFD700; /* Un dorado intenso, tipo lingote */
+    --fondo-saldos: #410020;    /* Un gris muy claro para el fondo */
+    
     --fondo-crema: #f9f9f7;
     --blanco: #ffffff;
     --texto-suave: #555555;
     --whatsapp: #25D366;
-    --oferta-rojo: #ff4757; /* Color para las ofertas */
+    --oferta-rojo: #ff4757;
 }
 
 /* --- RESET Y BASE --- */
@@ -25,6 +30,19 @@ body {
     background-size: 24px 24px;
     color: var(--primario); 
     padding-bottom: 0px; 
+    transition: all 0.5s ease;
+}
+
+/* --- MODO SALDOS (CAMBIO DE LOOK TOTAL A AMARILLO) --- */
+body.seccion-saldos-activa {
+    background-color: var(--fondo-saldos) !important;
+    background-image: none; /* Quitamos los puntitos para que se vea más limpio */
+}
+
+/* El header cambia de color en modo saldos */
+body.seccion-saldos-activa header {
+    border-bottom: 4px solid var(--amarillo-oferta);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
 }
 
 /* --- HEADER BOUTIQUE --- */
@@ -111,7 +129,6 @@ header {
 .icon-instagram { color: #E1306C; }
 .icon-facebook { color: #4267B2; }
 .icon-whatsapp { color: #25D366; }
-/* NUEVA REGLA TIKTOK MANTENIENDO EL ESTILO ORIGINAL */
 .icon-tiktok { color: #ffffff; }
 
 /* --- CATEGORÍAS --- */
@@ -144,9 +161,22 @@ header {
 }
 
 .categoria-btn.activa { 
-    background: var(--dorado);    /* Cambiado de vino a dorado */
+    background: var(--dorado); 
     color: var(--blanco); 
-    border-color: var(--dorado);  /* Cambiado para que el borde también sea dorado */
+    border-color: var(--dorado); 
+}
+
+/* BOTÓN ESPECIAL DE SALDOS CON ANIMACIÓN DE PULSO AMARILLO */
+.categoria-btn:last-child {
+    border: 2px dashed var(--amarillo-oferta);
+    color: var(--amarillo-oferta);
+    animation: pulseAmarillo 1.5s infinite;
+}
+
+@keyframes pulseAmarillo {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 /* --- PRODUCTOS --- */
@@ -174,7 +204,6 @@ header {
     border-color: var(--dorado);
 }
 
-/* MODIFICACIÓN: Contenedor de imagen ahora relativo para la etiqueta de oferta */
 .main-img-container { 
     position: relative;
     height: 300px; 
@@ -188,7 +217,52 @@ header {
 
 .main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-/* --- ESTILOS DE OFERTA (NUEVO) --- */
+/* --- ESTILOS DE TARJETA DE SALDOS (NUEVO AMARILLO OFERTA) --- */
+.seccion-saldos-activa .producto {
+    background: #fff !important; /* Mantenemos el fondo blanco de la tarjeta */
+    border: 3px solid var(--amarillo-oferta) !important; /* Borde amarillo grueso de oferta */
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.seccion-saldos-activa h3 {
+    color: #333 !important; /* Texto oscuro para el nombre */
+}
+
+/* Bloque del precio en AMARILLO VIBRANTE */
+.seccion-saldos-activa .precio {
+    background: var(--amarillo-oferta) !important; 
+    color: #333 !important; /* Texto oscuro sobre amarillo */
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 1.8rem !important;
+    font-weight: 900;
+    width: 90%;
+    margin: 0 auto 10px;
+}
+
+/* Bloque de la descripción en AMARILLO SUAVE */
+.seccion-saldos-activa .descripcion {
+    background: rgba(255, 215, 0, 0.08) !important; /* Un amarillo sutil de fondo */
+    color: #555 !important;
+    border-left-color: var(--amarillo-oferta);
+}
+
+/* Etiqueta de la talla en amarillo */
+.seccion-saldos-activa .main-img-container::before {
+    content: "OUTLET";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--amarillo-oferta);
+    color: #333;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+/* --- ESTILOS DE OFERTA (PARA MODO NORMAL) --- */
 .badge-oferta {
     position: absolute;
     top: 15px;
