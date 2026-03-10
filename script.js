@@ -110,7 +110,7 @@ function mostrarProductos() {
     contenedor.innerHTML = "";
     
     const inicio = (paginaActual - 1) * productosPorPagina;
-    const fin = inicio + productosPorPagina;
+    const fin = Math.min(inicio + productosPorPagina, productosFiltrados.length);
     const lista = productosFiltrados.slice(inicio, fin);
 
     lista.forEach(p => {
