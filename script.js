@@ -319,6 +319,50 @@ function enviarPedidoWhatsApp() {
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
+/* --- BUSCADOR FLOTANTE INFERIOR (SOLO PC) --- */
+function mostrarBuscadorFlotante() {
+    const buscadorFlotante = document.getElementById('buscador-flotante');
+    if (buscadorFlotante && window.innerWidth >= 1024) {
+        buscadorFlotante.style.display = 'flex';
+    }
+}
+
+function cerrarBuscadorFlotante() {
+    const buscadorFlotante = document.getElementById('buscador-flotante');
+    if (buscadorFlotante) {
+        buscadorFlotante.style.display = 'none';
+    }
+}
+
+// Detectar cuando el usuario llega al final de la página (solo en PC)
+window.addEventListener('scroll', () => {
+    // Solo ejecutar en pantallas grandes (PC)
+    if (window.innerWidth < 1024) return;
+    
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    // Mostrar buscador cuando esté a 200px del final
+    if (scrollTop + windowHeight >= documentHeight - 200) {
+        mostrarBuscadorFlotante();
+    } else {
+        cerrarBuscadorFlotante();
+    }
+});
+
+// Conectar el buscador inferior con la misma lógica que el principal (solo en PC)
+document.getElementById('buscador-inferior')?.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    // Sincronizar con el buscador principal
+    const buscadorPrincipal = document.getElementById('buscador');
+    if (buscadorPrincipal) {
+        buscadorPrincipal.value = term;
+        // Disparar el evento del buscador principal
+        buscadorPrincipal.dispatchEvent(new Event('input'));
+    }
+});
+
 /* --- BUSCADOR --- */
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
