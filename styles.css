@@ -167,6 +167,13 @@ header {
     z-index: 900; 
 }
 
+@media (min-width: 768px) {
+    #categorias {
+        justify-content: flex-start;
+        padding-left: 40px;
+    }
+}
+
 .categoria-btn { 
     padding: 6px 16px;
     border-radius: 20px; 
