@@ -168,6 +168,7 @@ function abrirGaleria(codigo, total) {
     actualizarVistaGaleria();
     document.getElementById('lightbox').style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('lightbox-active');
 }
 
 function actualizarVistaGaleria() {
@@ -228,6 +229,7 @@ function cambiarImagenNav(paso, event) {
 function cerrarImagen() {
     document.getElementById('lightbox').style.display = 'none';
     document.body.style.overflow = 'auto';
+    document.body.classList.remove('lightbox-active');
 }
 
 /* --- LÓGICA DEL CARRITO --- */

@@ -726,7 +726,7 @@ h3 {
     width: 100%; 
     height: 100%; 
     background: rgba(0,0,0,0.96); 
-    z-index: 6000; 
+    z-index: 99999; 
     justify-content: center; 
     align-items: center; 
 }
@@ -806,6 +806,45 @@ h3 {
     border-color: var(--marca-secundario); 
     transform: scale(1.1); 
     opacity: 1; 
+}
+
+/* =================================== */
+/* 10.5 🌙 MODO LIGHTBOX ACTIVO - OCULTAR ELEMENTOS */
+/* =================================== */
+body.lightbox-active {
+    overflow: hidden !important;
+}
+
+body.lightbox-active header {
+    display: none !important;
+}
+
+body.lightbox-active #categorias {
+    display: none !important;
+}
+
+body.lightbox-active #productos {
+    display: none !important;
+}
+
+body.lightbox-active #paginacion {
+    display: none !important;
+}
+
+body.lightbox-active .banner-popup {
+    display: none !important;
+}
+
+body.lightbox-active .bottom-nav {
+    display: none !important;
+}
+
+body.lightbox-active footer {
+    display: none !important;
+}
+
+body.lightbox-active #btn-carrito {
+    display: none !important;
 }
 
 /* =================================== */
