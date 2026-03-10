@@ -1215,6 +1215,8 @@ body.seccion-saldos-activa .pag-btn.activa {
         display: flex !important;
         order: 2;
         margin-top: 15px !important;
+        position: relative !important;
+        z-index: 10 !important;
     }
     
     /* Search container debajo del logo */
@@ -1228,7 +1230,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         margin: 0 auto !important;
         padding: 0 !important;
         background: transparent !important;
-        z-index: auto !important;
+        z-index: 1 !important;
         box-shadow: none !important;
         order: 3;
     }
