@@ -169,6 +169,7 @@ header {
 
 @media (min-width: 768px) {
     #categorias {
+        justify-content: flex-start;
         padding-left: 8px;
     }
 }
