@@ -110,8 +110,21 @@ function mostrarProductos() {
     contenedor.innerHTML = "";
     
     const inicio = (paginaActual - 1) * productosPorPagina;
-    const fin = inicio + productosPorPagina;
+    const fin = Math.min(inicio + productosPorPagina, productosFiltrados.length);
     const lista = productosFiltrados.slice(inicio, fin);
+    
+    // Para la última página con menos productos, ajustar el grid
+    const esUltimaPagina = (paginaActual === Math.ceil(productosFiltrados.length / productosPorPagina));
+    const productosEnUltimaPagina = productosFiltrados.length % productosPorPagina;
+    
+    if (esUltimaPagina && productosEnUltimaPagina !== 0) {
+        // Ajustar grid para última página incompleta
+        const columnasNecesarias = Math.min(productosEnUltimaPagina, 4); // Máximo 4 columnas
+        contenedor.style.gridTemplateColumns = `repeat(${columnasNecesarias}, 1fr)`;
+    } else {
+        // Mantener grid normal para páginas completas
+        contenedor.style.gridTemplateColumns = "";
+    }
 
     lista.forEach(p => {
         const div = document.createElement('div');
