@@ -151,6 +151,11 @@ header {
 .icon-whatsapp { color: var(--whatsapp); }
 .icon-tiktok { color: var(--tiktok); }
 
+/* Ocultar bottom nav en desktop */
+.bottom-nav {
+    display: none;
+}
+
 /* =================================== */
 /* 5. 🏷️ CATEGORÍAS (FILTROS) */
 /* =================================== */
