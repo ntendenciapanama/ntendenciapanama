@@ -104,9 +104,10 @@ header {
     position: sticky;
     top: 0;
     background: var(--marca-primario);
-    padding: 10px 0;
+    padding: 15px 0;
     z-index: 901;
     backdrop-filter: blur(10px);
+    min-height: 100px;
 }
 
 #buscador { 
@@ -165,11 +166,11 @@ header {
     flex-wrap: wrap; 
     justify-content: center; 
     gap: 8px; 
-    padding: 12px 15px;
+    padding: 20px 15px;
     background: var(--negro);
     border-bottom: 1px solid #333;
     position: sticky; 
-    top: 85px; 
+    top: 100px; 
     z-index: 900; 
 }
 
