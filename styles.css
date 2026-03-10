@@ -1347,17 +1347,6 @@ body.seccion-saldos-activa .pag-btn.activa {
     /* Categorías debajo de todo - ahora sticky en tablet */
     #categorias {
         position: sticky !important;
-    /* Ocultar paginación en móvil */
-    #paginacion {
-        display: none !important;
-    }
-    
-    /* Ocultar botón flotante de carrito original */
-    #btn-carrito {
-        display: none !important;
-    }
-    
-    /* Ocultar marquee en header móvil */
     header > div:last-child {
         display: none !important;
     }
