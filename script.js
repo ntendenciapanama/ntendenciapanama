@@ -12,7 +12,7 @@ let totalImg = 1;
 let codActual = "";
 
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
-const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
+const URL_SHEET = URL_BASE + '&t=' + new Date().getTime() + '&v=' + Math.random();
 
 /* --- BANNER POPUP PARA MÓVILES --- */
 function mostrarBannerMovil() {
