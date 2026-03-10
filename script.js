@@ -37,6 +37,75 @@ function cerrarBanner() {
         // Guardar en localStorage para no mostrar de nuevo en esta sesión
         localStorage.setItem('banner-cerrado', 'true');
     }
+}
+
+// Mostrar banner solo si no se ha cerrado en esta sesión
+function initBanner() {
+    if (localStorage.getItem('banner-cerrado') !== 'true') {
+        // Mostrar después de 1 segundo de cargar la página
+        setTimeout(mostrarBannerMovil, 1000);
+    }
+}
+
+initBanner();
+
+/* --- RESPONSIVIDAD --- */
+function ajustarPaginacionDinamica() {
+    const ancho = window.innerWidth;
+    if (ancho < 600) { productosPorPagina = 10; } 
+    else if (ancho >= 600 && ancho < 1024) { productosPorPagina = 12; } 
+    else if (ancho >= 1024 && ancho < 1440) { productosPorPagina = 12; } 
+    else { productosPorPagina = 18; }
+}
+
+ajustarPaginacionDinamica();
+
+/* --- CARGA DE DATOS --- */
+fetch(URL_SHEET)
+    .then(res => res.text())
+    .then(csvText => {
+        const todasLasFilas = csvText.split(/\r?\n/);
+        const filasDeProductos = todasLasFilas.slice(2);
+        
+        const productosMapeados = filasDeProductos.map(fila => {
+            const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
+            const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
+
+            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
+            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
+            const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
+
+            return {
+                codigo: limpiar(columnas[0]),
+                nombre: limpiar(columnas[1]),
+                precio: precioVentaHoy,
+                precioOriginal: precioBase,
+                esOferta: precioOferta > 0 && precioOferta < precioBase,
+                stock: limpiar(columnas[3]),
+                descripcion: limpiar(columnas[4]) || "",
+                status: limpiar(columnas[5])?.toLowerCase(),
+                categoria: limpiar(columnas[6]) || "General",
+                totalImagenes: parseInt(limpiar(columnas[7])) || 1 
+            };
+        }).filter(p => {
+            const tieneCodigo = p.codigo && p.codigo.length > 1;
+            const estaVendido = p.status === 'true' || p.status === '1' || p.status === 'vendido' || p.status === 'vrai';
+            return tieneCodigo && !estaVendido;
+        });
+
+        const listaInvertida = productosMapeados.reverse();
+        catalogoCompleto = listaInvertida;
+        todosLosProductos = listaInvertida.filter(p => p.categoria.toLowerCase() !== 'saldos');
+        productosFiltrados = todosLosProductos;
+        
+        generarCategorias();
+        mostrarProductos();
+    })
+    .catch(err => console.error("Error cargando Google Sheets:", err));
+
+/* --- MOSTRAR PRODUCTOS EN GRILLA --- */
+function mostrarProductos() {
+    const contenedor = document.getElementById('productos');
     if (!contenedor) return;
     contenedor.innerHTML = "";
     
