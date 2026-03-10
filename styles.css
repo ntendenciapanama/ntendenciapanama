@@ -1191,8 +1191,8 @@ body.seccion-saldos-activa .pag-btn.activa {
     }
     
     .logo-imagen {
-        max-width: 300px !important;
-        max-height: 60px !important;
+        max-width: 350px !important;
+        max-height: 70px !important;
         width: auto !important;
         height: auto !important;
     }
@@ -1210,15 +1210,6 @@ body.seccion-saldos-activa .pag-btn.activa {
         height: 24px !important;
     }
     
-    /* Mostrar marquee en tablet */
-    header > div:last-child {
-        display: flex !important;
-        order: 2;
-        margin-top: 15px !important;
-        position: relative !important;
-        z-index: 10 !important;
-    }
-    
     /* Search container debajo del logo */
     .search-container {
         position: relative !important;
@@ -1230,9 +1221,9 @@ body.seccion-saldos-activa .pag-btn.activa {
         margin: 0 auto !important;
         padding: 0 !important;
         background: transparent !important;
-        z-index: 1 !important;
+        z-index: 10 !important;
         box-shadow: none !important;
-        order: 3;
+        order: 2;
     }
     
     #buscador {
@@ -1253,6 +1244,15 @@ body.seccion-saldos-activa .pag-btn.activa {
     
     .search-container .slogan-marca {
         display: none !important;
+    }
+    
+    /* Mostrar marquee en tablet */
+    header > div:last-child {
+        display: flex !important;
+        order: 3;
+        margin-top: 20px !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
     
     /* Categorías debajo de todo */
