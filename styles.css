@@ -1740,11 +1740,21 @@ header {
 
 /* Responsive Mobile */
 @media (max-width: 768px) {
-    /* Ocultar elementos desktop */
-    .contact-icons,
-    .search-container .slogan-marca,
-    #categorias {
+    /* Ocultar header desktop y mostrar header mobile */
+    header:not(.header-mobile) {
         display: none !important;
+    }
+    
+    .header-mobile {
+        display: flex !important;
+        background: var(--marca-primario);
+        padding: 15px 20px;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     
     /* Mostrar elementos mobile */
@@ -1758,9 +1768,11 @@ header {
         display: flex;
     }
     
-    /* Ajustar header */
-    header {
-        padding: 15px 20px;
+    /* Ocultar elementos desktop */
+    .contact-icons,
+    .search-container .slogan-marca,
+    #categorias {
+        display: none !important;
     }
     
     /* Ajustar buscador */
