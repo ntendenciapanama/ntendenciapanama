@@ -168,8 +168,8 @@ header {
     background: var(--negro);
     border-bottom: 1px solid #333;
     position: sticky; 
-    top: 104px; 
-    z-index: 900; 
+    top: 0; 
+    z-index: 999; 
 }
 
 @media (min-width: 768px) {
@@ -1267,19 +1267,14 @@ body.seccion-saldos-activa .pag-btn.activa {
 
 /* TABLET: Ajustes específicos para tablets (769px - 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
-    /* Header en columna para tablet vertical */
+    /* Header en columna para tablet vertical - ahora sticky */
     header {
         padding: 15px 20px !important;
         gap: 15px !important;
         flex-direction: column !important;
         height: auto !important;
         min-height: 120px !important;
-        position: relative !important;
-    }
-    
-    /* Logo centrado y grande */
-    .logo-wrapper {
-        width: 100% !important;
+        position: sticky !important;
         justify-content: center !important;
         padding: 0 !important;
     }
@@ -1349,29 +1344,9 @@ body.seccion-saldos-activa .pag-btn.activa {
         z-index: 1 !important;
     }
     
-    /* Categorías debajo de todo */
+    /* Categorías debajo de todo - ahora sticky en tablet */
     #categorias {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 10px 15px !important;
-        z-index: auto !important;
-        order: 4;
-    }
-    
-    /* Productos en tablet */
-    #productos {
-        margin-top: 20px !important;
-        padding: 20px !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-    }
-}
-
-/* MÓVIL: Ajustes específicos para móviles (max-width: 768px) */
-@media (max-width: 768px) {
+        position: sticky !important;
     /* Ocultar paginación en móvil */
     #paginacion {
         display: none !important;
