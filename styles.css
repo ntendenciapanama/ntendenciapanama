@@ -920,50 +920,222 @@ h3 {
 }
 
 /* =================================== */
-/* 13. 🎨 ESTILOS ESPECIALES SALDOS */
+/* 13. 🎨 ESTILOS ESPECIALES SALDOS - OUTLET ELEGANTE */
 /* =================================== */
+body.seccion-saldos-activa {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%) !important;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+    background-size: 400px 400px, 400px 400px;
+    background-attachment: fixed;
+}
+
+body.seccion-saldos-activa header {
+    border-bottom: 4px solid var(--oferta-amarillo);
+    box-shadow: 0 4px 30px rgba(255, 215, 0, 0.4);
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%) !important;
+}
+
+/* Partículas doradas flotantes para saldos */
+body.seccion-saldos-activa::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.02) 0%, transparent 50%);
+    animation: particulasSaldos 20s infinite linear;
+}
+
+@keyframes particulasSaldos {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* Productos con look outlet de lujo */
 .seccion-saldos-activa .producto {
-    background: #fff !important; 
-    border: 3px solid var(--oferta-amarillo) !important; 
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%) !important; 
+    border: 2px solid var(--oferta-amarillo) !important; 
+    box-shadow: 
+        0 0 20px rgba(255, 215, 0, 0.3),
+        0 0 40px rgba(255, 215, 0, 0.1),
+        inset 0 0 20px rgba(255, 215, 0, 0.05);
+    position: relative;
+    overflow: hidden;
 }
 
+/* Efecto holográfico en bordes */
+.seccion-saldos-activa .producto::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        transparent, 
+        var(--oferta-amarillo), 
+        transparent, 
+        var(--oferta-amarillo), 
+        transparent);
+    border-radius: 15px;
+    z-index: -1;
+    animation: holografico 3s infinite linear;
+    opacity: 0.6;
+}
+
+@keyframes holografico {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.seccion-saldos-activa .producto:hover {
+    transform: translateY(-15px) scale(1.03) !important; 
+    box-shadow: 
+        0 0 30px rgba(255, 215, 0, 0.5),
+        0 0 60px rgba(255, 215, 0, 0.2),
+        0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: var(--marca-dorado-brillante) !important;
+}
+
+/* Textos elegantes */
 .seccion-saldos-activa h3 {
-    color: #333 !important; 
+    color: var(--oferta-amarillo) !important; 
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    font-weight: 700;
 }
 
+/* Precios con look premium */
 .seccion-saldos-activa .precio {
-    background: var(--oferta-amarillo) !important; 
-    color: #333 !important; 
-    padding: 10px;
-    border-radius: 8px;
-    width: 90%;
-    margin: 0 auto 10px;
+    background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important; 
+    color: #000 !important; 
+    padding: 15px;
+    border-radius: 12px;
+    width: 95%;
+    margin: 0 auto 15px;
+    box-shadow: 
+        0 5px 15px rgba(255, 215, 0, 0.4),
+        inset 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto brillo en precios */
+.seccion-saldos-activa .precio::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent);
+    animation: brilloPrecio 3s infinite;
+}
+
+@keyframes brilloPrecio {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
 }
 
 .seccion-saldos-activa .precio .precio-actual {
-    font-size: 1.8rem !important;
+    font-size: 2rem !important;
     font-weight: 900;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
 }
 
+/* Descripciones elegantes */
 .seccion-saldos-activa .descripcion {
-    background: rgba(255, 215, 0, 0.08) !important; 
-    color: #555 !important;
-    border-left-color: var(--oferta-amarillo);
+    background: rgba(255, 215, 0, 0.05) !important; 
+    color: #ccc !important;
+    border-left: 4px solid var(--oferta-amarillo);
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.1);
 }
 
+/* Badge OUTLET premium */
 .seccion-saldos-activa .main-img-container::before {
     content: "OUTLET";
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--oferta-amarillo);
-    color: #333;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%);
+    color: #000;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 5px 12px;
+    border-radius: 8px;
     text-transform: uppercase;
+    box-shadow: 
+        0 4px 15px rgba(255, 215, 0, 0.5),
+        inset 0 0 10px rgba(0, 0, 0, 0.1);
+    animation: pulsoOutlet 2s infinite;
+    z-index: 10;
+    letter-spacing: 1px;
+}
+
+@keyframes pulsoOutlet {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+    }
+    50% { 
+        transform: scale(1.05); 
+        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.7);
+    }
+}
+
+/* Efectos adicionales para botones en saldos */
+.seccion-saldos-activa .whatsapp-btn,
+.seccion-saldos-activa .btn-añadir-lista {
+    background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+    color: #000 !important;
+    font-weight: 800;
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.seccion-saldos-activa .whatsapp-btn:hover,
+.seccion-saldos-activa .btn-añadir-lista:hover {
+    transform: translateY(-8px) scale(1.05) !important;
+    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.6);
+    filter: brightness(1.2);
+}
+
+/* Categorías en modo saldos */
+body.seccion-saldos-activa #categorias {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%) !important;
+    border-bottom: 2px solid var(--oferta-amarillo);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+}
+
+body.seccion-saldos-activa .categoria-btn.activa {
+    background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+    color: #000 !important;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Paginación elegante en saldos */
+body.seccion-saldos-activa .pag-btn {
+    border-color: var(--oferta-amarillo) !important;
+    color: var(--oferta-amarillo) !important;
+}
+
+body.seccion-saldos-activa .pag-btn.activa {
+    background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+    color: #000 !important;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
 }
 
 /* =================================== */
