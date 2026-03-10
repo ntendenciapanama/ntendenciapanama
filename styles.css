@@ -1431,19 +1431,19 @@ body.seccion-saldos-activa .pag-btn.activa {
     animation: none !important;
 }
 
-/* Ocultar elementos cuando carrito está abierto en móvil */
-body.carrito-abierto header,
-body.carrito-abierto .search-container,
-body.carrito-abierto #categorias,
-body.carrito-abierto .bottom-nav {
-    display: none !important;
-}
-
-body.carrito-abierto {
-    overflow: hidden !important;
-}
-
 @media (max-width: 768px) {
+    /* Ocultar elementos cuando carrito está abierto - solo móvil */
+    body.carrito-abierto header,
+    body.carrito-abierto .search-container,
+    body.carrito-abierto #categorias,
+    body.carrito-abierto .bottom-nav {
+        display: none !important;
+    }
+
+    body.carrito-abierto {
+        overflow: hidden !important;
+    }
+
     .bottom-nav {
         position: fixed !important;
         bottom: 0 !important;
