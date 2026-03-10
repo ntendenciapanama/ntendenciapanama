@@ -1,27 +1,3 @@
-/* --- FUNCIONES BARRA INFERIOR AMAZON --- */
-function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Actualizar estado activo
-    document.querySelectorAll('.bottom-nav-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    event.currentTarget.classList.add('active');
-}
-
-function focusSearch() {
-    const buscador = document.getElementById('buscador');
-    if (buscador) {
-        buscador.focus();
-        // Hacer scroll al buscador
-        buscador.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    // Actualizar estado activo
-    document.querySelectorAll('.bottom-nav-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    event.currentTarget.classList.add('active');
-}
-
 /* --- VARIABLES GLOBALES --- */
 let todosLosProductos = []; // Solo premium
 let productosFiltrados = [];
@@ -30,8 +6,6 @@ let carrito = [];
 
 let productosPorPagina = 12; 
 let paginaActual = 1;
-let cargandoMas = false;
-let tieneMasProductos = true;
 
 let imgIndex = 1;
 let totalImg = 1;
@@ -129,34 +103,26 @@ fetch(URL_SHEET)
     })
     .catch(err => console.error("Error cargando Google Sheets:", err));
 
-/* --- MOSTRAR PRODUCTOS CON SCROLL INFINITO --- */
-function mostrarProductos(cargarMas = false) {
+/* --- MOSTRAR PRODUCTOS EN GRILLA --- */
+function mostrarProductos() {
     const contenedor = document.getElementById('productos');
     if (!contenedor) return;
-    
-    if (!cargarMas) {
-        contenedor.innerHTML = "";
-        paginaActual = 1;
-        tieneMasProductos = true;
-    }
+    contenedor.innerHTML = "";
     
     const inicio = (paginaActual - 1) * productosPorPagina;
     const fin = inicio + productosPorPagina;
     const lista = productosFiltrados.slice(inicio, fin);
-    
-    if (lista.length === 0) {
-        tieneMasProductos = false;
-        return;
-    }
 
     lista.forEach(p => {
         const div = document.createElement('div');
+        // REPARACIÓN: Se añade 'tiene-oferta' para activar el marco amarillo si es oferta
         const claseSaldos = p.categoria.toLowerCase() === 'saldos' ? 'producto-saldo' : '';
         const claseOferta = p.esOferta ? 'tiene-oferta' : '';
         div.className = `producto ${claseSaldos} ${claseOferta}`;
         
         const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
         
+        // REPARACIÓN: Estructura de precio ajustada para el CSS de columna
         const precioHTML = p.esOferta 
             ? `<div class="precio">
                 <span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> 
@@ -184,23 +150,7 @@ function mostrarProductos(cargarMas = false) {
         `;
         contenedor.appendChild(div);
     });
-    
-    paginaActual++;
-    
-    // Verificar si hay más productos
-    if (fin >= productosFiltrados.length) {
-        tieneMasProductos = false;
-    }
-    
-    cargandoMas = false;
-    
-    // Ocultar paginación en móvil
-    if (window.innerWidth < 768) {
-        const paginacion = document.getElementById('paginacion');
-        if (paginacion) paginacion.style.display = 'none';
-    } else {
-        actualizarPaginacion();
-    }
+    actualizarPaginacion();
 }
 
 /* --- LÓGICA DE GALERÍA (LIGHTBOX) --- */
@@ -430,22 +380,5 @@ window.addEventListener('resize', () => {
     if (previo !== productosPorPagina) {
         paginaActual = 1; 
         mostrarProductos();
-    }
-});
-
-/* --- SCROLL INFINITO --- */
-window.addEventListener('scroll', () => {
-    // Solo activar scroll infinito en móvil
-    if (window.innerWidth >= 768) return;
-    
-    if (cargandoMas || !tieneMasProductos) return;
-    
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const documentHeight = document.documentElement.offsetHeight;
-    
-    // Cargar más productos cuando falten 200px para llegar al final
-    if (scrollPosition >= documentHeight - 200) {
-        cargandoMas = true;
-        mostrarProductos(true);
     }
 });
