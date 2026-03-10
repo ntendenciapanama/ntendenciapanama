@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <header class="header-main"> 
+    <header style="position: relative; padding-bottom: 45px;"> 
         <div class="logo-wrapper">
             <img src="logo.png" alt="NTENDENCIA PA" class="logo-imagen">
         </div>
@@ -82,8 +82,8 @@
             </a>
         </div>
 
-        <div class="marquee-container">
-            <marquee id="marquee-promociones" class="marquee-promociones" scrollamount="5">
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: transparent; overflow: hidden;">
+            <marquee id="marquee-promociones" scrollamount="5" style="color: white; font-family: 'Poppins', sans-serif; font-size: 13px; padding: 10px 0; font-weight: 600; letter-spacing: 1.2px; display: block; width: 100%;">
                 ✨ BIENVENIDOS (AS) A NTENDENCIA PANAMÁ: SÍGUENOS EN NUESTRAS REDES SOCIALES Y CONOCE LA EXCLUSIVIDAD AL MEJOR PRECIO ✨ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
                 💎 MARCAS PREMIUM SELECCIONADAS SOLO PARA TI 💎 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
                 🔥 ¡LO QUE VES HOY, SE VA MAÑANA! – UNIDADES LIMITADAS POR MODELO – PIDE LA TUYA ANTES QUE SE AGOTE 🔥 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -92,15 +92,28 @@
         </div>
     </header>
 
-    <nav id="categorias" class="categorias-nav">
+    <nav id="categorias" style="
+        position: sticky; 
+        top: 0; 
+        z-index: 1000; 
+        background: #000; 
+        width: 100%; 
+        padding: 12px 5px; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+        display: flex; 
+        flex-wrap: wrap;       /* Clave: permite bajar a la siguiente línea */
+        justify-content: center; /* Centra los botones estéticamente */
+        gap: 8px;              /* Espacio entre botones */
+        box-sizing: border-box;
+    ">
     </nav>
     
     <main id="productos"></main>
     <div id="paginacion"></div>
 
-    <div id="btn-carrito" class="btn-carrito" onclick="toggleCarrito()">
+    <div id="btn-carrito" onclick="toggleCarrito()">
         <span class="icono-carrito">🛒</span>
-        <div id="contador-carrito" class="contador-carrito">0</div>
+        <div id="contador-carrito">0</div>
     </div>
 
     <div id="modal-carrito" class="modal-carrito" onclick="toggleCarrito()">
@@ -140,12 +153,14 @@
         </div>
     </div>
 
-    <footer class="footer-main">
-        <p class="footer-title">Visitas a la boutique</p>
-        <div class="footer-counter">
-            <img src="https://counter9.optistats.ovh/private/contadorvisitasgratis.php?c=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6&style=white" title="visitas" alt="visitas">
+    <footer style="text-align: center; margin-top: 50px; padding: 40px; border-top: 1px solid #eee; background: #fff;">
+        <p style="font-size: 0.8rem; color: #410020; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px;">
+            Visitas a la boutique
+        </p>
+        <div style="display: inline-block;">
+            <img src="https://counter9.optistats.ovh/private/contadorvisitasgratis.php?c=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6&style=white" border="0" title="visitas" alt="visitas" style="height: 30px;">
         </div>
-        <p class="footer-copyright">&copy; 2026 NTENDENCIA PANAMÁ - Todos los derechos reservados</p>
+        <p style="font-size: 0.7rem; color: #bbb; margin-top: 25px; font-family: 'Poppins', sans-serif;">&copy; 2026 NTENDENCIA PANAMÁ - Todos los derechos reservados</p>
     </footer>
 
     <nav class="bottom-nav">
