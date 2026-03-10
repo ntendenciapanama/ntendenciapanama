@@ -236,7 +236,7 @@ function cerrarImagen() {
 function añadirAlCarrito(codigo) {
     const yaExiste = carrito.find(x => x.codigo === codigo);
     if (yaExiste) {
-        alert("Este producto ya está en lista");
+        mostrarNotificacion("Este producto ya está en lista");
         return;
     }
     const p = catalogoCompleto.find(x => x.codigo === codigo);
@@ -429,3 +429,68 @@ window.addEventListener('resize', () => {
         mostrarProductos();
     }
 });
+
+/* --- NOTIFICACIONES PERSONALIZADAS --- */
+function mostrarNotificacion(mensaje) {
+    // Crear el elemento de notificación
+    const notificacion = document.createElement('div');
+    notificacion.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #410020 0%, #6a1b3a 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        border: 2px solid #E0C080;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        z-index: 100000;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        max-width: 300px;
+        animation: slideInRight 0.3s ease-out;
+        transition: all 0.3s ease;
+    `;
+    notificacion.textContent = mensaje;
+    
+    // Agregar al body
+    document.body.appendChild(notificacion);
+    
+    // Remover después de 3 segundos
+    setTimeout(() => {
+        notificacion.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => {
+            if (notificacion.parentNode) {
+                document.body.removeChild(notificacion);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Agregar las animaciones necesarias
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
