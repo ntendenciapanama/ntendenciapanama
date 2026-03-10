@@ -218,6 +218,74 @@ function cambiarImagenNav(paso, event) {
     actualizarVistaGaleria();
 }
 
+function cerrarImagen() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+/* --- LÓGICA DEL CARRITO --- */
+function añadirAlCarrito(codigo) {
+    const yaExiste = carrito.find(x => x.codigo === codigo);
+    if (yaExiste) {
+        alert("✨ Este producto ya está en tu lista de pedido.");
+        return;
+    }
+    const p = catalogoCompleto.find(x => x.codigo === codigo);
+    if (p) { 
+        carrito.push(p); 
+        const contador = document.getElementById('contador-carrito');
+        if (contador) contador.innerText = carrito.length;
+        // Actualizar badge en bottom nav (móvil)
+        const badge = document.getElementById('bottom-nav-badge');
+        if (badge) {
+            badge.innerText = carrito.length;
+            badge.style.display = carrito.length > 0 ? 'flex' : 'none';
+        }
+        const btn = document.getElementById('btn-carrito');
+        if (btn) {
+            btn.style.transform = "scale(1.2)";
+            setTimeout(() => btn.style.transform = "scale(1)", 200);
+        }
+    }
+}
+
+function toggleCarrito() {
+    const m = document.getElementById('modal-carrito');
+    if (!m) return;
+    const isVisible = m.style.display === "flex";
+    m.style.display = isVisible ? "none" : "flex";
+    document.body.style.overflow = isVisible ? "auto" : "hidden";
+    if (!isVisible) dibujarCarrito();
+}
+
+function dibujarCarrito() {
+    const lista = document.getElementById('lista-carrito');
+    const totalSpan = document.getElementById('precio-total');
+    if (!lista || !totalSpan) return;
+    lista.innerHTML = ""; 
+    let total = 0;
+    if (carrito.length === 0) {
+        lista.innerHTML = `<div style="text-align:center; padding:40px 0; color:#888;"><p>Tu lista está vacía.</p></div>`;
+        totalSpan.innerText = "0.00";
+        return;
+    }
+    carrito.forEach((p, i) => {
+        total += p.precio;
+        lista.innerHTML += `
+            <div class="item-carrito">
+                <div>
+                    <strong>${p.nombre}</strong>
+                    <small style="display:block; color:#666;">Cód: ${p.codigo}</small>
+                </div>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <span style="font-weight:bold;">$${p.precio.toFixed(2)}</span>
+                    <button class="btn-quitar" onclick="quitarDelCarrito(${i})">✕</button>
+                </div>
+            </div>`;
+    });
+    totalSpan.innerText = total.toFixed(2);
+}
+
 function quitarDelCarrito(i) {
     carrito.splice(i, 1);
     const contador = document.getElementById('contador-carrito');
