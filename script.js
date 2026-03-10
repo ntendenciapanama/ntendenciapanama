@@ -348,6 +348,7 @@ function generarCategorias() {
             
             paginaActual = 1;
             mostrarProductos();
+            window.scrollTo({top: 0, behavior: 'smooth'});
         };
         cont.appendChild(b);
     });
