@@ -380,20 +380,65 @@ header {
     transition: transform 0.4s ease;
 }
 
-/* Badge de oferta */
+/* Badge de oferta ESPECTACULAR */
 .badge-oferta {
     position: absolute;
     top: 15px;
     left: 15px;
-    background: var(--oferta-rojo);
+    background: linear-gradient(135deg, #ff1744 0%, #ff6b6b 50%, #ff1744 100%);
     color: white;
-    padding: 5px 12px;
-    border-radius: 5px;
-    font-weight: 800;
-    font-size: 0.75rem;
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 900;
+    font-size: 0.8rem;
     z-index: 10;
-    box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
-    animation: pulseOferta 2s infinite;
+    box-shadow: 
+        0 6px 20px rgba(255, 23, 68, 0.4),
+        0 0 30px rgba(255, 23, 68, 0.2),
+        inset 0 0 10px rgba(255, 255, 255, 0.2);
+    animation: pulseOferta 1.5s infinite, glowOferta 2s infinite alternate;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Efecto de brillo en badge */
+.badge-oferta::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent);
+    animation: brilloBadge 3s infinite;
+}
+
+@keyframes brilloBadge {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+}
+
+/* Efecto de glow animado */
+@keyframes glowOferta {
+    0% { 
+        box-shadow: 
+            0 6px 20px rgba(255, 23, 68, 0.4),
+            0 0 30px rgba(255, 23, 68, 0.2),
+            inset 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+    100% { 
+        box-shadow: 
+            0 8px 25px rgba(255, 23, 68, 0.6),
+            0 0 40px rgba(255, 23, 68, 0.4),
+            inset 0 0 15px rgba(255, 255, 255, 0.3);
+    }
 }
 
 /* Precios */
