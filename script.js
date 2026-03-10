@@ -126,7 +126,7 @@ function mostrarProductos() {
         const precioHTML = p.esOferta 
             ? `<div class="precio">
                 <span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> 
-                <span class="precio-actual">$${p.precio.toFixed(2)}</span>
+                <span class="precio-actual oferta">$${p.precio.toFixed(2)}</span>
                </div>`
             : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
 

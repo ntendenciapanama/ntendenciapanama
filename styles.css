@@ -410,11 +410,30 @@ header {
 
 .precio-tachado {
     text-decoration: line-through;
-    color: #b0b0b0;
-    font-size: 0.6em;
+    color: #999;
+    font-size: 0.75em;
     font-weight: 400;
-    margin-right: 0;
-    margin-bottom: -5px;
+    margin-right: 8px;
+    opacity: 0.7;
+    position: relative;
+}
+
+.precio-tachado::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: var(--oferta-rojo);
+    transform: translateY(-50%);
+}
+
+.precio-actual.oferta {
+    color: var(--oferta-rojo);
+    font-weight: 800;
+    font-size: 1.3em;
+    text-shadow: 0 1px 2px rgba(255, 71, 87, 0.1);
 }
 
 /* Info del producto */
