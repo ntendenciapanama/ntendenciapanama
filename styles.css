@@ -1192,7 +1192,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         right: 0 !important;
         width: 100% !important;
         min-height: 60px;
-        z-index: 1000;
+        z-index: 9998 !important;
     }
     
     .logo-wrapper {
@@ -1226,7 +1226,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         margin: 0 !important;
         padding: 6px 10px !important;
         background: #410020 !important;
-        z-index: 1001 !important;
+        z-index: 10000 !important;
         box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
     
@@ -1266,7 +1266,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         padding: 6px 12px !important;
         gap: 8px !important;
         background: #000 !important;
-        z-index: 1000 !important;
+        z-index: 9997 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         scrollbar-width: none;
         -ms-overflow-style: none;
