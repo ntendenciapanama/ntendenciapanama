@@ -44,6 +44,109 @@ body.seccion-saldos-activa header {
     box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
 }
 
+/* --- HERO SECTION ANIMADA --- */
+.hero-section {
+    position: relative;
+    height: 400px;
+    background: linear-gradient(135deg, var(--primario) 0%, #6a1b3a 50%, var(--primario) 100%);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: white;
+    padding: 0 20px;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    font-weight: 300;
+    opacity: 0.9;
+    margin-bottom: 30px;
+    animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+.hero-cta {
+    background: var(--dorado);
+    color: var(--primario);
+    padding: 15px 40px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    animation: fadeInUp 1s ease-out 0.8s both;
+    box-shadow: 0 10px 30px rgba(224, 192, 128, 0.3);
+}
+
+.hero-cta:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(224, 192, 128, 0.4);
+    background: var(--dorado-brillante);
+}
+
+@keyframes titleGlow {
+    from {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    to {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(224, 192, 128, 0.6);
+    }
+}
+
+/* Partículas flotantes de fondo */
+.hero-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: float 6s infinite ease-in-out;
+}
+
+.particle:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-delay: 0s; }
+.particle:nth-child(2) { width: 60px; height: 60px; left: 70%; animation-delay: 2s; }
+.particle:nth-child(3) { width: 40px; height: 40px; left: 40%; animation-delay: 4s; }
+.particle:nth-child(4) { width: 100px; height: 100px; left: 85%; animation-delay: 1s; }
+.particle:nth-child(5) { width: 50px; height: 50px; left: 25%; animation-delay: 3s; }
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translateY(-100px) rotate(180deg);
+        opacity: 0.8;
+    }
+}
+
 /* --- HEADER BOUTIQUE --- */
 header { 
     background: var(--primario); 
@@ -176,12 +279,46 @@ header {
     100% { transform: scale(1); opacity: 1; }
 }
 
-/* --- PRODUCTOS --- */
+/* --- ANIMACIONES DE ENTRADA PARA PRODUCTOS --- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* --- PRODUCTOS CON ANIMACIONES MEJORADAS --- */
 #productos { 
     display: grid; 
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
     gap: 25px; 
-    padding: 25px; 
+    padding: 25px;
 }
 
 .producto { 
@@ -192,8 +329,24 @@ header {
     display: flex; 
     flex-direction: column;
     height: 100%;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    animation: fadeInUp 0.8s ease-out;
+    transform-origin: center;
 }
+
+/* Animación escalonada para productos */
+.producto:nth-child(1) { animation-delay: 0.1s; }
+.producto:nth-child(2) { animation-delay: 0.2s; }
+.producto:nth-child(3) { animation-delay: 0.3s; }
+.producto:nth-child(4) { animation-delay: 0.4s; }
+.producto:nth-child(5) { animation-delay: 0.5s; }
+.producto:nth-child(6) { animation-delay: 0.6s; }
+.producto:nth-child(7) { animation-delay: 0.7s; }
+.producto:nth-child(8) { animation-delay: 0.8s; }
+.producto:nth-child(9) { animation-delay: 0.9s; }
+.producto:nth-child(10) { animation-delay: 1.0s; }
+.producto:nth-child(11) { animation-delay: 1.1s; }
+.producto:nth-child(12) { animation-delay: 1.2s; }
 
 /* REPARACIÓN: MARCO AMARILLO AUTOMÁTICO PARA PRODUCTOS EN OFERTA */
 .producto.tiene-oferta {
@@ -202,9 +355,31 @@ header {
 }
 
 .producto:hover { 
-    transform: translateY(-8px); 
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
+    transform: translateY(-12px) scale(1.02); 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
     border-color: var(--dorado);
+}
+
+/* Efecto de brillo al hover */
+.producto:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s;
+    z-index: 1;
+}
+
+.producto:hover::before {
+    left: 100%;
+}
+
+.main-img-container:hover img {
+    transform: scale(1.05);
+    transition: transform 0.4s ease;
 }
 
 .main-img-container { 
@@ -216,9 +391,15 @@ header {
     justify-content: center;
     background: #fff;
     cursor: pointer;
+    overflow: hidden;
 }
 
-.main-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.main-img-container img { 
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain;
+    transition: transform 0.4s ease;
+}
 
 /* --- ESTILOS DE TARJETA DE SALDOS --- */
 .seccion-saldos-activa .producto {
@@ -317,9 +498,31 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     border-left: 4px solid var(--dorado); text-align: left; line-height: 1.4;
 }
 
-/* --- BOTONES CON ANIMACIÓN MEJORADA --- */
-.contenedor-botones { display: flex; gap: 10px; margin-top: auto; }
+/* --- MICROINTERACCIONES MEJORADAS --- */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
 
+.ripple::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.ripple:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Botones con efectos mejorados */
 .whatsapp-btn, .btn-añadir-lista { 
     flex: 1; 
     padding: 14px 5px; 
@@ -330,26 +533,99 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
     text-transform: uppercase; 
     text-align: center; 
     text-decoration: none; 
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Elevación al pasar el mouse (PC) */
+/* Efecto de onda expansiva */
+.whatsapp-btn::after, .btn-añadir-lista::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.whatsapp-btn:focus:not(:active)::after, .btn-añadir-lista:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 1;
+    }
+    20% {
+        transform: scale(25, 25);
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(40, 40);
+    }
+}
+
+/* Elevación mejorada al hover */
 .whatsapp-btn:hover, .btn-añadir-lista:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    filter: brightness(1.1);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    filter: brightness(1.15);
 }
 
-/* Efecto de hundimiento al hacer clic */
+/* Efecto de pulsación continuo */
+.whatsapp-btn {
+    animation: pulseWhatsApp 2s infinite;
+}
+
+@keyframes pulseWhatsApp {
+    0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+    }
+}
+
+/* Efecto de hundimiento mejorado */
 .whatsapp-btn:active, .btn-añadir-lista:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    filter: brightness(0.9);
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    filter: brightness(0.85);
+    transition: all 0.1s ease;
+}
+
+/* Efecto de brillo al pasar mouse */
+.whatsapp-btn::before, .btn-añadir-lista::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.whatsapp-btn:hover::before, .btn-añadir-lista:hover::before {
+    left: 100%;
 }
 
 .whatsapp-btn { background: var(--whatsapp); color: white; }
 .btn-añadir-lista { background: var(--primario); color: white; }
+
+/* --- BOTONES CON ANIMACIÓN MEJORADA --- */
+.contenedor-botones { display: flex; gap: 10px; margin-top: auto; }
 
 /* --- CARRITO --- */
 .modal-carrito {
