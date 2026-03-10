@@ -122,6 +122,7 @@ function mostrarProductos() {
         
         const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
         
+        // REPARACIÓN: Estructura de precio ajustada para el CSS de columna
         const precioHTML = p.esOferta 
             ? `<div class="precio">
                 <span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> 
