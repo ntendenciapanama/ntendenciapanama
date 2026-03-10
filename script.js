@@ -338,8 +338,11 @@ function scrollToTop() {
 function focusSearch() {
     const buscador = document.getElementById('buscador');
     if (buscador) {
-        buscador.focus();
-        buscador.scrollIntoView({behavior: 'smooth', block: 'center'});
+        buscador.focus({preventScroll: true});
+        // No hacer scroll en móvil para evitar descuadre
+        if (window.innerWidth > 768) {
+            buscador.scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
     }
 }
 document.getElementById('buscador')?.addEventListener('input', (e) => {
