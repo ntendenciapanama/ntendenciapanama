@@ -1328,6 +1328,8 @@ body.seccion-saldos-activa .pag-btn.activa {
         padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)) !important;
         gap: 10px !important;
         grid-template-columns: repeat(2, 1fr) !important;
+        overflow-x: hidden !important;
+        touch-action: pan-y !important;
     }
     
     .producto {
