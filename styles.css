@@ -773,6 +773,35 @@ h3 { font-size: 1rem; min-height: 2.4em; display: flex; align-items: center; jus
 
 /* --- RESPONSIVE MÓVIL --- */
 @media (max-width: 480px) {
+    /* Hero Section para móvil */
+    .hero-section {
+        height: 250px;
+        margin-bottom: 15px;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        letter-spacing: 1px;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+    
+    .hero-cta {
+        padding: 10px 25px;
+        font-size: 0.9rem;
+    }
+    
+    /* Partículas más pequeñas en móvil */
+    .particle:nth-child(1) { width: 40px; height: 40px; }
+    .particle:nth-child(2) { width: 30px; height: 30px; }
+    .particle:nth-child(3) { width: 25px; height: 25px; }
+    .particle:nth-child(4) { width: 50px; height: 50px; }
+    .particle:nth-child(5) { width: 35px; height: 35px; }
+    
     header {
         flex-direction: column;
         padding: 20px 15px 12px;
