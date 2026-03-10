@@ -1325,7 +1325,7 @@ body.seccion-saldos-activa .pag-btn.activa {
     #productos {
         margin-top: 140px !important;
         padding: 10px !important;
-        padding-bottom: 80px !important;
+        padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)) !important;
         gap: 10px !important;
         grid-template-columns: repeat(2, 1fr) !important;
     }
