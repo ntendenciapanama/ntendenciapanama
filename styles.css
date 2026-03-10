@@ -1171,47 +1171,7 @@ body.seccion-saldos-activa .pag-btn.activa {
 /* 14. 📱 RESPONSIVE MÓVIL */
 /* =================================== */
 
-/* TABLET: Ajustes específicos para tablets (769px - 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
-    /* Header más compacto en tablet */
-    header {
-        padding: 10px 20px !important;
-        gap: 15px !important;
-    }
-    
-    /* Search container en tablet - posición normal debajo del header */
-    .search-container {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 10px 20px !important;
-        background: transparent !important;
-        z-index: auto !important;
-        box-shadow: none !important;
-    }
-    
-    /* Categorías en tablet - posición normal */
-    #categorias {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 10px 20px !important;
-        z-index: auto !important;
-    }
-    
-    /* Productos en tablet - sin margin-top extra */
-    #productos {
-        margin-top: 0 !important;
-        padding: 20px !important;
-    }
-}
-
+/* MÓVIL: Ajustes específicos para móviles (max-width: 768px) */
 @media (max-width: 768px) {
     /* Ocultar paginación en móvil */
     #paginacion {
