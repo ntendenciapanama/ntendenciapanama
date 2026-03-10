@@ -159,11 +159,11 @@ header {
     flex-wrap: wrap; 
     justify-content: center; 
     gap: 8px; 
-    padding: 20px 15px;
+    padding: 12px 15px;
     background: var(--negro);
     border-bottom: 1px solid #333;
     position: sticky; 
-    top: 120px; 
+    top: 104px; 
     z-index: 900; 
 }
 
