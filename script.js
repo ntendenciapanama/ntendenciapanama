@@ -109,9 +109,16 @@ function mostrarProductos() {
     if (!contenedor) return;
     contenedor.innerHTML = "";
     
-    const inicio = (paginaActual - 1) * productosPorPagina;
-    const fin = inicio + productosPorPagina;
-    const lista = productosFiltrados.slice(inicio, fin);
+    // En móvil, mostrar TODOS los productos sin paginación
+    const esMovil = window.innerWidth <= 768;
+    let lista;
+    if (esMovil) {
+        lista = productosFiltrados; // Todos los productos
+    } else {
+        const inicio = (paginaActual - 1) * productosPorPagina;
+        const fin = inicio + productosPorPagina;
+        lista = productosFiltrados.slice(inicio, fin);
+    }
 
     lista.forEach(p => {
         const div = document.createElement('div');

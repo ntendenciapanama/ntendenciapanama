@@ -1201,7 +1201,7 @@ body.seccion-saldos-activa .pag-btn.activa {
     }
     
     .logo-imagen {
-        max-width: 120px !important;
+        max-width: 160px !important;
         height: auto;
     }
     
@@ -1368,13 +1368,13 @@ body.seccion-saldos-activa .pag-btn.activa {
         right: 0 !important;
         width: 100% !important;
         height: 60px;
-        background: #fff !important;
+        background: linear-gradient(135deg, var(--marca-primario) 0%, #2a0010 100%) !important;
         display: flex !important;
         justify-content: space-around !important;
         align-items: center !important;
         z-index: 2000 !important;
-        box-shadow: 0 -2px 15px rgba(0,0,0,0.15);
-        border-top: 1px solid #eee;
+        box-shadow: 0 -2px 15px rgba(0,0,0,0.3);
+        border-top: 2px solid var(--marca-secundario);
     }
     
     .bottom-nav-item {
@@ -1386,12 +1386,14 @@ body.seccion-saldos-activa .pag-btn.activa {
         padding: 8px 20px !important;
         cursor: pointer !important;
         transition: all 0.2s ease;
-        color: #888;
+        color: var(--marca-secundario);
         text-decoration: none !important;
     }
     
     .bottom-nav-item.active {
-        color: var(--marca-primario);
+        color: #fff;
+        background: rgba(224, 192, 128, 0.15);
+        border-radius: 12px;
     }
     
     .bottom-nav-item:active {
@@ -1399,13 +1401,13 @@ body.seccion-saldos-activa .pag-btn.activa {
     }
     
     .bottom-nav-icon {
-        font-size: 22px !important;
+        font-size: 24px !important;
         line-height: 1;
     }
     
     .bottom-nav-label {
         font-size: 10px !important;
-        font-weight: 500;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
@@ -1417,19 +1419,20 @@ body.seccion-saldos-activa .pag-btn.activa {
     
     .bottom-nav-badge {
         position: absolute;
-        top: 2px;
-        right: 15px;
+        top: 0;
+        right: 12px;
         background: var(--oferta-rojo);
         color: white;
         font-size: 10px;
         font-weight: 700;
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 2px solid #fff;
+        border: 2px solid var(--marca-primario);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
 }
 
