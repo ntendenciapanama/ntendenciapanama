@@ -163,6 +163,22 @@
         <p style="font-size: 0.7rem; color: #bbb; margin-top: 25px; font-family: 'Poppins', sans-serif;">&copy; 2026 NTENDENCIA PANAMÁ - Todos los derechos reservados</p>
     </footer>
 
+    <nav class="bottom-nav">
+        <a href="#" class="bottom-nav-item active" onclick="scrollToTop(); return false;">
+            <span class="bottom-nav-icon">🏠</span>
+            <span class="bottom-nav-label">Inicio</span>
+        </a>
+        <a href="#" class="bottom-nav-item" onclick="focusSearch(); return false;">
+            <span class="bottom-nav-icon">🔍</span>
+            <span class="bottom-nav-label">Buscar</span>
+        </a>
+        <a href="#" class="bottom-nav-item carrito-item" onclick="toggleCarrito(); return false;">
+            <span class="bottom-nav-icon">🛒</span>
+            <span class="bottom-nav-label">Carrito</span>
+            <span class="bottom-nav-badge" id="bottom-nav-badge" style="display: none;">0</span>
+        </a>
+    </nav>
+
     <script src="script.js"></script>
 </body>
 </html>
