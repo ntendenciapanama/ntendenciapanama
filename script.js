@@ -331,6 +331,7 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
     }
     paginaActual = 1;
     mostrarProductos();
+    window.scrollTo({top: 0, behavior: 'smooth'});
 });
 
 /* --- CATEGORÍAS --- */
@@ -361,6 +362,7 @@ function generarCategorias() {
             
             paginaActual = 1;
             mostrarProductos();
+            window.scrollTo({top: 0, behavior: 'smooth'});
         };
         cont.appendChild(b);
     });
