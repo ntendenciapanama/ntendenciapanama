@@ -101,13 +101,6 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: sticky;
-    top: 0;
-    background: var(--marca-primario);
-    padding: 15px 0;
-    z-index: 901;
-    backdrop-filter: blur(10px);
-    min-height: 100px;
 }
 
 #buscador { 
@@ -170,7 +163,7 @@ header {
     background: var(--negro);
     border-bottom: 1px solid #333;
     position: sticky; 
-    top: 100px; 
+    top: 120px; 
     z-index: 900; 
 }
 
