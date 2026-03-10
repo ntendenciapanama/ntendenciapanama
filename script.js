@@ -173,6 +173,20 @@ function actualizarVistaGaleria() {
         };
     }
 
+    // Ocultar o mostrar flechas según cantidad de imágenes
+    const flechaPrev = document.querySelector('.flecha-incrustada.prev');
+    const flechaNext = document.querySelector('.flecha-incrustada.next');
+    
+    if (totalImg <= 1) {
+        // Ocultar flechas si solo hay una imagen
+        if (flechaPrev) flechaPrev.style.display = 'none';
+        if (flechaNext) flechaNext.style.display = 'none';
+    } else {
+        // Mostrar flechas si hay múltiples imágenes
+        if (flechaPrev) flechaPrev.style.display = 'flex';
+        if (flechaNext) flechaNext.style.display = 'flex';
+    }
+
     const nav = document.getElementById('lightbox-nav');
     if (!nav) return;
     nav.innerHTML = "";
