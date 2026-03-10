@@ -1201,7 +1201,7 @@ body.seccion-saldos-activa .pag-btn.activa {
     }
     
     .logo-imagen {
-        max-width: 160px !important;
+        max-width: 220px !important;
         height: auto;
     }
     
@@ -1254,7 +1254,7 @@ body.seccion-saldos-activa .pag-btn.activa {
     /* Categorías scroll horizontal tipo app */
     #categorias {
         position: fixed !important;
-        top: 108px !important;
+        top: 100px !important;
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
@@ -1263,13 +1263,14 @@ body.seccion-saldos-activa .pag-btn.activa {
         overflow-x: auto !important;
         overflow-y: hidden !important;
         -webkit-overflow-scrolling: touch;
-        padding: 10px 15px !important;
-        gap: 10px !important;
+        padding: 6px 12px !important;
+        gap: 8px !important;
         background: #000 !important;
         z-index: 998;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         scrollbar-width: none;
         -ms-overflow-style: none;
+        min-height: 44px;
     }
     
     #categorias::-webkit-scrollbar {
@@ -1290,15 +1291,17 @@ body.seccion-saldos-activa .pag-btn.activa {
     
     .categoria-btn {
         flex-shrink: 0 !important;
-        padding: 8px 16px !important;
-        font-size: 0.8rem !important;
-        border-radius: 20px !important;
+        padding: 6px 14px !important;
+        font-size: 0.75rem !important;
+        border-radius: 16px !important;
         white-space: nowrap !important;
+        height: 32px;
+        line-height: 1;
     }
     
     /* Productos - ajuste de padding para header fijo */
     #productos {
-        margin-top: 155px !important;
+        margin-top: 145px !important;
         padding: 10px !important;
         padding-bottom: 80px !important;
         gap: 10px !important;
@@ -1403,6 +1406,14 @@ body.seccion-saldos-activa .pag-btn.activa {
     .bottom-nav-icon {
         font-size: 24px !important;
         line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .bottom-nav-icon svg {
+        width: 26px;
+        height: 26px;
     }
     
     .bottom-nav-label {
