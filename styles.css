@@ -410,13 +410,11 @@ header {
 
 .precio-tachado {
     text-decoration: line-through;
-    color: #999;
-    font-size: 0.7em;
+    color: #b0b0b0;
+    font-size: 0.6em;
     font-weight: 400;
-    margin-right: 8px;
-    margin-bottom: 2px;
-    opacity: 0.8;
-    position: relative;
+    margin-right: 0;
+    margin-bottom: -5px;
 }
 
 .precio-tachado::after {

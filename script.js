@@ -122,22 +122,12 @@ function mostrarProductos() {
         
         const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
         
-        // Estructura de precio mejorada con descuento
-        const calcularDescuento = () => {
-            if (!p.esOferta) return 0;
-            return Math.round(((p.precioOriginal - p.precio) / p.precioOriginal) * 100);
-        };
-        
-        const descuento = calcularDescuento();
         const precioHTML = p.esOferta 
-            ? `<div class="precio-contenedor">
-                <div class="porcentaje-descuento">-${descuento}%</div>
+            ? `<div class="precio">
                 <span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> 
                 <span class="precio-actual">$${p.precio.toFixed(2)}</span>
                </div>`
-            : `<div class="precio-contenedor">
-                <span class="precio-actual">$${p.precio.toFixed(2)}</span>
-               </div>`;
+            : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
 
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
