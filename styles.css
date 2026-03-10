@@ -147,6 +147,100 @@ body.seccion-saldos-activa header {
     }
 }
 
+/* --- BANNER POPUP PARA MÓVILES --- */
+.banner-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.banner-content {
+    background: linear-gradient(135deg, var(--primario) 0%, #6a1b3a 50%, var(--primario) 100%);
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    color: white;
+    max-width: 350px;
+    width: 90%;
+    position: relative;
+    animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--dorado);
+}
+
+.cerrar-banner {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.cerrar-banner:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.banner-logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.banner-title {
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+.banner-subtitle {
+    font-size: 1rem;
+    font-weight: 300;
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+.banner-cta {
+    background: var(--dorado);
+    color: var(--primario);
+    padding: 12px 30px;
+    border-radius: 25px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(224, 192, 128, 0.3);
+}
+
+.banner-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(224, 192, 128, 0.4);
+    background: var(--dorado-brillante);
+}
+
 /* --- HEADER BOUTIQUE --- */
 header { 
     background: var(--primario); 

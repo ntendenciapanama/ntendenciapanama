@@ -14,6 +14,41 @@ let codActual = "";
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime();
 
+/* --- BANNER POPUP PARA MÓVILES --- */
+function mostrarBannerMovil() {
+    // Solo mostrar en móviles (menos de 768px)
+    if (window.innerWidth < 768) {
+        const banner = document.getElementById('banner-popup');
+        if (banner) {
+            banner.style.display = 'flex';
+            
+            // Auto-cerrar después de 8 segundos
+            setTimeout(() => {
+                cerrarBanner();
+            }, 8000);
+        }
+    }
+}
+
+function cerrarBanner() {
+    const banner = document.getElementById('banner-popup');
+    if (banner) {
+        banner.style.display = 'none';
+        // Guardar en localStorage para no mostrar de nuevo en esta sesión
+        localStorage.setItem('banner-cerrado', 'true');
+    }
+}
+
+// Mostrar banner solo si no se ha cerrado en esta sesión
+function initBanner() {
+    if (localStorage.getItem('banner-cerrado') !== 'true') {
+        // Mostrar después de 1 segundo de cargar la página
+        setTimeout(mostrarBannerMovil, 1000);
+    }
+}
+
+initBanner();
+
 /* --- RESPONSIVIDAD --- */
 function ajustarPaginacionDinamica() {
     const ancho = window.innerWidth;

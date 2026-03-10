@@ -24,6 +24,17 @@
 </head>
 <body>
 
+    <!-- BANNER POPUP PARA MÓVILES -->
+    <div id="banner-popup" class="banner-popup">
+        <div class="banner-content">
+            <span class="cerrar-banner" onclick="cerrarBanner()">&times;</span>
+            <img src="logo.png" alt="NTENDENCIA PANAMÁ" class="banner-logo">
+            <h2 class="banner-title">NTENDENCIA PANAMÁ</h2>
+            <p class="banner-subtitle">Estilo que inspira cada paso</p>
+            <button class="banner-cta" onclick="cerrarBanner()">Explorar Colección</button>
+        </div>
+    </div>
+
     <header style="position: relative; padding-bottom: 45px;"> 
         <div class="logo-wrapper">
             <img src="logo.png" alt="NTENDENCIA PA" class="logo-imagen">
@@ -80,22 +91,6 @@
             </marquee>
         </div>
     </header>
-
-    <!-- HERO SECTION ANIMADA -->
-    <div class="hero-section">
-        <div class="hero-particles">
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-            <div class="particle"></div>
-        </div>
-        <div class="hero-content">
-            <h1 class="hero-title">NTENDENCIA PANAMÁ</h1>
-            <p class="hero-subtitle">Estilo que inspira cada paso</p>
-            <a href="#productos" class="hero-cta">Explorar Colección</a>
-        </div>
-    </div>
 
     <nav id="categorias" style="
         position: sticky; 
