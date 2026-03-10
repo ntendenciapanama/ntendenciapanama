@@ -1593,7 +1593,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         display: none;
     }
 
-    /* Menú lateral sticky estilo Amazon */
+    /* Menú lateral sticky estilo Amazon - CORREGIDO */
     #categorias {
         position: sticky;
         top: calc(48px + 120px + 60px); /* Altura header + logo + buscador + iconos */
@@ -1609,23 +1609,37 @@ body.seccion-saldos-activa .pag-btn.activa {
         display: flex;
         align-items: center;
         height: 48px;
+        gap: 0;
     }
 
     #categorias::-webkit-scrollbar {
         display: none;
     }
 
-    /* Pista visual de que hay más categorías */
+    /* Pista visual mejorada de que hay más categorías */
     #categorias::after {
         content: '';
         position: absolute;
         right: 0;
         top: 0;
         bottom: 0;
-        width: 30px;
-        background: linear-gradient(90deg, transparent, #232f3e);
+        width: 40px;
+        background: linear-gradient(90deg, transparent 0%, rgba(35, 47, 62, 0.3) 50%, #232f3e 100%);
         pointer-events: none;
-        z-index: 1;
+        z-index: 10;
+    }
+
+    /* También pista visual al inicio */
+    #categorias::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 20px;
+        background: linear-gradient(90deg, #232f3e 0%, rgba(35, 47, 62, 0.3) 100%, transparent 100%);
+        pointer-events: none;
+        z-index: 10;
     }
 
     .categoria-btn {
@@ -1641,6 +1655,11 @@ body.seccion-saldos-activa .pag-btn.activa {
         border-radius: 0;
         flex-shrink: 0;
         position: relative;
+        border-right: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .categoria-btn:last-child {
+        border-right: none;
     }
 
     .categoria-btn:hover {
@@ -1654,9 +1673,16 @@ body.seccion-saldos-activa .pag-btn.activa {
         border-left: 3px solid var(--marca-secundario);
     }
 
-    /* Contenedor principal con espacio para barra inferior */
+    /* Contenedor principal con espacio para barra inferior y scroll solo en contenido */
     body {
         padding-bottom: 60px;
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    /* Asegurar que solo el contenido principal haga scroll */
+    main {
+        min-height: calc(100vh - 250px); /* Altura menos header, categorías y barra inferior */
     }
 
     /* Productos grid móvil */
@@ -1731,6 +1757,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         min-height: 2.4em;
         display: -webkit-box;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
         color: #111;
