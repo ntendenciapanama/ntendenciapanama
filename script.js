@@ -236,7 +236,7 @@ function cerrarImagen() {
 function añadirAlCarrito(codigo) {
     const yaExiste = carrito.find(x => x.codigo === codigo);
     if (yaExiste) {
-        alert("✨ Este producto ya está en tu lista de pedido.");
+        alert("Este producto ya está en lista");
         return;
     }
     const p = catalogoCompleto.find(x => x.codigo === codigo);
