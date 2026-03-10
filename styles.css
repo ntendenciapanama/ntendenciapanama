@@ -1171,6 +1171,74 @@ body.seccion-saldos-activa .pag-btn.activa {
 /* 14. 📱 RESPONSIVE MÓVIL */
 /* =================================== */
 
+/* TABLET: Ajustes específicos para tablets (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* Header más compacto en tablet */
+    header {
+        padding: 8px 15px !important;
+        gap: 10px !important;
+        flex-direction: row !important;
+    }
+    
+    .logo-imagen {
+        max-width: 200px !important;
+        max-height: 45px !important;
+    }
+    
+    /* Search container en tablet - ancho completo debajo del header */
+    .search-container {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 8px 15px !important;
+        background: #410020 !important;
+        z-index: auto !important;
+        box-shadow: none !important;
+    }
+    
+    #buscador {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 10px 20px !important;
+        font-size: 16px !important;
+        height: 40px !important;
+        border-radius: 20px !important;
+        background: #fff !important;
+        color: #333 !important;
+        border: none !important;
+    }
+    
+    #buscador::placeholder {
+        color: #666 !important;
+    }
+    
+    .search-container .slogan-marca {
+        display: none !important;
+    }
+    
+    /* Categorías en tablet */
+    #categorias {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 8px 15px !important;
+        z-index: auto !important;
+    }
+    
+    /* Productos en tablet */
+    #productos {
+        margin-top: 0 !important;
+        padding: 15px !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
 /* MÓVIL: Ajustes específicos para móviles (max-width: 768px) */
 @media (max-width: 768px) {
     /* Ocultar paginación en móvil */
