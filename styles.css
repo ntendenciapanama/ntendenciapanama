@@ -1225,8 +1225,8 @@ body.seccion-saldos-activa .pag-btn.activa {
         width: 100% !important;
         margin: 0 !important;
         padding: 6px 10px !important;
-        background: var(--marca-secundario) !important;
-        z-index: 999;
+        background: #410020 !important;
+        z-index: 1001 !important;
         box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
     
@@ -1239,7 +1239,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         border-radius: 18px !important;
         background: #fff !important;
         color: #333 !important;
-        border: 2px solid var(--marca-primario) !important;
+        border: none !important;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     
@@ -1266,7 +1266,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         padding: 6px 12px !important;
         gap: 8px !important;
         background: #000 !important;
-        z-index: 998;
+        z-index: 1000 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         scrollbar-width: none;
         -ms-overflow-style: none;
@@ -1310,6 +1310,15 @@ body.seccion-saldos-activa .pag-btn.activa {
     
     .producto {
         border-radius: 10px !important;
+        border: 2px solid var(--marca-secundario) !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    .producto:active {
+        transform: none !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
     }
     
     .main-img-container {
