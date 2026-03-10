@@ -1210,6 +1210,13 @@ body.seccion-saldos-activa .pag-btn.activa {
         height: 24px !important;
     }
     
+    /* Mostrar marquee en tablet */
+    header > div:last-child {
+        display: flex !important;
+        order: 2;
+        margin-top: 15px !important;
+    }
+    
     /* Search container debajo del logo */
     .search-container {
         position: relative !important;
@@ -1223,7 +1230,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         background: transparent !important;
         z-index: auto !important;
         box-shadow: none !important;
-        order: 2;
+        order: 3;
     }
     
     #buscador {
@@ -1244,13 +1251,6 @@ body.seccion-saldos-activa .pag-btn.activa {
     
     .search-container .slogan-marca {
         display: none !important;
-    }
-    
-    /* Mostrar marquee en tablet */
-    header > div:last-child {
-        display: flex !important;
-        order: 3;
-        margin-top: 25px !important;
     }
     
     /* Categorías debajo de todo */
