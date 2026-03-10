@@ -1420,23 +1420,49 @@ body.seccion-saldos-activa .pag-btn.activa {
 }
 
 /* =================================== */
-/* 📱 MODAL CARRITO FULL SCREEN EN MÓVIL */
+/* 📱 MODAL CARRITO - PC PEQUEÑO, MÓVIL FULL */
 /* =================================== */
+
+/* PC: Modal pequeño centrado */
 #modal-carrito {
-    z-index: 99999 !important;
-    background: var(--marca-primario) !important;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6) !important;
+    z-index: 99999;
+    justify-content: center;
+    align-items: center;
 }
 
 #modal-carrito .contenido-carrito {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 100% !important;
-    max-height: 100% !important;
-    border-radius: 0 !important;
-    animation: none !important;
+    width: 90% !important;
+    max-width: 500px !important;
+    height: auto !important;
+    max-height: 80vh !important;
+    border-radius: 20px !important;
+    animation: slideUp 0.3s ease-out;
+    position: relative;
 }
 
+/* Móvil: Full screen */
 @media (max-width: 768px) {
+    #modal-carrito {
+        background: var(--marca-primario) !important;
+        align-items: flex-start;
+    }
+    
+    #modal-carrito .contenido-carrito {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        border-radius: 0 !important;
+        animation: none !important;
+    }
+    
     /* Ocultar elementos cuando carrito está abierto - solo móvil */
     body.carrito-abierto header,
     body.carrito-abierto .search-container,
