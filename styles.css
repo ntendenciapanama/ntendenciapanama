@@ -1270,6 +1270,205 @@ body.seccion-saldos-activa .pag-btn.activa {
         height: 40px;
         font-size: 18px;
     }
+
+    /* =================================== */
+    /* 📱 SALDOS MÓVIL - OUTLET ELEGANTE OPTIMIZADO */
+    /* =================================== */
+    body.seccion-saldos-activa {
+        background: #0a0a0a !important;
+        background-image: none !important;
+    }
+
+    /* Partículas móviles más visibles */
+    body.seccion-saldos-activa::before {
+        background-image: 
+            radial-gradient(circle at 30% 70%, rgba(255, 215, 0, 0.08) 0%, transparent 40%),
+            radial-gradient(circle at 70% 30%, rgba(255, 215, 0, 0.08) 0%, transparent 40%);
+        animation: particulasSaldosMobile 15s infinite linear;
+    }
+
+    @keyframes particulasSaldosMobile {
+        0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+        50% { transform: translateY(-15px) rotate(180deg); opacity: 1; }
+    }
+
+    /* Productos saldos móviles más visibles */
+    .seccion-saldos-activa .producto {
+        background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%) !important; 
+        border: 3px solid var(--oferta-amarillo) !important; 
+        box-shadow: 
+            0 0 15px rgba(255, 215, 0, 0.4),
+            0 0 25px rgba(255, 215, 0, 0.2),
+            inset 0 0 10px rgba(255, 215, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Efecto holográfico móvil más sutil */
+    .seccion-saldos-activa .producto::before {
+        background: linear-gradient(45deg, 
+            transparent, 
+            var(--oferta-amarillo), 
+            transparent, 
+            var(--oferta-amarillo), 
+            transparent);
+        border-radius: 12px;
+        animation: holograficoMobile 4s infinite linear;
+        opacity: 0.4;
+    }
+
+    @keyframes holograficoMobile {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .seccion-saldos-activa .producto:hover {
+        transform: translateY(-8px) scale(1.02) !important; 
+        box-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.6),
+            0 0 35px rgba(255, 215, 0, 0.3),
+            0 10px 25px rgba(0, 0, 0, 0.4);
+        border-color: var(--marca-dorado-brillante) !important;
+    }
+
+    /* Textos móviles más legibles */
+    .seccion-saldos-activa h3 {
+        color: var(--oferta-amarillo) !important; 
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+        font-weight: 700;
+        font-size: 0.8rem !important;
+    }
+
+    /* Precios móviles más impactantes */
+    .seccion-saldos-activa .precio {
+        background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important; 
+        color: #000 !important; 
+        padding: 12px 8px;
+        border-radius: 10px;
+        width: 95%;
+        margin: 0 auto 12px;
+        box-shadow: 
+            0 4px 12px rgba(255, 215, 0, 0.5),
+            inset 0 0 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Brillo móvil más rápido */
+    .seccion-saldos-activa .precio::before {
+        background: linear-gradient(45deg, 
+            transparent, 
+            rgba(255, 255, 255, 0.4), 
+            transparent);
+        animation: brilloPrecioMobile 2s infinite;
+    }
+
+    @keyframes brilloPrecioMobile {
+        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    }
+
+    .seccion-saldos-activa .precio .precio-actual {
+        font-size: 1.6rem !important;
+        font-weight: 900;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Descripciones móviles elegantes */
+    .seccion-saldos-activa .descripcion {
+        background: rgba(255, 215, 0, 0.08) !important; 
+        color: #ccc !important;
+        border-left: 3px solid var(--oferta-amarillo);
+        box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.15);
+        font-size: 0.7rem !important;
+    }
+
+    /* Badge OUTLET móvil más visible */
+    .seccion-saldos-activa .main-img-container::before {
+        content: "OUTLET";
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%);
+        color: #000;
+        font-size: 9px;
+        font-weight: 900;
+        padding: 4px 8px;
+        border-radius: 6px;
+        text-transform: uppercase;
+        box-shadow: 
+            0 3px 10px rgba(255, 215, 0, 0.6),
+            inset 0 0 6px rgba(0, 0, 0, 0.1);
+        animation: pulsoOutletMobile 1.5s infinite;
+        z-index: 10;
+        letter-spacing: 0.5px;
+    }
+
+    @keyframes pulsoOutletMobile {
+        0%, 100% { 
+            transform: scale(1); 
+            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.6);
+        }
+        50% { 
+            transform: scale(1.08); 
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.8);
+        }
+    }
+
+    /* Botones móviles dorados */
+    .seccion-saldos-activa .whatsapp-btn,
+    .seccion-saldos-activa .btn-añadir-lista {
+        background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+        color: #000 !important;
+        font-weight: 800;
+        box-shadow: 0 3px 10px rgba(255, 215, 0, 0.5);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        font-size: 0.8rem !important;
+        padding: 12px 4px !important;
+    }
+
+    .seccion-saldos-activa .whatsapp-btn:hover,
+    .seccion-saldos-activa .btn-añadir-lista:hover {
+        transform: translateY(-5px) scale(1.03) !important;
+        box-shadow: 0 6px 18px rgba(255, 215, 0, 0.7);
+        filter: brightness(1.2);
+    }
+
+    /* Header saldos móvil */
+    body.seccion-saldos-activa header {
+        border-bottom: 3px solid var(--oferta-amarillo);
+        box-shadow: 0 3px 20px rgba(255, 215, 0, 0.5);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%) !important;
+    }
+
+    /* Categorías saldos móvil */
+    body.seccion-saldos-activa #categorias {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%) !important;
+        border-bottom: 2px solid var(--oferta-amarillo);
+        box-shadow: 0 3px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    body.seccion-saldos-activa .categoria-btn.activa {
+        background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+        color: #000 !important;
+        box-shadow: 0 3px 12px rgba(255, 215, 0, 0.5);
+    }
+
+    /* Paginación saldos móvil */
+    body.seccion-saldos-activa .pag-btn {
+        border-color: var(--oferta-amarillo) !important;
+        color: var(--oferta-amarillo) !important;
+        border-width: 2px !important;
+    }
+
+    body.seccion-saldos-activa .pag-btn.activa {
+        background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+        color: #000 !important;
+        box-shadow: 0 3px 12px rgba(255, 215, 0, 0.5);
+    }
 }
 
 /* =================================== */
