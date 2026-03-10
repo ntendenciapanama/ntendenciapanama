@@ -1250,7 +1250,7 @@ body.seccion-saldos-activa .pag-btn.activa {
     header > div:last-child {
         display: flex !important;
         order: 3;
-        margin-top: 10px !important;
+        margin-top: 25px !important;
     }
     
     /* Categorías debajo de todo */
