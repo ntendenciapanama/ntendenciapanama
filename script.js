@@ -262,6 +262,12 @@ function toggleCarrito() {
     const isVisible = m.style.display === "flex";
     m.style.display = isVisible ? "none" : "flex";
     document.body.style.overflow = isVisible ? "auto" : "hidden";
+    // Agregar/quitar clase para ocultar header en móvil
+    if (!isVisible) {
+        document.body.classList.add('carrito-abierto');
+    } else {
+        document.body.classList.remove('carrito-abierto');
+    }
     if (!isVisible) dibujarCarrito();
 }
 

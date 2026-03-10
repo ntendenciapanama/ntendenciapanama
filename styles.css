@@ -1415,10 +1415,32 @@ body.seccion-saldos-activa .pag-btn.activa {
 }
 
 /* =================================== */
-/* 📱 BARRA DE NAVEGACIÓN INFERIOR */
+/* 📱 MODAL CARRITO FULL SCREEN EN MÓVIL */
 /* =================================== */
-.bottom-nav {
-    display: none;
+#modal-carrito {
+    z-index: 99999 !important;
+    background: var(--marca-primario) !important;
+}
+
+#modal-carrito .contenido-carrito {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 0 !important;
+    animation: none !important;
+}
+
+/* Ocultar elementos cuando carrito está abierto en móvil */
+body.carrito-abierto header,
+body.carrito-abierto .search-container,
+body.carrito-abierto #categorias,
+body.carrito-abierto .bottom-nav {
+    display: none !important;
+}
+
+body.carrito-abierto {
+    overflow: hidden !important;
 }
 
 @media (max-width: 768px) {

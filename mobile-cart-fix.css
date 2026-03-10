@@ -1,0 +1,13 @@
+/* =================================== */
+/* 📱 OCULTAR ELEMENTOS CUANDO CARRITO ABIERTO */
+/* =================================== */
+body.carrito-abierto header,
+body.carrito-abierto .search-container,
+body.carrito-abierto #categorias,
+body.carrito-abierto .bottom-nav {
+    display: none !important;
+}
+
+body.carrito-abierto {
+    overflow: hidden !important;
+}
