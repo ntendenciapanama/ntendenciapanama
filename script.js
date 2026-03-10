@@ -54,8 +54,8 @@ function ajustarPaginacionDinamica() {
     const ancho = window.innerWidth;
     if (ancho < 600) { productosPorPagina = 10; } 
     else if (ancho >= 600 && ancho < 1024) { productosPorPagina = 12; } 
-    else if (ancho >= 1024 && ancho < 1440) { productosPorPagina = 15; } 
-    else { productosPorPagina = 16; }
+    else if (ancho >= 1024 && ancho < 1440) { productosPorPagina = 12; } 
+    else { productosPorPagina = 18; }
 }
 
 ajustarPaginacionDinamica();
@@ -81,10 +81,91 @@ fetch(URL_SHEET)
                 precio: precioVentaHoy,
                 precioOriginal: precioBase,
                 esOferta: precioOferta > 0 && precioOferta < precioBase,
+                stock: limpiar(columnas[3]),
+                descripcion: limpiar(columnas[4]) || "",
+                status: limpiar(columnas[5])?.toLowerCase(),
+                categoria: limpiar(columnas[6]) || "General",
+                totalImagenes: parseInt(limpiar(columnas[7])) || 1 
+            };
+        }).filter(p => {
+            const tieneCodigo = p.codigo && p.codigo.length > 1;
+            const estaVendido = p.status === 'true' || p.status === '1' || p.status === 'vendido' || p.status === 'vrai';
+            return tieneCodigo && !estaVendido;
+        });
+
+        const listaInvertida = productosMapeados.reverse();
+        catalogoCompleto = listaInvertida;
+        todosLosProductos = listaInvertida.filter(p => p.categoria.toLowerCase() !== 'saldos');
+        productosFiltrados = todosLosProductos;
+        
+        generarCategorias();
+        mostrarProductos();
+    })
+    .catch(err => console.error("Error cargando Google Sheets:", err));
+
+/* --- MOSTRAR PRODUCTOS EN GRILLA --- */
+function mostrarProductos() {
+    const contenedor = document.getElementById('productos');
+    if (!contenedor) return;
+    contenedor.innerHTML = "";
     
     const inicio = (paginaActual - 1) * productosPorPagina;
-    const fin = Math.min(inicio + productosPorPagina, productosFiltrados.length);
+    const fin = inicio + productosPorPagina;
     const lista = productosFiltrados.slice(inicio, fin);
+
+    lista.forEach(p => {
+        const div = document.createElement('div');
+        // REPARACIÓN: Se añade 'tiene-oferta' para activar el marco amarillo si es oferta
+        const claseSaldos = p.categoria.toLowerCase() === 'saldos' ? 'producto-saldo' : '';
+        const claseOferta = p.esOferta ? 'tiene-oferta' : '';
+        div.className = `producto ${claseSaldos} ${claseOferta}`;
+        
+        const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
+        
+        // REPARACIÓN: Estructura de precio ajustada para el CSS de columna
+        const precioHTML = p.esOferta 
+            ? `<div class="precio">
+                <span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> 
+                <span class="precio-actual oferta">$${p.precio.toFixed(2)}</span>
+               </div>`
+            : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
+
+        div.innerHTML = `
+            <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
+                ${badgeHTML}
+                <img src="images/${p.codigo}/1.jpg" 
+                     alt="${p.nombre}" 
+                     loading="lazy" 
+                     onerror="this.onerror=null; this.src='images/${p.codigo}/1.png'; this.setAttribute('onerror', 'this.src=\'logo.png\'')">
+            </div>
+            <div class="producto-info">
+                ${precioHTML}
+                <h3>${p.nombre}</h3>
+                <div class="descripcion">${p.descripcion}</div>
+                <div class="contenedor-botones">
+                    <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
+                    <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
+                </div>
+            </div>
+        `;
+        contenedor.appendChild(div);
+    });
+    actualizarPaginacion();
+}
+
+/* --- LÓGICA DE GALERÍA (LIGHTBOX) --- */
+function abrirGaleria(codigo, total) {
+    codActual = codigo; 
+    totalImg = total; 
+    imgIndex = 1;
+    actualizarVistaGaleria();
+    document.getElementById('lightbox').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function actualizarVistaGaleria() {
+    const imgGrande = document.getElementById('img-grande');
+    if (imgGrande) {
         imgGrande.src = `images/${codActual}/${imgIndex}.jpg`;
         imgGrande.onerror = function() {
             this.onerror = null; 
