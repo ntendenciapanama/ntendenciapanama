@@ -163,6 +163,33 @@ function mostrarProductos() {
     actualizarPaginacion();
 }
 
+/* --- FUNCIÓN PARA EXPANDIR/CONTRAER DESCRIPCIONES (SOLO MÓVIL) --- */
+function toggleDescripcion(codigo) {
+    const descElement = document.getElementById(`desc-${codigo}`);
+    if (!descElement) return;
+    
+    const producto = catalogoCompleto.find(p => p.codigo === codigo);
+    if (!producto) return;
+    
+    const isExpandida = descElement.classList.contains('expandida');
+    
+    if (isExpandida) {
+        // Contraer: mostrar solo primera frase
+        descElement.classList.remove('expandida');
+        descElement.innerHTML = `
+            ${producto.descripcion.split('.')[0] + (producto.descripcion.includes('.') ? '.' : '')}
+            ${producto.descripcion.split('.').length > 1 ? `<button class="btn-expandir" onclick="toggleDescripcion('${codigo}')">+</button>` : ''}
+        `;
+    } else {
+        // Expandir: mostrar descripción completa
+        descElement.classList.add('expandida');
+        descElement.innerHTML = `
+            ${producto.descripcion}
+            <button class="btn-expandir" onclick="toggleDescripcion('${codigo}')">−</button>
+        `;
+    }
+}
+
 /* --- LÓGICA DE GALERÍA (LIGHTBOX) --- */
 function abrirGaleria(codigo, total) {
     codActual = codigo; 

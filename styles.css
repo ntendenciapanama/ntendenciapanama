@@ -1513,14 +1513,17 @@ body.seccion-saldos-activa .pag-btn.activa {
     
     .descripcion {
         font-size: 0.6rem !important;
-        padding: 6px 40px 10px 6px !important; /* Más espacio abajo */
-        margin-bottom: 20px !important; /* Mucho más espacio antes de botones */
+        padding: 6px 45px 8px 6px !important; /* Más espacio para botón */
+        margin-bottom: 15px !important;
         line-height: 1.4;
         position: relative;
         max-height: 1.4em; /* Solo una línea */
         overflow: hidden;
-        text-overflow: ellipsis; /* Cortar texto con ... */
-        white-space: nowrap; /* Forzar una sola línea */
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        background: #fdfaf2;
+        border-radius: 8px;
+        border-left: 3px solid var(--marca-secundario);
     }
     
     .descripcion-expandible {
@@ -1529,38 +1532,45 @@ body.seccion-saldos-activa .pag-btn.activa {
     
     .descripcion-expandible.expandida {
         max-height: none;
-        padding-right: 6px !important; /* Quitar espacio extra cuando expandido */
+        white-space: normal; /* Permitir múltiples líneas cuando expandido */
+        padding-right: 6px !important;
     }
     
     .btn-expandir {
         position: absolute;
-        bottom: 8px; /* Posición ajustada */
-        right: 8px; /* Más a la derecha */
+        bottom: 4px;
+        right: 4px;
         background: var(--marca-primario);
         color: white;
         border: none;
-        padding: 3px 8px; /* Un poco más grande */
+        padding: 3px 8px;
         border-radius: 4px;
         font-size: 0.5rem;
         cursor: pointer;
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
-        z-index: 10;
+        z-index: 15;
         transition: all 0.2s ease;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        min-width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .btn-expandir:hover {
         background: var(--marca-secundario);
-        transform: scale(1.05);
+        transform: scale(1.1);
     }
     
     .descripcion-expandible.expandida .btn-expandir {
         position: static;
-        margin-top: 4px;
-        width: 100%;
-        padding: 4px;
+        margin-top: 6px;
+        width: auto;
+        padding: 4px 8px;
         background: var(--oferta-rojo);
+        height: auto;
     }
     
     .contenedor-botones {
