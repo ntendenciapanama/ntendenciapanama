@@ -1470,9 +1470,9 @@ body.seccion-saldos-activa .pag-btn.activa {
     /* Productos - ajuste de padding para header fijo */
     #productos {
         margin-top: 140px !important;
-        padding: 10px !important;
+        padding: 15px !important;
         padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)) !important;
-        gap: 10px !important;
+        gap: 15px !important;
         grid-template-columns: repeat(2, 1fr) !important;
         overflow-x: hidden !important;
         touch-action: pan-y !important;
