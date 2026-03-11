@@ -351,6 +351,23 @@ header {
     border-color: var(--marca-secundario);
 }
 
+/* Efecto de brillo al hover */
+.producto:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s;
+    z-index: 1;
+}
+
+.producto:hover::before {
+    left: 100%;
+}
+
 .main-img-container { 
     position: relative;
     height: 300px; 
@@ -368,6 +385,27 @@ header {
     max-height: 100%; 
     object-fit: contain;
     transition: transform 0.4s ease;
+}
+
+.main-img-container:hover img {
+    transform: scale(1.05);
+    transition: transform 0.4s ease;
+}
+
+/* Badge de oferta */
+.badge-oferta {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: var(--oferta-rojo);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
+    animation: pulseOferta 2s infinite;
 }
 
 /* Precios */
@@ -392,10 +430,22 @@ header {
     position: relative;
 }
 
+.precio-tachado::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: var(--oferta-rojo);
+    transform: translateY(-50%);
+}
+
 .precio-actual.oferta {
     color: var(--oferta-rojo);
     font-weight: 800;
     font-size: 1.3em;
+    text-shadow: 0 1px 2px rgba(255, 71, 87, 0.1);
 }
 
 /* Info del producto */
@@ -448,8 +498,90 @@ h3 {
     overflow: hidden;
 }
 
-.whatsapp-btn { background: var(--whatsapp); color: white; animation: pulseWhatsApp 2s infinite; }
+/* Colores de botones */
+.whatsapp-btn { background: var(--whatsapp); color: white; }
 .btn-añadir-lista { background: var(--marca-primario); color: white; }
+
+/* Efectos hover */
+.whatsapp-btn:hover, .btn-añadir-lista:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    filter: brightness(1.15);
+}
+
+/* Efectos active */
+.whatsapp-btn:active, .btn-añadir-lista:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    filter: brightness(0.85);
+    transition: all 0.1s ease;
+}
+
+/* Efecto de brillo */
+.whatsapp-btn::before, .btn-añadir-lista::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.whatsapp-btn:hover::before, .btn-añadir-lista:hover::before {
+    left: 100%;
+}
+
+/* Ripple effects */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.ripple:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Efecto de onda expansiva */
+.whatsapp-btn::after, .btn-añadir-lista::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.whatsapp-btn:focus:not(:active)::after, .btn-añadir-lista:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+/* Pulsación WhatsApp */
+.whatsapp-btn {
+    animation: pulseWhatsApp 2s infinite;
+}
+
+/* Contenedor de botones */
 .contenedor-botones { display: flex; gap: 10px; margin-top: auto; }
 
 /* =================================== */
@@ -481,9 +613,75 @@ h3 {
     overflow: hidden;
 }
 
-.monto-total { font-size: 1.8rem; font-weight: 900; color: var(--marca-primario); }
-.btn-enviar-pedido { width: 100%; background: var(--whatsapp); color: white; padding: 18px; border-radius: 15px; border: none; font-size: 1rem; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+.header-carrito { 
+    padding: 25px; 
+    background: var(--marca-primario); 
+    color: var(--blanco); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 3px solid var(--marca-secundario);
+}
 
+.titulo-carrito h2 { font-size: 1.3rem; }
+.cerrar-carrito { font-size: 32px; cursor: pointer; transition: 0.3s; }
+.cuerpo-carrito { padding: 25px; max-height: 55vh; overflow-y: auto; }
+
+.item-carrito { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 15px 0; 
+    border-bottom: 1px solid #f0f0f0; 
+}
+
+.btn-quitar { 
+    background: #fff0f0; 
+    color: var(--oferta-rojo); 
+    border: none; 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    font-weight: bold; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
+
+.footer-carrito { 
+    padding: 25px; 
+    background: #fafafa; 
+    border-top: 1px solid #eee; 
+}
+
+.total-contenedor { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px; 
+}
+
+.monto-total { 
+    font-size: 1.8rem; 
+    font-weight: 900; 
+    color: var(--marca-primario); 
+}
+
+.btn-enviar-pedido { 
+    width: 100%; 
+    background: var(--whatsapp); 
+    color: white; 
+    padding: 18px; 
+    border-radius: 15px; 
+    border: none; 
+    font-size: 1rem; 
+    font-weight: 800; 
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+/* Botón flotante del carrito */
 #btn-carrito { 
     position: fixed; 
     bottom: 30px; 
@@ -503,62 +701,1350 @@ h3 {
     border: 2px solid var(--marca-secundario);
 }
 
+#contador-carrito { 
+    position: absolute; 
+    top: -5px; 
+    right: -5px; 
+    background: var(--oferta-rojo); 
+    width: 26px; 
+    height: 26px; 
+    border-radius: 50%; 
+    font-size: 12px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+}
+
 /* =================================== */
-/* 10. 🖼️ LIGHTBOX (GALERÍA) */
+/* 10. 🖼️ LIGHTBOX (GALERÍA DE IMÁGENES) */
 /* =================================== */
-.lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.96); z-index: 99999; justify-content: center; align-items: center; }
-body.lightbox-active { overflow: hidden !important; }
-body.lightbox-active header, body.lightbox-active #categorias, body.lightbox-active #productos, body.lightbox-active #btn-carrito { display: none !important; }
+.lightbox { 
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0,0,0,0.96); 
+    z-index: 99999; 
+    justify-content: center; 
+    align-items: center; 
+}
+
+.galeria-wrapper { 
+    width: 95%; 
+    max-width: 550px; 
+    position: relative;
+}
+
+.galeria-container { 
+    position: relative; 
+    background: transparent; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
+
+.lightbox-img { 
+    max-width: 100%; 
+    max-height: 80vh; 
+    object-fit: contain; 
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); 
+}
+
+/* Flechas de navegación */
+.flecha-incrustada { 
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background: rgba(0,0,0,0.6); 
+    color: white; 
+    border: none; 
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    font-size: 22px; 
+    z-index: 7000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flecha-incrustada.prev { left: 10px; }
+.flecha-incrustada.next { right: 10px; }
+
+.cerrar-lightbox { 
+    position: absolute; 
+    top: 25px; 
+    right: 35px; 
+    color: white; 
+    font-size: 50px; 
+    cursor: pointer; 
+    z-index: 7001; 
+}
+
+.lightbox-nav { 
+    margin-top: 20px; 
+    display: flex; 
+    gap: 10px; 
+    justify-content: center; 
+    flex-wrap: wrap; 
+}
+
+.thumb-galeria { 
+    width: 60px; 
+    height: 60px; 
+    object-fit: cover; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    border: 2px solid transparent; 
+    opacity: 0.6; 
+}
+
+.thumb-galeria.activa { 
+    border-color: var(--marca-secundario); 
+    transform: scale(1.1); 
+    opacity: 1; 
+}
+
+/* =================================== */
+/* 10.5 🌙 MODO LIGHTBOX ACTIVO - OCULTAR ELEMENTOS */
+/* =================================== */
+body.lightbox-active {
+    overflow: hidden !important;
+}
+
+body.lightbox-active header {
+    display: none !important;
+}
+
+body.lightbox-active #categorias {
+    display: none !important;
+}
+
+body.lightbox-active #productos {
+    display: none !important;
+}
+
+body.lightbox-active #paginacion {
+    display: none !important;
+}
+
+body.lightbox-active .banner-popup {
+    display: none !important;
+}
+
+body.lightbox-active .bottom-nav {
+    display: none !important;
+}
+
+body.lightbox-active footer {
+    display: none !important;
+}
+
+body.lightbox-active #btn-carrito {
+    display: none !important;
+}
 
 /* =================================== */
 /* 11. 📄 PAGINACIÓN */
 /* =================================== */
-#paginacion { display: flex; justify-content: center; gap: 8px; padding: 50px 10px; }
-.pag-btn { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--marca-primario); background: white; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-.pag-btn.activa { background: var(--marca-primario); color: white; }
+#paginacion { 
+    display: flex; 
+    justify-content: center; 
+    gap: 8px; 
+    padding: 50px 10px; 
+    flex-wrap: wrap; 
+}
 
-/* =================================== */
-/* 12. ✨ ANIMACIONES */
-/* =================================== */
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes pulseWhatsApp { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
+.pag-btn { 
+    width: 42px; 
+    height: 42px; 
+    min-width: 42px; 
+    min-height: 42px;
+    border-radius: 50%; 
+    border: 2px solid var(--marca-primario); 
+    background: white;
+    color: var(--marca-primario);
+    cursor: pointer; 
+    font-weight: 700; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    flex-shrink: 0; 
+    transition: 0.2s;
+}
 
-/* =================================== */
-/* 13. 🎨 ESTILOS SALDOS (OUTLET) */
-/* =================================== */
-body.seccion-saldos-activa .producto {
-    background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%) !important; 
-    border: 2px solid var(--oferta-amarillo) !important; 
+.pag-btn.activa { 
+    background: var(--marca-primario); 
+    color: white; 
 }
 
 /* =================================== */
-/* 14. 📱 RESPONSIVE MÓVIL (CORREGIDO) */
+/* 12. ✨ ANIMACIONES (CAMBIA EFECTOS AQUÍ) */
 /* =================================== */
 
+/* Animaciones de entrada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Animaciones de efectos */
+@keyframes titleGlow {
+    from {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    to {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(224, 192, 128, 0.6);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translateY(-100px) rotate(180deg);
+        opacity: 0.8;
+    }
+}
+
+@keyframes pulseAmarillo {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulseOferta {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes pulseWhatsApp {
+    0% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+    }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 1;
+    }
+    20% {
+        transform: scale(25, 25);
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(40, 40);
+    }
+}
+
+/* =================================== */
+/* 13. 🎨 ESTILOS ESPECIALES SALDOS - OUTLET ELEGANTE */
+/* =================================== */
+body.seccion-saldos-activa {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%) !important;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+    background-size: 400px 400px, 400px 400px;
+    background-attachment: fixed;
+}
+
+body.seccion-saldos-activa header {
+    border-bottom: 4px solid var(--oferta-amarillo);
+    box-shadow: 0 4px 30px rgba(255, 215, 0, 0.4);
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%) !important;
+}
+
+/* Partículas doradas flotantes para saldos */
+body.seccion-saldos-activa::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.02) 0%, transparent 50%);
+    animation: particulasSaldos 20s infinite linear;
+}
+
+@keyframes particulasSaldos {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* Productos con look outlet de lujo */
+.seccion-saldos-activa .producto {
+    background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%) !important; 
+    border: 2px solid var(--oferta-amarillo) !important; 
+    box-shadow: 
+        0 0 20px rgba(255, 215, 0, 0.3),
+        0 0 40px rgba(255, 215, 0, 0.1),
+        inset 0 0 20px rgba(255, 215, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto holográfico en bordes */
+.seccion-saldos-activa .producto::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        transparent, 
+        var(--oferta-amarillo), 
+        transparent, 
+        var(--oferta-amarillo), 
+        transparent);
+    border-radius: 15px;
+    z-index: -1;
+    animation: holografico 3s infinite linear;
+    opacity: 0.6;
+}
+
+@keyframes holografico {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.seccion-saldos-activa .producto:hover {
+    transform: translateY(-15px) scale(1.03) !important; 
+    box-shadow: 
+        0 0 30px rgba(255, 215, 0, 0.5),
+        0 0 60px rgba(255, 215, 0, 0.2),
+        0 20px 40px rgba(0, 0, 0, 0.4);
+    border-color: var(--marca-dorado-brillante) !important;
+}
+
+/* Textos elegantes */
+.seccion-saldos-activa h3 {
+    color: var(--oferta-amarillo) !important; 
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    font-weight: 700;
+}
+
+/* Precios con look premium */
+.seccion-saldos-activa .precio {
+    background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important; 
+    color: #000 !important; 
+    padding: 15px;
+    border-radius: 12px;
+    width: 95%;
+    margin: 0 auto 15px;
+    box-shadow: 
+        0 5px 15px rgba(255, 215, 0, 0.4),
+        inset 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto brillo en precios */
+.seccion-saldos-activa .precio::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent);
+    animation: brilloPrecio 3s infinite;
+}
+
+@keyframes brilloPrecio {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+}
+
+.seccion-saldos-activa .precio .precio-actual {
+    font-size: 2rem !important;
+    font-weight: 900;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+/* Descripciones elegantes */
+.seccion-saldos-activa .descripcion {
+    background: rgba(255, 215, 0, 0.05) !important; 
+    color: #ccc !important;
+    border-left: 4px solid var(--oferta-amarillo);
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.1);
+}
+
+/* Badge OUTLET premium */
+.seccion-saldos-activa .main-img-container::before {
+    content: "OUTLET";
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%);
+    color: #000;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 5px 12px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    box-shadow: 
+        0 4px 15px rgba(255, 215, 0, 0.5),
+        inset 0 0 10px rgba(0, 0, 0, 0.1);
+    animation: pulsoOutlet 2s infinite;
+    z-index: 10;
+    letter-spacing: 1px;
+}
+
+@keyframes pulsoOutlet {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+    }
+    50% { 
+        transform: scale(1.05); 
+        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.7);
+    }
+}
+
+/* Efectos adicionales para botones en saldos */
+.seccion-saldos-activa .whatsapp-btn,
+.seccion-saldos-activa .btn-añadir-lista {
+    background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+    color: #000 !important;
+    font-weight: 800;
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.seccion-saldos-activa .whatsapp-btn:hover,
+.seccion-saldos-activa .btn-añadir-lista:hover {
+    transform: translateY(-8px) scale(1.05) !important;
+    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.6);
+    filter: brightness(1.2);
+}
+
+/* Categorías en modo saldos */
+body.seccion-saldos-activa #categorias {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%) !important;
+    border-bottom: 2px solid var(--oferta-amarillo);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+}
+
+body.seccion-saldos-activa .categoria-btn.activa {
+    background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+    color: #000 !important;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Paginación elegante en saldos */
+body.seccion-saldos-activa .pag-btn {
+    border-color: var(--oferta-amarillo) !important;
+    color: var(--oferta-amarillo) !important;
+}
+
+body.seccion-saldos-activa .pag-btn.activa {
+    background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+}
+
+/* =================================== */
+/* 14. 📱 RESPONSIVE MÓVIL */
+/* =================================== */
+
+/* TABLET: Ajustes específicos para tablets (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* Header en columna para tablet vertical */
+    header {
+        padding: 15px 20px !important;
+        gap: 15px !important;
+        flex-direction: column !important;
+        height: auto !important;
+        min-height: 120px !important;
+        position: relative !important;
+    }
+    
+    /* Logo centrado y grande */
+    .logo-wrapper {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 0 !important;
+    }
+    
+    .logo-imagen {
+        max-width: 380px !important;
+        max-height: 75px !important;
+        width: auto !important;
+        height: auto !important;
+    }
+    
+    /* Iconos de redes a la derecha del logo */
+    .contact-icons {
+        position: absolute !important;
+        top: 15px !important;
+        right: 20px !important;
+        gap: 10px !important;
+    }
+    
+    .contact-icons svg.icon {
+        width: 24px !important;
+        height: 24px !important;
+    }
+    
+    /* Search container debajo del logo */
+    .search-container {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        max-width: 600px !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        background: transparent !important;
+        z-index: 10 !important;
+        box-shadow: none !important;
+        order: 2;
+    }
+    
+    #buscador {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 12px 24px !important;
+        font-size: 16px !important;
+        height: 45px !important;
+        border-radius: 25px !important;
+        background: #fff !important;
+        color: #333 !important;
+        border: none !important;
+    }
+    
+    #buscador::placeholder {
+        color: #666 !important;
+    }
+    
+    .search-container .slogan-marca {
+        display: none !important;
+    }
+    
+    /* Mostrar marquee en tablet */
+    header > div:last-child {
+        display: flex !important;
+        order: 3;
+        margin-top: 10px !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+    
+    /* Categorías debajo de todo */
+    #categorias {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 10px 15px !important;
+        z-index: auto !important;
+        order: 4;
+    }
+    
+    /* Productos en tablet */
+    #productos {
+        margin-top: 20px !important;
+        padding: 20px !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+/* MÓVIL: Ajustes específicos para móviles (max-width: 768px) */
 @media (max-width: 768px) {
-    #paginacion, #btn-carrito {
+    /* Ocultar paginación en móvil */
+    #paginacion {
+        display: none !important;
+    }
+    
+    /* Ocultar botón flotante de carrito original */
+    #btn-carrito {
+        display: none !important;
+    }
+    
+    /* Ocultar marquee en header móvil */
+    header > div:last-child {
+        display: none !important;
+    }
+    
+    /* Header estilo app - compacto */
+    header {
+        flex-direction: row !important;
+        padding: 6px 12px !important;
+        gap: 8px !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: 50px !important;
+        min-height: 50px !important;
+        max-height: 50px !important;
+        z-index: 9998 !important;
+        overflow: hidden !important;
+    }
+    
+    .logo-wrapper {
+        align-self: center !important;
+        width: auto !important;
+        padding: 0 !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .logo-imagen {
+        max-width: 220px !important;
+        max-height: 42px !important;
+        height: auto;
+        width: auto;
+        display: block;
+    }
+    
+    .contact-icons {
+        align-self: center !important;
+        margin-bottom: 0 !important;
+        gap: 6px !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .contact-icons svg.icon {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    
+    /* Search container móvil - justo debajo del header */
+    .search-container {
+        position: fixed !important;
+        top: 50px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 5px 10px !important;
+        background: #410020 !important;
+        z-index: 10000 !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        transform: translateZ(0); /* Forzar GPU layer */
+        will-change: transform;
+    }
+    
+    #buscador {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 8px 16px !important;
+        font-size: 16px !important; /* Prevenir zoom en iOS */
+        height: 34px !important;
+        border-radius: 17px !important;
+        background: #fff !important;
+        color: #333 !important;
+        border: none !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        -webkit-appearance: none; /* Quitar estilos default de iOS */
+        appearance: none;
+    }
+    
+    #buscador::placeholder {
+        color: #666 !important;
+    }
+    
+    .search-container .slogan-marca {
+        display: none !important;
+    }
+    
+    /* Categorías - justo debajo de search */
+    #categorias {
+        position: fixed !important;
+        top: 89px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch;
+        padding: 6px 12px !important;
+        gap: 8px !important;
+        background: #000 !important;
+        z-index: 9997 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        min-height: 44px;
+    }
+    
+    #categorias::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* Indicador de scroll a la derecha */
+    #categorias::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+        background: linear-gradient(to right, transparent, rgba(0,0,0,0.8));
+        pointer-events: none;
+    }
+    
+    .categoria-btn {
+        flex-shrink: 0 !important;
+        padding: 6px 14px !important;
+        font-size: 0.75rem !important;
+        border-radius: 16px !important;
+        white-space: nowrap !important;
+        height: 32px;
+        line-height: 1;
+    }
+    
+    /* Productos - ajuste de padding para header fijo */
+    #productos {
+        margin-top: 140px !important;
+        padding: 10px !important;
+        padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)) !important;
+        gap: 10px !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        overflow-x: hidden !important;
+        touch-action: pan-y !important;
+    }
+    
+    .producto {
+        border-radius: 10px !important;
+        border: 2px solid var(--marca-secundario) !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    .producto:active {
+        transform: none !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    }
+    
+    .main-img-container {
+        height: 140px !important;
+        padding: 6px !important;
+    }
+    
+    .producto-info {
+        padding: 8px !important;
+    }
+    
+    h3 {
+        font-size: 0.7rem !important;
+        min-height: 1.8em !important;
+    }
+    
+    .precio {
+        font-size: 1rem !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .descripcion {
+        font-size: 0.6rem !important;
+        padding: 6px !important;
+        margin-bottom: 8px !important;
+        line-height: 1.3;
+    }
+    
+    .contenedor-botones {
+        flex-direction: row !important;
+        gap: 6px !important;
+    }
+    
+    .whatsapp-btn, .btn-añadir-lista {
+        padding: 8px 4px !important;
+        font-size: 0.65rem !important;
+        border-radius: 6px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .whatsapp-btn:active, .btn-añadir-lista:active {
+        transform: scale(0.92);
+    }
+    
+    .whatsapp-btn {
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%) !important;
+        box-shadow: 0 3px 10px rgba(37, 211, 102, 0.4);
+    }
+    
+    .btn-añadir-lista {
+        background: linear-gradient(135deg, #E0C080 0%, #C0A060 100%) !important;
+        box-shadow: 0 3px 10px rgba(224, 192, 128, 0.4);
+    }
+    
+    /* Efecto ripple al tocar */
+    .whatsapp-btn::after, .btn-añadir-lista::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255,255,255,0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s, height 0.3s;
+    }
+    
+    .whatsapp-btn:active::after, .btn-añadir-lista:active::after {
+        width: 60px;
+        height: 60px;
+    }
+    
+    /* Footer móvil */
+    footer {
+        margin-bottom: 70px !important;
+        padding: 20px !important;
+    }
+}
+
+/* =================================== */
+/* 📱 MODAL CARRITO - PC PEQUEÑO, MÓVIL FULL */
+/* =================================== */
+
+/* PC: Modal pequeño centrado */
+#modal-carrito {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6) !important;
+    z-index: 99999;
+    justify-content: center;
+    align-items: center;
+}
+
+#modal-carrito .contenido-carrito {
+    width: 90% !important;
+    max-width: 500px !important;
+    height: auto !important;
+    max-height: 80vh !important;
+    border-radius: 20px !important;
+    animation: slideUp 0.3s ease-out;
+    position: relative;
+}
+
+/* Móvil: Full screen */
+@media (max-width: 768px) {
+    #modal-carrito {
+        background: var(--marca-primario) !important;
+        align-items: flex-start;
+    }
+    
+    #modal-carrito .contenido-carrito {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        border-radius: 0 !important;
+        animation: none !important;
+    }
+    
+    /* Ocultar elementos cuando carrito está abierto - solo móvil */
+    body.carrito-abierto header,
+    body.carrito-abierto .search-container,
+    body.carrito-abierto #categorias,
+    body.carrito-abierto .bottom-nav {
         display: none !important;
     }
 
+    body.carrito-abierto {
+        overflow: hidden !important;
+    }
+
+    .bottom-nav {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: 60px;
+        background: linear-gradient(135deg, var(--marca-primario) 0%, #2a0010 100%) !important;
+        display: flex !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        z-index: 2000 !important;
+        box-shadow: 0 -2px 15px rgba(0,0,0,0.3);
+        border-top: 2px solid var(--marca-secundario);
+    }
+    
+    .bottom-nav-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 3px !important;
+        padding: 8px 20px !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease;
+        color: var(--marca-secundario);
+        text-decoration: none !important;
+    }
+    
+    .bottom-nav-item.active {
+        color: #fff;
+        background: linear-gradient(135deg, rgba(224, 192, 128, 0.25) 0%, rgba(224, 192, 128, 0.15) 100%);
+        border-radius: 12px;
+        border: 1px solid rgba(224, 192, 128, 0.4);
+        box-shadow: 0 0 12px rgba(224, 192, 128, 0.3), inset 0 0 8px rgba(224, 192, 128, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .bottom-nav-item.active svg {
+        filter: drop-shadow(0 0 4px rgba(224, 192, 128, 0.6));
+        transform: scale(1.1);
+    }
+    
+    .bottom-nav-item:active {
+        transform: scale(0.95);
+    }
+    
+    .bottom-nav-icon {
+        font-size: 24px !important;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .bottom-nav-icon svg {
+        width: 26px;
+        height: 26px;
+    }
+    
+    .bottom-nav-label {
+        font-size: 10px !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Badge del carrito en bottom nav */
+    .bottom-nav-item.carrito-item {
+        position: relative;
+    }
+    
+    .bottom-nav-badge {
+        position: absolute;
+        top: 0;
+        right: 12px;
+        background: var(--oferta-rojo);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--marca-primario);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+}
+
+/* =================================== */
+/* 📱 RESPONSIVE LEGACY - 480px */
+/* =================================== */
+@media (max-width: 480px) {
+    /* Header móvil */
     header {
-        padding: 15px 10px;
         flex-direction: column;
+        padding: 20px 15px 12px;
         gap: 15px;
     }
-
-    .logo-imagen {
-        max-width: 250px;
+    
+    .logo-imagen { 
+        max-width: 320px; 
+        width: 90%; 
+        margin: 0 auto;
+    }
+    
+    .logo-wrapper { 
+        align-self: center; 
+        width: 100%; 
+        justify-content: center; 
+    }
+    
+    .contact-icons { 
+        align-self: center; 
+        margin-bottom: 5px; 
+    }
+    
+    .search-container { 
+        width: 100%; 
+        margin: 0; 
+    }
+    
+    #buscador { 
+        width: 100%; 
+        max-width: 100%; 
+        padding: 10px 15px; 
+        font-size: 15px;
+        height: 45px; 
+    }
+    
+    /* Categorías móvil */
+    #categorias {
+        top: 205px; 
+        padding: 10px 8px;
+        gap: 6px;
     }
 
-    .search-container {
-        width: 100%;
-        margin: 0;
+    /* Productos móvil */
+    #productos { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px; 
+        padding: 12px; 
+    }
+    
+    .producto { 
+        border-radius: 12px; 
+    }
+    
+    .producto-info { 
+        padding: 10px 8px; 
+    }
+    
+    .main-img-container { 
+        height: 160px; 
+        padding: 8px; 
     }
 
-    #buscador {
-        max-width: 100%;
+    .badge-oferta {
+        top: 8px;
+        left: 8px;
+        padding: 3px 8px;
+        font-size: 0.6rem;
+    }
+    
+    h3 { 
+        font-size: 0.75rem; 
+        min-height: 2.2em; 
+        margin-bottom: 2px; 
+    }
+    
+    .precio { 
+        font-size: 1.1rem; 
+        margin-bottom: 4px; 
+        margin-top: -5px; 
+    }
+
+    .precio-tachado {
+        font-size: 0.75rem;
+        margin-right: 4px;
+    }
+    
+    .descripcion { 
+        display: block !important; 
+        font-size: 0.65rem; 
+        padding: 8px; 
+        margin-bottom: 10px; 
+        border-left: 3px solid var(--marca-secundario);
+        line-height: 1.2;
+    } 
+    
+    /* Botones móvil */
+    .contenedor-botones { 
+        flex-direction: column; 
+        gap: 5px; 
+    }
+    
+    .whatsapp-btn:hover, .btn-añadir-lista:hover {
+        transform: none;
+    }
+    
+    .whatsapp-btn, .btn-añadir-lista { 
+        padding: 10px 2px; 
+        font-size: 0.75rem; 
+        border-radius: 6px;
+    }
+    
+    /* Paginación móvil */
+    .pag-btn {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        min-height: 38px;
         font-size: 14px;
+    }
+
+    /* Lightbox móvil */
+    .flecha-incrustada {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    /* =================================== */
+    /* 📱 SALDOS MÓVIL - OUTLET ELEGANTE OPTIMIZADO */
+    /* =================================== */
+    body.seccion-saldos-activa {
+        background: #0a0a0a !important;
+        background-image: none !important;
+    }
+
+    /* Partículas móviles más visibles */
+    body.seccion-saldos-activa::before {
+        background-image: 
+            radial-gradient(circle at 30% 70%, rgba(255, 215, 0, 0.08) 0%, transparent 40%),
+            radial-gradient(circle at 70% 30%, rgba(255, 215, 0, 0.08) 0%, transparent 40%);
+        animation: particulasSaldosMobile 15s infinite linear;
+    }
+
+    @keyframes particulasSaldosMobile {
+        0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+        50% { transform: translateY(-15px) rotate(180deg); opacity: 1; }
+    }
+
+    /* Productos saldos móviles más visibles */
+    .seccion-saldos-activa .producto {
+        background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%) !important; 
+        border: 3px solid var(--oferta-amarillo) !important; 
+        box-shadow: 
+            0 0 15px rgba(255, 215, 0, 0.4),
+            0 0 25px rgba(255, 215, 0, 0.2),
+            inset 0 0 10px rgba(255, 215, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Efecto holográfico móvil más sutil */
+    .seccion-saldos-activa .producto::before {
+        background: linear-gradient(45deg, 
+            transparent, 
+            var(--oferta-amarillo), 
+            transparent, 
+            var(--oferta-amarillo), 
+            transparent);
+        border-radius: 12px;
+        animation: holograficoMobile 4s infinite linear;
+        opacity: 0.4;
+    }
+
+    @keyframes holograficoMobile {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .seccion-saldos-activa .producto:hover {
+        transform: translateY(-8px) scale(1.02) !important; 
+        box-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.6),
+            0 0 35px rgba(255, 215, 0, 0.3),
+            0 10px 25px rgba(0, 0, 0, 0.4);
+        border-color: var(--marca-dorado-brillante) !important;
+    }
+
+    /* Textos móviles más legibles */
+    .seccion-saldos-activa h3 {
+        color: var(--oferta-amarillo) !important; 
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+        font-weight: 700;
+        font-size: 0.8rem !important;
+    }
+
+    /* Precios móviles más impactantes */
+    .seccion-saldos-activa .precio {
+        background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important; 
+        color: #000 !important; 
+        padding: 12px 8px;
+        border-radius: 10px;
+        width: 95%;
+        margin: 0 auto 12px;
+        box-shadow: 
+            0 4px 12px rgba(255, 215, 0, 0.5),
+            inset 0 0 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Brillo móvil más rápido */
+    .seccion-saldos-activa .precio::before {
+        background: linear-gradient(45deg, 
+            transparent, 
+            rgba(255, 255, 255, 0.4), 
+            transparent);
+        animation: brilloPrecioMobile 2s infinite;
+    }
+
+    @keyframes brilloPrecioMobile {
+        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    }
+
+    .seccion-saldos-activa .precio .precio-actual {
+        font-size: 1.6rem !important;
+        font-weight: 900;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Descripciones móviles elegantes */
+    .seccion-saldos-activa .descripcion {
+        background: rgba(255, 215, 0, 0.08) !important; 
+        color: #ccc !important;
+        border-left: 3px solid var(--oferta-amarillo);
+        box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.15);
+        font-size: 0.7rem !important;
+    }
+
+    /* Badge OUTLET móvil más visible */
+    .seccion-saldos-activa .main-img-container::before {
+        content: "OUTLET";
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%);
+        color: #000;
+        font-size: 9px;
+        font-weight: 900;
+        padding: 4px 8px;
+        border-radius: 6px;
+        text-transform: uppercase;
+        box-shadow: 
+            0 3px 10px rgba(255, 215, 0, 0.6),
+            inset 0 0 6px rgba(0, 0, 0, 0.1);
+        animation: pulsoOutletMobile 1.5s infinite;
+        z-index: 10;
+        letter-spacing: 0.5px;
+    }
+
+    @keyframes pulsoOutletMobile {
+        0%, 100% { 
+            transform: scale(1); 
+            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.6);
+        }
+        50% { 
+            transform: scale(1.08); 
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.8);
+        }
+    }
+
+    /* Botones móviles dorados */
+    .seccion-saldos-activa .whatsapp-btn,
+    .seccion-saldos-activa .btn-añadir-lista {
+        background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+        color: #000 !important;
+        font-weight: 800;
+        box-shadow: 0 3px 10px rgba(255, 215, 0, 0.5);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        font-size: 0.8rem !important;
+        padding: 12px 4px !important;
+    }
+
+    .seccion-saldos-activa .whatsapp-btn:hover,
+    .seccion-saldos-activa .btn-añadir-lista:hover {
+        transform: translateY(-5px) scale(1.03) !important;
+        box-shadow: 0 6px 18px rgba(255, 215, 0, 0.7);
+        filter: brightness(1.2);
+    }
+
+    /* Header saldos móvil */
+    body.seccion-saldos-activa header {
+        border-bottom: 3px solid var(--oferta-amarillo);
+        box-shadow: 0 3px 20px rgba(255, 215, 0, 0.5);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%) !important;
+    }
+
+    /* Categorías saldos móvil */
+    body.seccion-saldos-activa #categorias {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%) !important;
+        border-bottom: 2px solid var(--oferta-amarillo);
+        box-shadow: 0 3px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    body.seccion-saldos-activa .categoria-btn.activa {
+        background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
+        color: #000 !important;
+        box-shadow: 0 3px 12px rgba(255, 215, 0, 0.5);
+    }
+
+    /* Paginación saldos móvil */
+    body.seccion-saldos-activa .pag-btn {
+        border-color: var(--oferta-amarillo) !important;
+        color: var(--oferta-amarillo) !important;
+        border-width: 2px !important;
+    }
+
+    body.seccion-saldos-activa .pag-btn.activa {
+        background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
     }
 }
