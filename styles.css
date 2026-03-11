@@ -1492,7 +1492,7 @@ body.seccion-saldos-activa .pag-btn.activa {
     }
     
     .main-img-container {
-        height: 140px !important;
+        height: 220px !important;
         padding: 6px !important;
         transition: height 0.3s ease !important;
     }
