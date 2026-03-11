@@ -1513,11 +1513,11 @@ body.seccion-saldos-activa .pag-btn.activa {
     
     .descripcion {
         font-size: 0.6rem !important;
-        padding: 6px 35px 6px 6px !important; /* Más espacio derecho para botón */
-        margin-bottom: 8px !important;
-        line-height: 1.4; /* Mejor espaciado para la talla */
+        padding: 6px 40px 8px 6px !important; /* Más espacio derecho y abajo */
+        margin-bottom: 12px !important; /* Más margen inferior */
+        line-height: 1.4;
         position: relative;
-        max-height: 1.4em; /* Espacio para la talla completa */
+        max-height: 1.4em;
         overflow: hidden;
     }
     
