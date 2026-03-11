@@ -148,10 +148,7 @@ function mostrarProductos() {
             <div class="producto-info">
                 ${precioHTML}
                 <h3>${p.nombre}</h3>
-                <div class="descripcion descripcion-expandible" id="desc-${p.codigo}">
-                    ${p.descripcion.split('.')[0] + (p.descripcion.includes('.') ? '.' : '')}
-                    ${p.descripcion.split('.').length > 1 ? `<button class="btn-expandir" onclick="toggleDescripcion('${p.codigo}')">+</button>` : ''}
-                </div>
+                <div class="descripcion">${p.descripcion}</div>
                 <div class="contenedor-botones">
                     <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
@@ -161,33 +158,6 @@ function mostrarProductos() {
         contenedor.appendChild(div);
     });
     actualizarPaginacion();
-}
-
-/* --- FUNCIÓN PARA EXPANDIR/CONTRAER DESCRIPCIONES (SOLO MÓVIL) --- */
-function toggleDescripcion(codigo) {
-    const descElement = document.getElementById(`desc-${codigo}`);
-    if (!descElement) return;
-    
-    const producto = catalogoCompleto.find(p => p.codigo === codigo);
-    if (!producto) return;
-    
-    const isExpandida = descElement.classList.contains('expandida');
-    
-    if (isExpandida) {
-        // Contraer: mostrar solo primera frase
-        descElement.classList.remove('expandida');
-        descElement.innerHTML = `
-            ${producto.descripcion.split('.')[0] + (producto.descripcion.includes('.') ? '.' : '')}
-            ${producto.descripcion.split('.').length > 1 ? `<button class="btn-expandir" onclick="toggleDescripcion('${codigo}')">+</button>` : ''}
-        `;
-    } else {
-        // Expandir: mostrar descripción completa
-        descElement.classList.add('expandida');
-        descElement.innerHTML = `
-            ${producto.descripcion}
-            <button class="btn-expandir" onclick="toggleDescripcion('${codigo}')">−</button>
-        `;
-    }
 }
 
 /* --- LÓGICA DE GALERÍA (LIGHTBOX) --- */
