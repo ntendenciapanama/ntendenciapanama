@@ -1569,7 +1569,30 @@ body.seccion-saldos-activa .pag-btn.activa {
         margin-bottom: 70px !important;
         padding: 20px !important;
     }
-}
+    
+    /* Indicador simple de "Ver detalles" en imágenes */
+    .main-img-container::after {
+        content: 'Ver detalles';
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background: var(--marca-secundario);
+        color: var(--marca-primario);
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.6rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        z-index: 10;
+        transition: all 0.3s ease;
+    }
+    
+    .main-img-container:hover::after {
+        background: var(--marca-dorado-brillante);
+        transform: scale(1.05);
+    }
 
 /* =================================== */
 /* 📱 MODAL CARRITO - PC PEQUEÑO, MÓVIL FULL */
