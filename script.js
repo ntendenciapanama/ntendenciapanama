@@ -370,17 +370,29 @@ function generarDescripcionMovil(descripcion) {
         return `<div class="descripcion">${descripcion}</div>`;
     }
     
-    // En móvil, mostrar solo las primeras palabras y botón para expandir
-    const palabras = descripcion.split(' ');
-    const palabrasVisibles = Math.min(3, palabras.length); // Mostrar primeras 3 palabras
-    const parteVisible = palabras.slice(0, palabrasVisibles).join(' ');
-    const restoDescripcion = palabras.slice(palabrasVisibles).join(' ').trim();
+    // En móvil, mostrar solo la talla y botón para expandir
+    const matchTalla = descripcion.match(/Talla[s]?:?\s*([A-Z0-9\/\-]+)/i);
+    let parteVisible = '';
+    let restoDescripcion = descripcion;
+
+    if (matchTalla && matchTalla[0]) {
+        // Extraer solo "Talla M" (sin punto ni nada más)
+        parteVisible = matchTalla[0].trim();
+        // Quitar la parte de la talla del resto de la descripción
+        restoDescripcion = descripcion.replace(parteVisible, '').trim();
+    } else {
+        // Si no encuentra "Talla", muestra las primeras 2 palabras como fallback
+        const palabras = descripcion.split(' ');
+        const palabrasVisibles = Math.min(2, palabras.length);
+        parteVisible = palabras.slice(0, palabrasVisibles).join(' ');
+        restoDescripcion = palabras.slice(palabrasVisibles).join(' ').trim();
+    }
     
     // En móvil, mostrar estructura con botón
     let html = '<div class="descripcion-movil">';
     
-    // Siempre mostrar las primeras palabras
-    html += `<div class="talla-visible">${parteVisible}${restoDescripcion ? '...' : ''}</div>`;
+    // Siempre mostrar solo la talla
+    html += `<div class="talla-visible">${parteVisible}</div>`;
     
     // Si hay más contenido, agregarlo oculto con botón
     if (restoDescripcion) {
