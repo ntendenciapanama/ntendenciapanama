@@ -137,9 +137,6 @@ function mostrarProductos() {
                </div>`
             : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
 
-        // Extraer talla de la descripción si existe
-        const talla = p.stock ? `<div class="talla-info">Talla: ${p.stock}</div>` : '';
-
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
                 ${badgeHTML}
@@ -151,11 +148,7 @@ function mostrarProductos() {
             <div class="producto-info">
                 ${precioHTML}
                 <h3>${p.nombre}</h3>
-                ${talla}
-                <div class="descripcion" id="desc-${p.codigo}" style="display: none;">${p.descripcion}</div>
-                <button class="btn-ver-detalles" onclick="toggleDescripcion('${p.codigo}')">
-                    <span id="texto-btn-${p.codigo}">Ver detalles</span>
-                </button>
+                <div class="descripcion">${p.descripcion}</div>
                 <div class="contenedor-botones">
                     <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
@@ -338,19 +331,6 @@ function enviarPedidoWhatsApp() {
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
     txt += "🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
-}
-
-function toggleDescripcion(codigo) {
-    const desc = document.getElementById(`desc-${codigo}`);
-    const btnTexto = document.getElementById(`texto-btn-${codigo}`);
-    
-    if (desc.style.display === 'none') {
-        desc.style.display = 'block';
-        btnTexto.textContent = 'Ocultar detalles';
-    } else {
-        desc.style.display = 'none';
-        btnTexto.textContent = 'Ver detalles';
-    }
 }
 
 function scrollToTop() {
