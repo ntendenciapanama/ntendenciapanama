@@ -1516,7 +1516,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         margin-bottom: 8px !important;
         line-height: 1.3;
         position: relative;
-        max-height: 1.3em; /* Solo mostrar primera línea */
+        max-height: 2.6em; /* Espacio para 2 líneas completas */
         overflow: hidden;
     }
     
@@ -1530,8 +1530,8 @@ body.seccion-saldos-activa .pag-btn.activa {
     
     .btn-expandir {
         position: absolute;
-        bottom: 0;
-        right: 0;
+        bottom: 2px;
+        right: 2px;
         background: var(--marca-primario);
         color: white;
         border: none;
@@ -1543,6 +1543,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         text-transform: uppercase;
         z-index: 10;
         transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
     
     .btn-expandir:hover {

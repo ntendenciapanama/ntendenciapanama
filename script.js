@@ -322,10 +322,8 @@ function dibujarCarrito() {
                     <strong>${p.nombre}</strong>
                     <small style="display:block; color:#666;">Cód: ${p.codigo}</small>
                 </div>
-                <div class="descripcion descripcion-expandible" id="desc-${p.codigo}">
-                    ${p.descripcion.split('.')[0] + (p.descripcion.includes('.') ? '.' : '')}
-                    ${p.descripcion.split('.').length > 1 ? `<button class="btn-expandir" onclick="toggleDescripcion('${p.codigo}')">+</button>` : ''}
-                </div>
+                <div class="descripcion">${p.descripcion}</div>
+                <button class="btn-quitar" onclick="quitarDelCarrito(${i})">×</button>
             </div>`;
     });
     totalSpan.innerText = total.toFixed(2);
