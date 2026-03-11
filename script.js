@@ -329,6 +329,7 @@ function dibujarCarrito() {
     totalSpan.innerText = total.toFixed(2);
 }
 
+/* ... */
 function quitarDelCarrito(i) {
     carrito.splice(i, 1);
     const contador = document.getElementById('contador-carrito');
