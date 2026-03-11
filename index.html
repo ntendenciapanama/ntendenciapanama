@@ -21,43 +21,10 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-
-    <style>
-        @media (max-width: 768px) {
-            /* Hacemos que la imagen use más espacio */
-            .producto img {
-                max-height: 400px !important; /* Ajusta este número si quieres la foto más alta */
-                object-fit: contain;
-            }
-
-            /* Estilo para el botón de expandir */
-            .descripcion-corta {
-                display: block;
-                background: #fdf6e9;
-                border: 1px solid #d4af37;
-                border-radius: 8px;
-                padding: 8px;
-                margin: 10px 0;
-            }
-
-            details summary {
-                list-style: none;
-                color: #c09d63;
-                font-weight: bold;
-                cursor: pointer;
-                font-size: 13px;
-                outline: none;
-                margin-top: 5px;
-            }
-
-            details summary::-webkit-details-marker {
-                display: none;
-            }
-        }
-    </style>
 </head>
 <body>
 
+    <!-- BANNER POPUP PARA MÓVILES -->
     <div id="banner-popup" class="banner-popup">
         <div class="banner-content">
             <span class="cerrar-banner" onclick="cerrarBanner()">&times;</span>
@@ -134,9 +101,9 @@
         padding: 12px 5px; 
         box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
         display: flex; 
-        flex-wrap: wrap;       
-        justify-content: center; 
-        gap: 8px;              
+        flex-wrap: wrap;       /* Clave: permite bajar a la siguiente línea */
+        justify-content: center; /* Centra los botones estéticamente */
+        gap: 8px;              /* Espacio entre botones */
         box-sizing: border-box;
     ">
     </nav>

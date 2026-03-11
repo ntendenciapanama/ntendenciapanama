@@ -16,11 +16,16 @@ const URL_SHEET = URL_BASE + '&t=' + new Date().getTime() + '&v=' + Math.random(
 
 /* --- BANNER POPUP PARA MÓVILES --- */
 function mostrarBannerMovil() {
+    // Solo mostrar en móviles (menos de 768px)
     if (window.innerWidth < 768) {
         const banner = document.getElementById('banner-popup');
         if (banner) {
             banner.style.display = 'flex';
-            setTimeout(() => { cerrarBanner(); }, 8000);
+            
+            // Auto-cerrar después de 8 segundos
+            setTimeout(() => {
+                cerrarBanner();
+            }, 8000);
         }
     }
 }
@@ -29,12 +34,15 @@ function cerrarBanner() {
     const banner = document.getElementById('banner-popup');
     if (banner) {
         banner.style.display = 'none';
+        // Guardar en localStorage para no mostrar de nuevo en esta sesión
         localStorage.setItem('banner-cerrado', 'true');
     }
 }
 
+// Mostrar banner solo si no se ha cerrado en esta sesión
 function initBanner() {
     if (localStorage.getItem('banner-cerrado') !== 'true') {
+        // Mostrar después de 1 segundo de cargar la página
         setTimeout(mostrarBannerMovil, 1000);
     }
 }
@@ -101,10 +109,11 @@ function mostrarProductos() {
     if (!contenedor) return;
     contenedor.innerHTML = "";
     
+    // En móvil, mostrar TODOS los productos sin paginación
     const esMovil = window.innerWidth <= 768;
     let lista;
     if (esMovil) {
-        lista = productosFiltrados; 
+        lista = productosFiltrados; // Todos los productos
     } else {
         const inicio = (paginaActual - 1) * productosPorPagina;
         const fin = inicio + productosPorPagina;
@@ -113,42 +122,20 @@ function mostrarProductos() {
 
     lista.forEach(p => {
         const div = document.createElement('div');
+        // REPARACIÓN: Se añade 'tiene-oferta' para activar el marco amarillo si es oferta
         const claseSaldos = p.categoria.toLowerCase() === 'saldos' ? 'producto-saldo' : '';
         const claseOferta = p.esOferta ? 'tiene-oferta' : '';
         div.className = `producto ${claseSaldos} ${claseOferta}`;
         
         const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
         
+        // REPARACIÓN: Estructura de precio ajustada para el CSS de columna
         const precioHTML = p.esOferta 
             ? `<div class="precio">
                 <span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> 
                 <span class="precio-actual oferta">$${p.precio.toFixed(2)}</span>
                </div>`
             : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
-
-        // LÓGICA DE DESCRIPCIÓN ACORDEÓN SOLO PARA MÓVIL
-        let descripcionHTML = `<div class="descripcion">${p.descripcion}</div>`;
-        
-        if (esMovil && p.descripcion.includes('.')) {
-            const partes = p.descripcion.split('.');
-            const primeraFrase = partes[0] + '.';
-            const resto = partes.slice(1).join('.').trim();
-
-            if (resto.length > 0) {
-                descripcionHTML = `
-                    <div class="descripcion-acordeon" style="background-color: #fdf6e9; border: 1px solid #d4af37; border-radius: 8px; padding: 8px; margin: 8px 0; text-align: left;">
-                        <p style="margin: 0; font-weight: bold; font-size: 13px; color: #333;">${primeraFrase}</p>
-                        <details style="width: 100%;">
-                            <summary style="list-style: none; cursor: pointer; color: #c09d63; font-weight: bold; font-size: 12px; margin-top: 4px; outline: none;">
-                                [ + Ver detalles ]
-                            </summary>
-                            <p style="margin: 8px 0 0 0; font-size: 12px; color: #555; line-height: 1.3; border-top: 1px dashed #d4af37; padding-top: 5px;">
-                                ${resto}
-                            </p>
-                        </details>
-                    </div>`;
-            }
-        }
 
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
@@ -161,7 +148,7 @@ function mostrarProductos() {
             <div class="producto-info">
                 ${precioHTML}
                 <h3>${p.nombre}</h3>
-                ${descripcionHTML}
+                <div class="descripcion">${p.descripcion}</div>
                 <div class="contenedor-botones">
                     <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
@@ -194,13 +181,16 @@ function actualizarVistaGaleria() {
         };
     }
 
+    // Ocultar o mostrar flechas según cantidad de imágenes
     const flechaPrev = document.querySelector('.flecha-incrustada.prev');
     const flechaNext = document.querySelector('.flecha-incrustada.next');
     
     if (totalImg <= 1) {
+        // Ocultar flechas si solo hay una imagen
         if (flechaPrev) flechaPrev.style.display = 'none';
         if (flechaNext) flechaNext.style.display = 'none';
     } else {
+        // Mostrar flechas si hay múltiples imágenes
         if (flechaPrev) flechaPrev.style.display = 'flex';
         if (flechaNext) flechaNext.style.display = 'flex';
     }
@@ -254,6 +244,7 @@ function añadirAlCarrito(codigo) {
         carrito.push(p); 
         const contador = document.getElementById('contador-carrito');
         if (contador) contador.innerText = carrito.length;
+        // Actualizar badge en bottom nav (móvil)
         const badge = document.getElementById('bottom-nav-badge');
         if (badge) {
             badge.innerText = carrito.length;
@@ -273,6 +264,7 @@ function toggleCarrito() {
     const isVisible = m.style.display === "flex";
     m.style.display = isVisible ? "none" : "flex";
     document.body.style.overflow = isVisible ? "auto" : "hidden";
+    // Agregar/quitar clase para ocultar header en móvil
     if (!isVisible) {
         document.body.classList.add('carrito-abierto');
     } else {
@@ -313,6 +305,7 @@ function quitarDelCarrito(i) {
     carrito.splice(i, 1);
     const contador = document.getElementById('contador-carrito');
     if (contador) contador.innerText = carrito.length;
+    // Actualizar badge en bottom nav
     const badge = document.getElementById('bottom-nav-badge');
     if (badge) {
         badge.innerText = carrito.length;
@@ -344,6 +337,16 @@ function scrollToTop() {
     window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
+function focusSearch() {
+    const buscador = document.getElementById('buscador');
+    if (buscador) {
+        buscador.focus({preventScroll: true});
+        // No hacer scroll en móvil para evitar descuadre
+        if (window.innerWidth > 768) {
+            buscador.scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
+    }
+}
 document.getElementById('buscador')?.addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     if (term === "") {
@@ -357,6 +360,7 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
     mostrarProductos();
 });
 
+/* --- CATEGORÍAS --- */
 function generarCategorias() {
     const cont = document.getElementById('categorias');
     if (!cont) return;
@@ -390,9 +394,11 @@ function generarCategorias() {
     });
 }
 
+/* --- PAGINACIÓN (DESHABILITADA EN MÓVIL) --- */
 function actualizarPaginacion() {
     const cont = document.getElementById('paginacion');
     if (!cont) return;
+    // En móvil no mostrar paginación
     if (window.innerWidth <= 768) {
         cont.innerHTML = "";
         cont.style.display = "none";
@@ -424,7 +430,9 @@ window.addEventListener('resize', () => {
     }
 });
 
+/* --- NOTIFICACIONES PERSONALIZADAS --- */
 function mostrarNotificacion(mensaje) {
+    // Crear el elemento de notificación
     const notificacion = document.createElement('div');
     notificacion.style.cssText = `
         position: fixed;
@@ -445,7 +453,11 @@ function mostrarNotificacion(mensaje) {
         transition: all 0.3s ease;
     `;
     notificacion.textContent = mensaje;
+    
+    // Agregar al body
     document.body.appendChild(notificacion);
+    
+    // Remover después de 3 segundos
     setTimeout(() => {
         notificacion.style.animation = 'slideOutRight 0.3s ease-out';
         setTimeout(() => {
@@ -456,9 +468,29 @@ function mostrarNotificacion(mensaje) {
     }, 3000);
 }
 
-const styleNotif = document.createElement('style');
-styleNotif.textContent = `
-    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+// Agregar las animaciones necesarias
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
 `;
-document.head.appendChild(styleNotif);
+document.head.appendChild(style);
