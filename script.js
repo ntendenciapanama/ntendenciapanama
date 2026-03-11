@@ -137,6 +137,9 @@ function mostrarProductos() {
                </div>`
             : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
 
+        // Separar la descripción: mostrar solo "Talla M" inicialmente en móvil
+        const descripcionHTML = p.descripcion ? generarDescripcionMovil(p.descripcion) : '<div class="descripcion"></div>';
+
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
                 ${badgeHTML}
@@ -148,7 +151,7 @@ function mostrarProductos() {
             <div class="producto-info">
                 ${precioHTML}
                 <h3>${p.nombre}</h3>
-                <div class="descripcion">${p.descripcion}</div>
+                ${descripcionHTML}
                 <div class="contenedor-botones">
                     <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
@@ -359,6 +362,71 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
     paginaActual = 1;
     mostrarProductos();
 });
+
+/* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN MÓVIL --- */
+function generarDescripcionMovil(descripcion) {
+    // Separar "Talla M" del resto de la descripción
+    const partes = descripcion.split('Talla M');
+    const tallaPart = 'Talla M';
+    const restoDescripcion = partes.length > 1 ? partes[1].trim() : '';
+    
+    // En desktop, mostrar descripción completa
+    if (window.innerWidth > 768) {
+        return `<div class="descripcion">${descripcion}</div>`;
+    }
+    
+    // En móvil, mostrar estructura con botón
+    let html = '<div class="descripcion-movil">';
+    
+    // Siempre mostrar "Talla M"
+    html += `<div class="talla-visible">${tallaPart}</div>`;
+    
+    // Si hay más contenido, agregarlo oculto con botón
+    if (restoDescripcion) {
+        html += `
+            <div class="descripcion-oculta" style="display: none;">
+                ${restoDescripcion}
+            </div>
+            <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
+                Ver más
+            </button>
+        `;
+    }
+    
+    html += '</div>';
+    return html;
+}
+
+function toggleDescripcion(boton) {
+    const descripcionOculta = boton.previousElementSibling;
+    const imgContainer = boton.closest('.producto').querySelector('.main-img-container');
+    
+    if (descripcionOculta.style.display === 'none') {
+        // Mostrar descripción
+        descripcionOculta.style.display = 'block';
+        boton.textContent = 'Ver menos';
+        
+        // Agrandar imagen
+        if (imgContainer) {
+            imgContainer.style.height = '180px';
+        }
+        
+        // Agregar clase expandida al producto
+        boton.closest('.producto').classList.add('descripcion-expandida');
+    } else {
+        // Ocultar descripción
+        descripcionOculta.style.display = 'none';
+        boton.textContent = 'Ver más';
+        
+        // Restaurar tamaño de imagen
+        if (imgContainer) {
+            imgContainer.style.height = '140px';
+        }
+        
+        // Quitar clase expandida
+        boton.closest('.producto').classList.remove('descripcion-expandida');
+    }
+}
 
 /* --- CATEGORÍAS --- */
 function generarCategorias() {
