@@ -365,21 +365,22 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
 
 /* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN MÓVIL --- */
 function generarDescripcionMovil(descripcion) {
-    // Separar "Talla M" del resto de la descripción
-    const partes = descripcion.split('Talla M');
-    const tallaPart = 'Talla M';
-    const restoDescripcion = partes.length > 1 ? partes[1].trim() : '';
-    
     // En desktop, mostrar descripción completa
     if (window.innerWidth > 768) {
         return `<div class="descripcion">${descripcion}</div>`;
     }
     
+    // En móvil, mostrar solo las primeras palabras y botón para expandir
+    const palabras = descripcion.split(' ');
+    const palabrasVisibles = Math.min(3, palabras.length); // Mostrar primeras 3 palabras
+    const parteVisible = palabras.slice(0, palabrasVisibles).join(' ');
+    const restoDescripcion = palabras.slice(palabrasVisibles).join(' ').trim();
+    
     // En móvil, mostrar estructura con botón
     let html = '<div class="descripcion-movil">';
     
-    // Siempre mostrar "Talla M"
-    html += `<div class="talla-visible">${tallaPart}</div>`;
+    // Siempre mostrar las primeras palabras
+    html += `<div class="talla-visible">${parteVisible}${restoDescripcion ? '...' : ''}</div>`;
     
     // Si hay más contenido, agregarlo oculto con botón
     if (restoDescripcion) {
