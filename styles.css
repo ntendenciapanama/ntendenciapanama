@@ -1492,7 +1492,7 @@ body.seccion-saldos-activa .pag-btn.activa {
     }
     
     .main-img-container {
-        height: 140px !important;
+        height: 180px !important;
         padding: 6px !important;
     }
     
@@ -1516,7 +1516,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         margin-bottom: 8px !important;
         line-height: 1.3;
         position: relative;
-        max-height: 1.3em; /* Solo mostrar primera frase "Talla M," */
+        max-height: 1.8em;
         overflow: hidden;
     }
     
