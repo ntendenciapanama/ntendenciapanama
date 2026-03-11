@@ -148,7 +148,10 @@ function mostrarProductos() {
             <div class="producto-info">
                 ${precioHTML}
                 <h3>${p.nombre}</h3>
-                <div class="descripcion">${p.descripcion}</div>
+                <div class="descripcion descripcion-expandible" id="desc-${p.codigo}">
+                    ${p.descripcion.split('.')[0] + (p.descripcion.includes('.') ? '.' : '')}
+                    ${p.descripcion.split('.').length > 1 ? `<button class="btn-expandir" onclick="toggleDescripcion('${p.codigo}')">+</button>` : ''}
+                </div>
                 <div class="contenedor-botones">
                     <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
