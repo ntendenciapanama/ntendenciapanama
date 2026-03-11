@@ -1492,7 +1492,7 @@ body.seccion-saldos-activa .pag-btn.activa {
     }
     
     .main-img-container {
-        height: 140px !important;
+        height: 200px !important;
         padding: 6px !important;
     }
     
@@ -1515,6 +1515,47 @@ body.seccion-saldos-activa .pag-btn.activa {
         padding: 6px !important;
         margin-bottom: 8px !important;
         line-height: 1.3;
+        position: relative;
+        max-height: 1.3em; /* Solo mostrar primera línea */
+        overflow: hidden;
+    }
+    
+    .descripcion-expandible {
+        position: relative;
+    }
+    
+    .descripcion-expandible.expandida {
+        max-height: none;
+    }
+    
+    .btn-expandir {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--marca-primario);
+        color: white;
+        border: none;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.5rem;
+        cursor: pointer;
+        font-weight: 600;
+        text-transform: uppercase;
+        z-index: 10;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-expandir:hover {
+        background: var(--marca-secundario);
+        transform: scale(1.05);
+    }
+    
+    .descripcion-expandible.expandida .btn-expandir {
+        position: static;
+        margin-top: 4px;
+        width: 100%;
+        padding: 4px;
+        background: var(--oferta-rojo);
     }
     
     .contenedor-botones {
