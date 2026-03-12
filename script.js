@@ -269,39 +269,77 @@ function generarCatalogoPDFReal() {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF();
         
-        // 1. Portada del catálogo
-        agregarPortadaCatalogo(pdf);
+        // Configurar fuente simple que funcione
+        pdf.setFont("helvetica");
         
-        // 2. Productos por páginas
-        let y = 20;
-        let pagina = 1;
+        // 1. Portada simple
+        pdf.setFontSize(24);
+        pdf.text("NTENDENCIA PANAMA", 105, 80, { align: 'center' });
+        pdf.setFontSize(20);
+        pdf.text("CATALOGO 2026", 105, 110, { align: 'center' });
+        pdf.setFontSize(14);
+        pdf.text("Tienda Virtual", 105, 140, { align: 'center' });
+        pdf.text("Coordinamos por WhatsApp", 105, 160, { align: 'center' });
+        pdf.text("@ntendenciapanama", 105, 180, { align: 'center' });
+        
+        // 2. Productos - página por página simple
+        let currentPage = 1;
+        let yPosition = 50;
+        
         catalogoCompleto.forEach((producto, index) => {
             // Actualizar progreso
             actualizarProgreso(index, catalogoCompleto.length);
             
-            // Verificar si necesitamos nueva página
-            if (y > 230) {
+            // Nueva página cada 6 productos
+            if (index > 0 && index % 6 === 0) {
                 pdf.addPage();
-                y = 20;
-                pagina++;
+                currentPage++;
+                yPosition = 50;
+                
+                // Header de página
+                pdf.setFontSize(16);
+                pdf.text(`Pagina ${currentPage}`, 105, 30, { align: 'center' });
             }
             
-            // Agregar header de página
-            if (index === 0 || (index > 0 && index % 4 === 0)) {
-                if (index > 0) pdf.addPage();
-                agregarHeaderPagina(pdf, pagina);
-                y = 40;
+            // Verificar espacio en página
+            if (yPosition > 250) {
+                pdf.addPage();
+                currentPage++;
+                yPosition = 50;
+                pdf.setFontSize(16);
+                pdf.text(`Pagina ${currentPage}`, 105, 30, { align: 'center' });
             }
             
-            // Agregar producto
-            y = agregarProductoCatalogo(pdf, producto, y);
+            // Agregar producto simple
+            pdf.setFontSize(12);
+            pdf.setFont("helvetica", "bold");
+            
+            // Nombre limpio y simple
+            const nombreSimple = limpiarTextoPDF(producto.nombre.substring(0, 30));
+            pdf.text(nombreSimple, 20, yPosition);
+            
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(10);
+            pdf.text(`Codigo: ${producto.codigo}`, 20, yPosition + 8);
+            pdf.text(`Precio: $${producto.precio.toFixed(2)}`, 20, yPosition + 16);
+            
+            // Línea separadora
+            pdf.setDrawColor(200, 200, 200);
+            pdf.line(20, yPosition + 20, 190, yPosition + 20);
+            
+            yPosition += 30;
         });
         
         // 3. Página final de contacto
         pdf.addPage();
-        agregarPaginaContacto(pdf);
+        pdf.setFontSize(18);
+        pdf.text("CONTACTO", 105, 50, { align: 'center' });
+        pdf.setFontSize(12);
+        pdf.text("WhatsApp: +507 6771-0645", 105, 80, { align: 'center' });
+        pdf.text("Tienda: ntendenciapanama.vercel.app", 105, 100, { align: 'center' });
+        pdf.text("Instagram: @ntendenciapanama", 105, 120, { align: 'center' });
         
-        // 4. Guardar y actualizar contador
+        // 4. Guardar PDF
         pdf.save('NTENDencia-Panama-Catalogo.pdf');
         incrementarContadorDescargas();
         
@@ -314,6 +352,21 @@ function generarCatalogoPDFReal() {
         cerrarPopupProgreso();
         mostrarNotificacion("Error al generar catálogo, intenta de nuevo");
     }
+}
+
+function limpiarTextoPDF(texto) {
+    return texto
+        .replace(/[^\x20-\x7E]/g, '') // Solo caracteres ASCII básicos
+        .replace(/[ñÑ]/g, 'n')
+        .replace(/[áÁ]/g, 'a')
+        .replace(/[éÉ]/g, 'e')
+        .replace(/[íÍ]/g, 'i')
+        .replace(/[óÓ]/g, 'o')
+        .replace(/[úÚ]/g, 'u')
+        .replace(/[üÜ]/g, 'u')
+        .replace(/[""''']/g, "'")
+        .replace(/–—/g, '-')
+        .trim();
 }
 
 function mostrarPopupProgreso() {
