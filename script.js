@@ -263,6 +263,9 @@ function generarCatalogoPDFReal() {
     }
     
     try {
+        // Mostrar popup de progreso
+        mostrarPopupProgreso();
+        
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF();
         
@@ -273,6 +276,9 @@ function generarCatalogoPDFReal() {
         let y = 20;
         let pagina = 1;
         catalogoCompleto.forEach((producto, index) => {
+            // Actualizar progreso
+            actualizarProgreso(index, catalogoCompleto.length);
+            
             // Verificar si necesitamos nueva página
             if (y > 230) {
                 pdf.addPage();
@@ -299,11 +305,70 @@ function generarCatalogoPDFReal() {
         pdf.save('NTENDencia-Panama-Catalogo.pdf');
         incrementarContadorDescargas();
         
+        // Cerrar popup y mostrar éxito
+        cerrarPopupProgreso();
         mostrarNotificacion("¡Catálogo descargado con éxito!");
         
     } catch(error) {
         console.error("Error generando catálogo:", error);
+        cerrarPopupProgreso();
         mostrarNotificacion("Error al generar catálogo, intenta de nuevo");
+    }
+}
+
+function mostrarPopupProgreso() {
+    // Crear overlay de progreso
+    const overlay = document.createElement('div');
+    overlay.id = 'catalogo-progreso-overlay';
+    overlay.innerHTML = `
+        <div class="catalogo-progreso-modal">
+            <div class="progreso-contenido">
+                <h3>📄 Generando Catálogo</h3>
+                <div class="progreso-barra">
+                    <div class="progreso-lleno" id="progreso-lleno"></div>
+                </div>
+                <p id="progreso-texto">Preparando productos...</p>
+                <p class="progreso-detalles">Esto puede tomar unos segundos</p>
+            </div>
+        </div>
+    `;
+    
+    // Estilos inline para el popup
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+        font-family: 'Poppins', sans-serif;
+    `;
+    
+    document.body.appendChild(overlay);
+}
+
+function actualizarProgreso(actual, total) {
+    const porcentaje = Math.round((actual / total) * 100);
+    const progresoLleno = document.getElementById('progreso-lleno');
+    const progresoTexto = document.getElementById('progreso-texto');
+    
+    if (progresoLleno) {
+        progresoLleno.style.width = porcentaje + '%';
+    }
+    
+    if (progresoTexto) {
+        progresoTexto.textContent = `Procesando ${actual + 1} de ${total} productos...`;
+    }
+}
+
+function cerrarPopupProgreso() {
+    const overlay = document.getElementById('catalogo-progreso-overlay');
+    if (overlay) {
+        overlay.remove();
     }
 }
 
@@ -365,16 +430,29 @@ function agregarProductoCatalogo(pdf, producto, y) {
         pdf.text('Sin imagen', 37.5, y + 20, { align: 'center' });
     }
     
-    // Información del producto
+    // Información del producto - CORREGIR CODIFICACIÓN
     pdf.setTextColor(0, 0, 0);
     pdf.setFontSize(12);
     pdf.setFont(undefined, 'bold');
-    const nombreCorto = producto.nombre.substring(0, 25);
-    pdf.text(nombreCorto, 65, y + 10);
+    
+    // Limpiar y codificar el nombre correctamente
+    const nombreLimpio = producto.nombre
+        .replace(/[^\x20-\x7E]/g, '') // Eliminar caracteres no ASCII
+        .replace(/[ñÑ]/g, 'n') // Reemplazar ñ
+        .replace(/[áÁéÉíÍóÓúÚ]/g, function(match) {
+            const replacements = {'á':'a','Á':'A','é':'e','É':'E','í':'i','Í':'I','ó':'o','Ó':'O','ú':'u','Ú':'U'};
+            return replacements[match] || match;
+        })
+        .substring(0, 25);
+    
+    pdf.text(nombreLimpio, 65, y + 10);
     
     pdf.setFontSize(10);
     pdf.setFont(undefined, 'normal');
-    pdf.text(`Código: ${producto.codigo}`, 65, y + 20);
+    
+    // Limpiar código también
+    const codigoLimpio = producto.codigo.replace(/[^\x20-\x7E]/g, '').replace(/[ñÑ]/g, 'n');
+    pdf.text(`Codigo: ${codigoLimpio}`, 65, y + 20);
     
     // Precio destacado
     pdf.setTextColor(65, 0, 32); // Rojo vino
