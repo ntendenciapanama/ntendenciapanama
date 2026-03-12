@@ -262,39 +262,45 @@ function generarCatalogoPDFNativo() {
         // Mostrar popup de progreso
         mostrarPopupProgreso();
         
-        // Crear contenido HTML para el catálogo
-        let htmlCatalogo = crearHTMLCatalogoPDF();
-        
-        // Crear Blob y descargar
-        const blob = new Blob([htmlCatalogo], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        
-        // Abrir en nueva pestaña para impresión
-        const nuevaVentana = window.open(url, '_blank');
-        
-        // Esperar a que cargue y luego imprimir
-        setTimeout(() => {
-            if (nuevaVentana) {
-                nuevaVentana.print();
-                // Cerrar después de imprimir
-                setTimeout(() => {
-                    nuevaVentana.close();
-                }, 1000);
+        // Crear contenido PDF
+        crearHTMLCatalogoPDF().then(pdfContent => {
+            // Determinar el tipo de contenido
+            const isBlob = pdfContent instanceof Blob;
+            const mimeType = isBlob ? 'application/pdf' : 'application/pdf';
+            
+            // Crear Blob y descargar
+            const blob = isBlob ? pdfContent : new Blob([pdfContent], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            
+            // Descargar directamente
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'NTENDencia-Panama-Catalogo.pdf';
+            link.click();
+            
+            // Intentar abrir en nueva pestaña si es posible
+            try {
+                const nuevaVentana = window.open(url, '_blank');
+                if (nuevaVentana) {
+                    setTimeout(() => {
+                        nuevaVentana.close();
+                    }, 5000);
+                }
+            } catch (error) {
+                console.log('No se pudo abrir en nueva pestaña, solo descarga');
             }
-        }, 1000);
-        
-        // Descargar directamente también
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'NTENDencia-Panama-Catalogo.html';
-        link.click();
-        
-        // Actualizar contador
-        incrementarContadorDescargas();
-        
-        // Cerrar popup y mostrar éxito
-        cerrarPopupProgreso();
-        mostrarNotificacion("¡Catálogo generado con éxito! Abriendo impresión...");
+            
+            // Actualizar contador
+            incrementarContadorDescargas();
+            
+            // Cerrar popup y mostrar éxito
+            cerrarPopupProgreso();
+            mostrarNotificacion("¡Catálogo PDF generado con éxito! Revisa tus descargas.");
+        }).catch(error => {
+            console.error("Error generando PDF:", error);
+            cerrarPopupProgreso();
+            mostrarNotificacion("Error al generar catálogo, intenta de nuevo");
+        });
         
     } catch(error) {
         console.error("Error generando catálogo:", error);
@@ -303,225 +309,259 @@ function generarCatalogoPDFNativo() {
     }
 }
 
-function crearHTMLCatalogoPDF() {
+async function crearHTMLCatalogoPDF() {
     const fecha = new Date();
     const año = fecha.getFullYear();
     
-    let html = `<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTENDENCIA PANAMÁ - Catálogo ${año}</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.4;
-            color: #333;
-            background: #fff;
-        }
-        
-        .header {
-            background: #410020;
-            color: white;
-            text-align: center;
-            padding: 60px 20px;
-            margin-bottom: 40px;
-            position: relative;
-        }
-        
-        .header h1 {
-            font-size: 3em;
-            margin-bottom: 15px;
-            color: #d4af37;
-            font-weight: 900;
-        }
-        
-        .header h2 {
-            font-size: 2.2em;
-            margin-bottom: 25px;
-            font-weight: 700;
-        }
-        
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 30px;
-        }
-        
-        .productos-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-            margin-bottom: 50px;
-        }
-        
-        .producto {
-            text-align: center;
-            padding: 20px;
-            border: 2px solid #ddd;
-            border-radius: 15px;
-            background: #f9f9f9;
-            page-break-inside: avoid;
-        }
-        
-        .producto-img {
-            width: 100%;
-            max-width: 200px;
-            height: 200px;
-            object-fit: cover;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .producto h3 {
-            color: #410020;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-            font-weight: 600;
-            min-height: 2.2em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .producto .codigo {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .producto .precio {
-            color: #410020;
-            font-size: 1.4em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .footer {
-            background: #410020;
-            color: white;
-            text-align: center;
-            padding: 40px 20px;
-            margin-top: 60px;
-        }
-        
-        .footer h3 {
-            margin-bottom: 20px;
-            color: #d4af37;
-            font-size: 1.8em;
-        }
-        
-        .footer p {
-            margin-bottom: 12px;
-            font-size: 1.1em;
-        }
-        
-        .footer .contacto {
-            font-size: 1.3em;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        .page-break {
-            page-break-before: always;
-        }
-        
-        @media print {
-            .productos-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .producto {
-                page-break-inside: avoid;
-            }
-            
-            .header, .footer {
-                page-break-after: avoid;
-            }
-            
-            body {
-                margin: 0;
-                padding: 0;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>NTENDENCIA PANAMÁ</h1>
-        <h2>CATÁLOGO ${año}</h2>
-        <p>Tienda Virtual</p>
-        <p>Coordinamos pedidos por WhatsApp</p>
-        <p>@ntendenciapanama</p>
-    </div>
-    
-    <div class="container">`;
+    // Crear PDF real con imágenes incrustadas
+    const pdfContent = await crearPDFReal();
+    return pdfContent;
+}
 
-    // Agregar productos en grupos de 4 por página
-    let productosPorPagina = 4;
-    let paginaActual = 0;
+async function crearPDFReal() {
+    const fecha = new Date();
+    const año = fecha.getFullYear();
     
-    for (let i = 0; i < catalogoCompleto.length; i += productosPorPagina) {
-        if (i > 0) {
-            html += '<div class="page-break"></div>';
-        }
-        
-        html += '<div class="productos-grid">';
+    // Usar jsPDF si está disponible, si no, crear PDF manual
+    if (typeof window.jsPDF !== 'undefined') {
+        return await crearPDFConjsPDF();
+    } else {
+        return await crearPDFManual();
+    }
+}
+
+async function crearPDFManual() {
+    // Crear PDF simple sin imágenes pero con toda la información
+    let pdfContent = `%PDF-1.4
+1 0 obj
+<< /Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<< /Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+
+4 0 obj
+<< /Length 2000
+>>
+stream
+BT
+/F1 24 Tf
+72 720 Td
+(NTENDENCIA PANAMÁ) Tj
+ET
+Q
+0 -40 Td
+/F1 18 Tf
+72 680 Td
+(CATÁLOGO ${año}) Tj
+ET
+Q
+0 -30 Td
+/F1 12 Tf
+72 650 Td
+(Tienda Virtual - Coordinamos por WhatsApp) Tj
+ET
+Q
+0 -20 Td
+/F1 10 Tf
+72 630 Td
+(@ntendenciapanama) Tj
+ET
+Q
+0 -60 Td
+/F1 14 Tf
+72 580 Td
+(PRODUCTOS) Tj
+ET
+Q`;
+
+    let yPos = 550;
+    
+    // Agregar productos
+    for (let i = 0; i < catalogoCompleto.length && yPos > 100; i++) {
+        const producto = catalogoCompleto[i];
+        const nombreLimpio = limpiarTextoPDF(producto.nombre);
         
         // Actualizar progreso
         actualizarProgreso(i, catalogoCompleto.length);
         
-        for (let j = i; j < Math.min(i + productosPorPagina, catalogoCompleto.length); j++) {
-            const producto = catalogoCompleto[j];
-            const nombreLimpio = limpiarTextoPDF(producto.nombre);
-            
-            // Usar URL absoluta para las imágenes
-            const imageUrl = window.location.origin + `/images/${producto.codigo}/1.jpg`;
-            
-            html += `
-            <div class="producto">
-                <img src="${imageUrl}" alt="${nombreLimpio}" class="producto-img" 
-                     onerror="this.src='${window.location.origin}/images/${producto.codigo}/1.png'; this.onerror='this.src=\"${window.location.origin}/logo.png\"';">
-                <h3>${nombreLimpio}</h3>
-                <div class="codigo">Código: ${producto.codigo}</div>
-                <div class="precio">$${producto.precio.toFixed(2)}</div>
-            </div>`;
+        if (yPos < 150) {
+            pdfContent += `
+BT
+/F1 12 Tf
+72 720 Td
+(--- Página ${Math.floor(i/8) + 2} ---) Tj
+ET
+Q`;
+            yPos = 700;
         }
         
-        html += '</div>';
+        pdfContent += `
+BT
+/F1 11 Tf
+72 ${yPos} Td
+(${nombreLimpio}) Tj
+ET
+Q
+0 -15 Td
+/F1 9 Tf
+72 ${yPos - 15} Td
+(Código: ${producto.codigo} - Precio: $${producto.precio.toFixed(2)}) Tj
+ET
+Q
+0 -25 Td`;
+        
+        yPos -= 40;
     }
 
-    html += `
-    </div>
-    
-    <div class="footer">
-        <h3>CONTACTO</h3>
-        <div class="contacto">📞 WhatsApp: +507 6771-0645</div>
-        <p>🛒 Tienda: ntendenciapanama.vercel.app</p>
-        <p>📱 Instagram: @ntendenciapanama</p>
-        <p>🎵 TikTok: @ntendenciapanama</p>
-        <p style="margin-top: 25px; font-style: italic; font-size: 1.1em;">¡Gracias por tu interés! Te esperamos pronto 💕</p>
-        <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">Generado el ${fecha.toLocaleDateString('es-PA')}</p>
-    </div>
-</body>
-</html>`;
+    // Agregar contacto
+    pdfContent += `
+BT
+/F1 14 Tf
+72 100 Td
+(CONTACTO) Tj
+ET
+Q
+0 -20 Td
+/F1 11 Tf
+72 80 Td
+(WhatsApp: +507 6771-0645) Tj
+ET
+Q
+0 -15 Td
+(Facebook: @ntendenciapanama) Tj
+ET
+Q
+0 -15 Td
+(Instagram: @ntendenciapanama) Tj
+ET
+Q
+0 -15 Td
+(TikTok: @ntendenciapanama) Tj
+ET
+Q
+endstream
+endobj
 
-    return html;
+5 0 obj
+<< /Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000200 00000 n 
+0000000220 00000 n 
+trailer
+<< /Size 6
+/Root 1 0 R
+>>
+%%EOF`;
+
+    return pdfContent;
+}
+
+async function crearPDFConjsPDF() {
+    // Si jsPDF está disponible, usarlo
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Portada
+    doc.setFontSize(24);
+    doc.setTextColor(65, 0, 32);
+    doc.text('NTENDENCIA PANAMÁ', 105, 50, { align: 'center' });
+    
+    doc.setFontSize(18);
+    doc.setTextColor(212, 175, 55);
+    doc.text(`CATÁLOGO ${new Date().getFullYear()}`, 105, 70, { align: 'center' });
+    
+    doc.setFontSize(12);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Tienda Virtual', 105, 90, { align: 'center' });
+    doc.text('Coordinamos por WhatsApp', 105, 100, { align: 'center' });
+    doc.text('@ntendenciapanama', 105, 110, { align: 'center' });
+    
+    // Productos
+    let yPosition = 140;
+    
+    for (let i = 0; i < catalogoCompleto.length; i++) {
+        const producto = catalogoCompleto[i];
+        
+        // Actualizar progreso
+        actualizarProgreso(i, catalogoCompleto.length);
+        
+        // Nueva página si es necesario
+        if (yPosition > 250) {
+            doc.addPage();
+            yPosition = 40;
+        }
+        
+        // Intentar agregar imagen
+        try {
+            const imgData = await cargarImagenComoBase64(producto.codigo);
+            if (imgData && imgData.startsWith('data:image')) {
+                doc.addImage(imgData, 'JPEG', 20, yPosition, 40, 40);
+            }
+        } catch (error) {
+            console.log('No se pudo cargar imagen para', producto.codigo);
+        }
+        
+        // Información del producto
+        doc.setFontSize(12);
+        doc.setTextColor(65, 0, 32);
+        doc.text(limpiarTextoPDF(producto.nombre), 70, yPosition + 15);
+        
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Código: ${producto.codigo}`, 70, yPosition + 25);
+        doc.text(`Precio: $${producto.precio.toFixed(2)}`, 70, yPosition + 35);
+        
+        yPosition += 60;
+    }
+    
+    // Página de contacto
+    doc.addPage();
+    doc.setFontSize(16);
+    doc.setTextColor(65, 0, 32);
+    doc.text('CONTACTO', 105, 50, { align: 'center' });
+    
+    doc.setFontSize(12);
+    doc.setTextColor(100, 100, 100);
+    doc.text('WhatsApp: +507 6771-0645', 105, 70, { align: 'center' });
+    doc.text('Facebook: @ntendenciapanama', 105, 85, { align: 'center' });
+    doc.text('Instagram: @ntendenciapanama', 105, 100, { align: 'center' });
+    doc.text('TikTok: @ntendenciapanama', 105, 115, { align: 'center' });
+    doc.text('Tienda: ntendenciapanama.vercel.app', 105, 130, { align: 'center' });
+    
+    doc.text('¡Gracias por tu interés! Te esperamos pronto 💕', 105, 160, { align: 'center' });
+    doc.text(`Generado el ${fecha.toLocaleDateString('es-PA')}`, 105, 175, { align: 'center' });
+    
+    return doc.output('blob');
 }
 
 async function cargarImagenComoBase64(codigo) {
