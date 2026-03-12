@@ -87,19 +87,8 @@ function generarDescripcionMovil(descripcion) {
     let html = '<div class="descripcion-movil">';
     
     if (tallas.length === 0) {
-        // No hay tallas, mostrar descripción completa en móvil, oculta con botón en PC
-        if (window.innerWidth <= 768) {
-            html += `<div class="descripcion">${descripcion}</div>`;
-        } else {
-            html += `
-                <div class="descripcion-oculta" style="display: none;">
-                    ${descripcion}
-                </div>
-                <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
-                    Ver descripción
-                </button>
-            `;
-        }
+        // No hay tallas, mostrar descripción completa
+        html += `<div class="descripcion">${descripcion}</div>`;
     } else if (tallas.length === 1) {
         // Una talla, mostrar como texto estático
         html += `<div class="talla-visible">${tallas[0]}</div>`;
