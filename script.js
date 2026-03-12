@@ -293,16 +293,12 @@ function dibujarCarrito() {
             <div class="item-carrito">
                 <img src="images/${p.codigo}/1.jpg" alt="${p.nombre}" class="miniatura-carrito">
                 <div class="contenido-item">
-                    <div class="header-item">
-                        <div class="info-producto">
-                            <strong>${p.nombre}</strong>
-                            <small style="display:block; color:rgba(255,255,255,0.6);">Cód: ${p.codigo}</small>
-                        </div>
-                        <button class="btn-quitar" onclick="quitarDelCarrito(${i})">×</button>
+                    <div class="info-producto">
+                        <strong>${p.nombre}</strong>
+                        <small>Cód: ${p.codigo}</small>
+                        <span class="precio-item-individual">$${p.precio.toFixed(2)}</span>
                     </div>
-                    <div class="precio-item">
-                        <span style="font-weight:bold;">$${p.precio.toFixed(2)}</span>
-                    </div>
+                    <button class="btn-quitar" onclick="quitarDelCarrito(${i})">×</button>
                 </div>
             </div>
         `;
