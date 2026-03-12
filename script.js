@@ -49,6 +49,9 @@ function initBanner() {
 
 initBanner();
 
+// Inicializar contador de descargas del catálogo
+actualizarContadorVisual();
+
 /* --- RESPONSIVIDAD --- */
 function ajustarPaginacionDinamica() {
     const ancho = window.innerWidth;
@@ -227,17 +230,388 @@ function cambiarImagenNav(paso, event) {
     if (imgIndex > totalImg) imgIndex = 1;
     if (imgIndex < 1) imgIndex = totalImg;
     actualizarVistaGaleria();
-}
-
-function cerrarImagen() {
-    document.getElementById('lightbox').style.display = 'none';
     document.body.style.overflow = 'auto';
     document.body.classList.remove('lightbox-active');
+}
+
+/* --- FUNCIÓN PARA GENERAR CATÁLOGO PDF NATIVO --- */
+function generarCatalogoPDF() {
+    // Detectar si es móvil
+    const esMovil = window.innerWidth <= 768;
+    
+    if (esMovil) {
+        // Mostrar confirmación en móvil
+        const confirmar = confirm('¿Deseas descargar el catálogo completo de NTENDENCIA PANAMÁ?\n\nIncluye todos nuestros productos con imágenes y precios\nEl archivo pesa aproximadamente 2-3MB');
+        
+        if (!confirmar) {
+            return; // Usuario canceló
+        }
+    }
+    
+    // Continuar con la generación
+    generarCatalogoPDFNativo();
+}
+
+function generarCatalogoPDFNativo() {
+    if (!catalogoCompleto || catalogoCompleto.length === 0) {
+        mostrarNotificacion("Cargando catálogo, espera un momento...");
+        return;
+    }
+    
+    try {
+        // Mostrar popup de progreso
+        mostrarPopupProgreso();
+        
+        // Crear contenido HTML para el catálogo
+        let htmlCatalogo = crearHTMLCatalogoPDF();
+        
+        // Crear Blob y descargar
+        const blob = new Blob([htmlCatalogo], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        
+        // Abrir en nueva pestaña para impresión
+        const nuevaVentana = window.open(url, '_blank');
+        
+        // Esperar a que cargue y luego imprimir
+        setTimeout(() => {
+            if (nuevaVentana) {
+                nuevaVentana.print();
+                // Cerrar después de imprimir
+                setTimeout(() => {
+                    nuevaVentana.close();
+                }, 1000);
+            }
+        }, 1000);
+        
+        // Descargar directamente también
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'NTENDencia-Panama-Catalogo.html';
+        link.click();
+        
+        // Actualizar contador
+        incrementarContadorDescargas();
+        
+        // Cerrar popup y mostrar éxito
+        cerrarPopupProgreso();
+        mostrarNotificacion("¡Catálogo generado con éxito! Abriendo impresión...");
+        
+    } catch(error) {
+        console.error("Error generando catálogo:", error);
+        cerrarPopupProgreso();
+        mostrarNotificacion("Error al generar catálogo, intenta de nuevo");
+    }
+}
+
+function crearHTMLCatalogoPDF() {
+    const fecha = new Date();
+    const año = fecha.getFullYear();
+    
+    let html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTENDENCIA PANAMÁ - Catálogo ${año}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.4;
+            color: #333;
+            background: #fff;
+        }
+        
+        .header {
+            background: #410020;
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #d4af37;
+            font-weight: 900;
+        }
+        
+        .header h2 {
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+        
+        .productos-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        .producto {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            background: #f9f9f9;
+            page-break-inside: avoid;
+        }
+        
+        .producto-img {
+            width: 100%;
+            max-width: 200px;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+        
+        .producto h3 {
+            color: #410020;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            font-weight: 600;
+            min-height: 2.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .producto .codigo {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .producto .precio {
+            color: #410020;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            background: #410020;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+        
+        .footer h3 {
+            margin-bottom: 20px;
+            color: #d4af37;
+            font-size: 1.8em;
+        }
+        
+        .footer p {
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        
+        .footer .contacto {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        @media print {
+            .productos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .producto {
+                page-break-inside: avoid;
+            }
+            
+            .header, .footer {
+                page-break-after: avoid;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>NTENDENCIA PANAMÁ</h1>
+        <h2>CATÁLOGO ${año}</h2>
+        <p>Tienda Virtual</p>
+        <p>Coordinamos pedidos por WhatsApp</p>
+        <p>@ntendenciapanama</p>
+    </div>
+    
+    <div class="container">`;
+
+    // Agregar productos en grupos de 4 por página
+    let productosPorPagina = 4;
+    let paginaActual = 0;
+    
+    for (let i = 0; i < catalogoCompleto.length; i += productosPorPagina) {
+        if (i > 0) {
+            html += '<div class="page-break"></div>';
+        }
+        
+        html += '<div class="productos-grid">';
+        
+        // Actualizar progreso
+        actualizarProgreso(i, catalogoCompleto.length);
+        
+        for (let j = i; j < Math.min(i + productosPorPagina, catalogoCompleto.length); j++) {
+            const producto = catalogoCompleto[j];
+            const nombreLimpio = limpiarTextoPDF(producto.nombre);
+            
+            html += `
+            <div class="producto">
+                <img src="images/${producto.codigo}/1.jpg" alt="${nombreLimpio}" class="producto-img" 
+                     onerror="this.src='images/${producto.codigo}/1.png'; this.onerror='this.src=\"logo.png\"';">
+                <h3>${nombreLimpio}</h3>
+                <div class="codigo">Código: ${producto.codigo}</div>
+                <div class="precio">$${producto.precio.toFixed(2)}</div>
+            </div>`;
+        }
+        
+        html += '</div>';
+    }
+
+    html += `
+    </div>
+    
+    <div class="footer">
+        <h3>CONTACTO</h3>
+        <div class="contacto">📞 WhatsApp: +507 6771-0645</div>
+        <p>🛒 Tienda: ntendenciapanama.vercel.app</p>
+        <p>📱 Instagram: @ntendenciapanama</p>
+        <p>🎵 TikTok: @ntendenciapanama</p>
+        <p style="margin-top: 25px; font-style: italic; font-size: 1.1em;">¡Gracias por tu interés! Te esperamos pronto 💕</p>
+        <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">Generado el ${fecha.toLocaleDateString('es-PA')}</p>
+    </div>
+</body>
+</html>`;
+
+    return html;
+}
+
+function limpiarTextoPDF(texto) {
+    return texto
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/[ñÑ]/g, 'n')
+        .replace(/[áÁ]/g, 'a')
+        .replace(/[éÉ]/g, 'e')
+        .replace(/[íÍ]/g, 'i')
+        .replace(/[óÓ]/g, 'o')
+        .replace(/[úÚ]/g, 'u')
+        .trim();
+}
+
+function mostrarPopupProgreso() {
+    // Crear overlay de progreso
+    const overlay = document.createElement('div');
+    overlay.id = 'catalogo-progreso-overlay';
+    overlay.innerHTML = `
+        <div class="catalogo-progreso-modal">
+            <div class="progreso-contenido">
+                <h3>📄 Generando Catálogo</h3>
+                <div class="progreso-barra">
+                    <div class="progreso-lleno" id="progreso-lleno"></div>
+                </div>
+                <p id="progreso-texto">Preparando productos...</p>
+                <p class="progreso-detalles">Esto puede tomar unos segundos</p>
+            </div>
+        </div>
+    `;
+    
+    // Estilos inline para el popup
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+        font-family: 'Poppins', sans-serif;
+    `;
+    
+    document.body.appendChild(overlay);
+}
+
+function actualizarProgreso(actual, total) {
+    const porcentaje = Math.round((actual / total) * 100);
+    const progresoLleno = document.getElementById('progreso-lleno');
+    const progresoTexto = document.getElementById('progreso-texto');
+    
+    if (progresoLleno) {
+        progresoLleno.style.width = porcentaje + '%';
+    }
+    
+    if (progresoTexto) {
+        progresoTexto.textContent = `Procesando ${actual + 1} de ${total} productos...`;
+    }
+}
+
+function cerrarPopupProgreso() {
+    const overlay = document.getElementById('catalogo-progreso-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+function incrementarContadorDescargas() {
+    let descargas = localStorage.getItem('catalogo-descargas') || '0';
+    descargas = parseInt(descargas) + 1;
+    localStorage.setItem('catalogo-descargas', descargas.toString());
+    actualizarContadorVisual();
+}
+
+function actualizarContadorVisual() {
+    const contador = document.getElementById('catalogo-descargas');
+    if (contador) {
+        let descargas = localStorage.getItem('catalogo-descargas') || '0';
+        contador.textContent = `${descargas} descargas`;
+    }
 }
 
 /* --- LÓGICA DEL CARRITO --- */
 function añadirAlCarrito(codigo) {
     const yaExiste = carrito.find(x => x.codigo === codigo);
+    const yaExisteIndex = carrito.findIndex(x => x.codigo === codigo);
+    if (yaExisteIndex !== -1) {
     if (yaExiste) {
         mostrarNotificacion("Este producto ya está en lista");
         return;
