@@ -585,7 +585,7 @@ h3 {
 .contenedor-botones { display: flex; gap: 10px; margin-top: auto; }
 
 /* =================================== */
-/* 9. 🛒 CARRITO DE COMPRAS */
+/* 9. 🛒 CARRITO DE COMPRAS CON IMÁGENES */
 /* =================================== */
 .modal-carrito {
     display: none; 
@@ -625,28 +625,184 @@ h3 {
 
 .titulo-carrito h2 { font-size: 1.3rem; }
 .cerrar-carrito { font-size: 32px; cursor: pointer; transition: 0.3s; }
-.cuerpo-carrito { padding: 25px; max-height: 55vh; overflow-y: auto; }
+.cuerpo-carrito { 
+    padding: 25px; 
+    max-height: 55vh; 
+    overflow-y: auto; 
+    background: var(--marca-primario);
+}
 
+/* NUEVO DISEÑO DE ITEMS DEL CARRITO */
 .item-carrito { 
     display: flex; 
-    justify-content: space-between; 
     align-items: center; 
     padding: 15px 0; 
-    border-bottom: 1px solid #f0f0f0; 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    gap: 12px;
+}
+
+.miniatura-carrito {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: transform 0.2s ease;
+}
+
+.miniatura-carrito:hover {
+    transform: scale(1.05);
+}
+
+.contenido-item {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0;
+}
+
+.header-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.info-producto {
+    flex: 1;
+    min-width: 0;
+}
+
+.info-producto strong {
+    display: block;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--blanco);
+}
+
+.info-producto small {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.precio-item {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.precio-item span {
+    font-weight: bold;
+    color: var(--blanco);
+    font-size: 0.95rem;
 }
 
 .btn-quitar { 
-    background: #fff0f0; 
+    background: rgba(255,255,255,0.1); 
     color: var(--oferta-rojo); 
     border: none; 
-    width: 32px; 
-    height: 32px; 
+    width: 28px; 
+    height: 28px; 
     border-radius: 50%; 
     cursor: pointer; 
     font-weight: bold; 
     display: flex; 
     align-items: center; 
     justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.btn-quitar:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.1);
+}
+
+/* ===== RESPONSIVE DESIGN PARA CARRITO ===== */
+
+/* Tablets y pantallas medianas */
+@media (max-width: 768px) {
+    .miniatura-carrito {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .contenido-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .header-item {
+        width: 100%;
+        margin-right: 0;
+    }
+    
+    .precio-item {
+        align-self: flex-end;
+    }
+    
+    .info-producto strong {
+        font-size: 0.85rem;
+    }
+    
+    .info-producto small {
+        font-size: 0.7rem;
+    }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+    .item-carrito {
+        padding: 12px 0;
+        gap: 10px;
+    }
+    
+    .miniatura-carrito {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .info-producto strong {
+        font-size: 0.8rem;
+    }
+    
+    .info-producto small {
+        font-size: 0.65rem;
+    }
+    
+    .btn-quitar {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+    
+    .precio-item span {
+        font-size: 0.85rem;
+    }
+}
+
+/* Móviles muy pequeños */
+@media (max-width: 320px) {
+    .miniatura-carrito {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .info-producto strong {
+        font-size: 0.75rem;
+    }
+    
+    .contenido-item {
+        gap: 3px;
+    }
 }
 
 .footer-carrito { 

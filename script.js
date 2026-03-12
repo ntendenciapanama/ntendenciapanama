@@ -291,15 +291,21 @@ function dibujarCarrito() {
         total += p.precio;
         lista.innerHTML += `
             <div class="item-carrito">
-                <div>
-                    <strong>${p.nombre}</strong>
-                    <small style="display:block; color:#666;">Cód: ${p.codigo}</small>
+                <img src="images/${p.codigo}/1.jpg" alt="${p.nombre}" class="miniatura-carrito">
+                <div class="contenido-item">
+                    <div class="header-item">
+                        <div class="info-producto">
+                            <strong>${p.nombre}</strong>
+                            <small style="display:block; color:rgba(255,255,255,0.6);">Cód: ${p.codigo}</small>
+                        </div>
+                        <button class="btn-quitar" onclick="quitarDelCarrito(${i})">×</button>
+                    </div>
+                    <div class="precio-item">
+                        <span style="font-weight:bold;">$${p.precio.toFixed(2)}</span>
+                    </div>
                 </div>
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <span style="font-weight:bold;">$${p.precio.toFixed(2)}</span>
-                    <button class="btn-quitar" onclick="quitarDelCarrito(${i})">✕</button>
-                </div>
-            </div>`;
+            </div>
+        `;
     });
     totalSpan.innerText = total.toFixed(2);
 }
