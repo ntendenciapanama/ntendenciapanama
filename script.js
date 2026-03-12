@@ -347,10 +347,11 @@ async function crearPDFReal() {
 }
 
 async function crearPDFManual() {
-    // Crear PDF simple pero funcional sin imágenes
+    // Crear PDF completo con todas las páginas necesarias
     const fecha = new Date();
     const año = fecha.getFullYear();
     
+    // Iniciar estructura PDF
     let pdfContent = `%PDF-1.4
 1 0 obj
 << /Type /Catalog
@@ -360,29 +361,27 @@ endobj
 
 2 0 obj
 << /Type /Pages
-/Kids [3 0 R]
-/Count 1
->>
-endobj
-
-3 0 obj
-<< /Type /Page
-/Parent 2 0 R
-/MediaBox [0 0 612 792]
-/Contents 4 0 R
-/Resources <<
-/Font <<
-/F1 5 0 R
->>
->>
->>
-endobj
-
-4 0 obj
-<< /Length 3000
->>
-stream
-BT
+/Kids [`;
+    
+    // Calcular cuántas páginas necesitamos (8 productos por página)
+    const productosPorPagina = 8;
+    const totalPaginas = Math.ceil(catalogoCompleto.length / productosPorPagina);
+    
+    // Crear objetos de página
+    let pageObjects = '';
+    let contentObjects = '';
+    let xrefEntries = [];
+    let currentOffset = 0;
+    
+    for (let pageNum = 0; pageNum < totalPaginas; pageNum++) {
+        const pageIndex = 3 + pageNum * 2; // 3 páginas base + 2 objetos por página
+        const contentIndex = pageIndex + 1;
+        
+        // Agregar referencia de página
+        pageObjects += `${pageIndex} 0 R `;
+        
+        // Crear contenido de página
+        let pageContent = `BT
 /F1 24 Tf
 72 720 Td
 (NTENDENCIA PANAMÁ) Tj
@@ -409,32 +408,23 @@ Q
 0 -60 Td
 /F1 14 Tf
 72 580 Td
-(PRODUCTOS) Tj
+(PÁGINA ${pageNum + 1}) Tj
 ET
 Q`;
-
-    let yPos = 550;
-    
-    // Agregar productos
-    for (let i = 0; i < catalogoCompleto.length && yPos > 100; i++) {
-        const producto = catalogoCompleto[i];
-        const nombreLimpio = limpiarTextoPDF(producto.nombre);
         
-        // Actualizar progreso
-        actualizarProgreso(i, catalogoCompleto.length);
+        let yPos = 540;
+        const startIndex = pageNum * productosPorPagina;
+        const endIndex = Math.min(startIndex + productosPorPagina, catalogoCompleto.length);
         
-        // Nueva página si es necesario
-        if (yPos < 150) {
-            pdfContent += `BT
-/F1 12 Tf
-72 720 Td
-(--- Página ${Math.floor(i/8) + 2} ---) Tj
-ET
-Q`;
-            yPos = 700;
-        }
-        
-        pdfContent += `BT
+        // Agregar productos de esta página
+        for (let i = startIndex; i < endIndex; i++) {
+            const producto = catalogoCompleto[i];
+            const nombreLimpio = limpiarTextoPDF(producto.nombre);
+            
+            // Actualizar progreso
+            actualizarProgreso(i, catalogoCompleto.length);
+            
+            pageContent += `BT
 /F1 11 Tf
 72 ${yPos} Td
 (${nombreLimpio}) Tj
@@ -447,39 +437,112 @@ Q
 ET
 Q
 0 -25 Td`;
+            
+            yPos -= 40;
+        }
         
-        yPos -= 40;
+        pageContent += `ET
+endstream
+endobj`;
+        
+        // Agregar objeto de página
+        contentObjects += `${contentIndex} 0 obj
+<< /Length ${pageContent.length}
+>>
+stream
+${pageContent}`;
+        
+        // Agregar objeto de contenido
+        contentObjects += `
+${pageIndex} 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents ${contentIndex} 0 R
+/Resources <<
+/Font <<
+/F1 ${100 + totalPaginas * 2} 0 R
+>>
+>>
+>>
+endobj`;
+        
+        xrefEntries.push(pageIndex, contentIndex);
     }
-
-    // Agregar contacto
-    pdfContent += `BT
-/F1 14 Tf
-72 100 Td
+    
+    // Agregar página de contacto
+    const contactoIndex = 3 + totalPaginas * 2;
+    const contactoContentIndex = contactoIndex + 1;
+    
+    pageObjects += `${contactoIndex} 0 R `;
+    
+    contentObjects += `${contactoContentIndex} 0 obj
+<< /Length 500
+>>
+stream
+BT
+/F1 16 Tf
+72 720 Td
 (CONTACTO) Tj
 ET
 Q
-0 -20 Td
-/F1 11 Tf
-72 80 Td
+0 -40 Td
+/F1 12 Tf
+72 680 Td
 (WhatsApp: +507 6771-0645) Tj
 ET
 Q
-0 -15 Td
+0 -20 Td
 (Facebook: @ntendenciapanama) Tj
 ET
 Q
-0 -15 Td
+0 -20 Td
 (Instagram: @ntendenciapanama) Tj
 ET
 Q
-0 -15 Td
+0 -20 Td
 (TikTok: @ntendenciapanama) Tj
+ET
+Q
+0 -20 Td
+(Tienda: ntendenciapanama.vercel.app) Tj
+ET
+Q
+0 -30 Td
+/F1 10 Tf
+72 580 Td
+(¡Gracias por tu interés! Te esperamos pronto 💕) Tj
+ET
+Q
+0 -20 Td
+(Generado el ${fecha.toLocaleDateString('es-PA')}) Tj
 ET
 Q
 endstream
 endobj
 
-5 0 obj
+${contactoIndex} 0 obj
+<< /Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents ${contactoContentIndex} 0 R
+/Resources <<
+/Font <<
+/F1 ${100 + totalPaginas * 2} 0 R
+>>
+>>
+>>
+endobj`;
+    
+    // Completar estructura PDF
+    pdfContent += pageObjects + `]
+/Count ${totalPaginas + 1}
+>>
+endobj
+
+${contentObjects}
+
+${100 + totalPaginas * 2} 0 obj
 << /Type /Font
 /Subtype /Type1
 /BaseFont /Helvetica
@@ -487,15 +550,19 @@ endobj
 endobj
 
 xref
-0 6
-0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000200 00000 n 
-0000000220 00000 n 
+0 ${100 + totalPaginas * 2 + 1}
+0000000000 65535 f`;
+
+    // Calcular offsets xref (simplificado)
+    let offset = 0;
+    for (let i = 1; i <= 100 + totalPaginas * 2; i++) {
+        pdfContent += `\n${offset.toString().padStart(10, '0')} 00000 n`;
+        offset += 1000; // Offset aproximado
+    }
+    
+    pdfContent += `
 trailer
-<< /Size 6
+<< /Size ${100 + totalPaginas * 2 + 1}
 /Root 1 0 R
 >>
 %%EOF`;
