@@ -576,3 +576,147 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Función simple para descargar catálogo
+function descargarCatalogo() {
+    try {
+        // Mostrar indicador de progreso
+        const btn = document.getElementById('btn-descargar-catalogo');
+        if (btn) {
+            btn.innerHTML = '⏳ DESCARGANDO...';
+            btn.disabled = true;
+        }
+
+        // Obtener TODOS los productos
+        const productos = todosLosProductos;
+        
+        if (productos.length === 0) {
+            alert('No hay productos para descargar');
+            return;
+        }
+
+        // Crear HTML del catálogo
+        let html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo NTENDENCIA PANAMÁ</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: white;
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 40px; 
+            border-bottom: 3px solid #410020;
+            padding-bottom: 20px;
+        }
+        .title { 
+            font-size: 32px; 
+            font-weight: bold; 
+            color: #410020;
+            margin-bottom: 10px;
+        }
+        .date { 
+            font-size: 16px; 
+            color: #666;
+        }
+        .product { 
+            margin-bottom: 40px; 
+            padding: 20px; 
+            border: 2px solid #410020;
+            page-break-inside: avoid;
+        }
+        .product img { 
+            width: 300px; 
+            height: 300px; 
+            margin-bottom: 15px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+        }
+        .name { 
+            font-size: 20px; 
+            font-weight: bold; 
+            margin-bottom: 8px;
+            color: #410020;
+        }
+        .code { 
+            font-size: 16px; 
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .price { 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: #410020;
+            margin-bottom: 10px;
+        }
+        .description { 
+            font-size: 14px; 
+            color: #666;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">NTENDENCIA PANAMÁ</div>
+        <div class="date">Catálogo Completo - ${new Date().toLocaleDateString('es-PA')}</div>
+    </div>
+`;
+
+        // Agregar todos los productos
+        productos.forEach(product => {
+            html += `
+    <div class="product">
+        <img src="${product.imagen}" onerror="this.src='https://via.placeholder.com/300x300/410020/ffffff?text=IMG'" alt="${product.nombre}">
+        <div class="code">${product.codigo || ''}</div>
+        <div class="name">${product.nombre || ''}</div>
+        <div class="price">$${product.precio || '0'}</div>
+        <div class="description">${product.descripcion || ''}</div>
+    </div>
+`;
+        });
+
+        html += `
+</body>
+</html>`;
+
+        // Crear blob y descargar
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `catalogo-ntendencia-${new Date().toISOString().split('T')[0]}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        URL.revokeObjectURL(url);
+        
+        // Restaurar botón
+        if (btn) {
+            btn.innerHTML = '📥 DESCARGAR CATÁLOGO';
+            btn.disabled = false;
+        }
+        
+        // Mostrar éxito
+        alert('✅ Catálogo descargado exitosamente!\n\nAbre el archivo y usa:\n• Ctrl+P (Windows) o Cmd+P (Mac)\n• "Guardar como PDF"\n\n🎯 Listo para imprimir o compartir!');
+        
+    } catch (error) {
+        console.error('Error descargando catálogo:', error);
+        
+        // Restaurar botón
+        const btn = document.getElementById('btn-descargar-catalogo');
+        if (btn) {
+            btn.innerHTML = '📥 DESCARGAR CATÁLOGO';
+            btn.disabled = false;
+        }
+        
+        alert('❌ Error al descargar. Intenta nuevamente.');
+    }
+}
