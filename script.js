@@ -61,7 +61,7 @@ function analizarDescripcion(descripcion) {
     let encontrandoTallas = true;
     
     partes.forEach(parte => {
-        if (encontrandoTallas && parte.toLowerCase().startsWith('talla')) {
+        if (encontrandoTallas && (parte.toLowerCase().startsWith('talla') || parte.toLowerCase().startsWith('talla:'))) {
             tallas.push(parte);
         } else {
             encontrandoTallas = false;
@@ -89,9 +89,9 @@ function generarDescripcionMovil(descripcion) {
     
     if (tallas.length === 0) {
         // No hay tallas, mostrar descripción completa con botón si es larga
-        if (descripcion && descripcion.length > 50) {
+        if (descripcion && descripcion.length > 80) {
             // Descripción larga: mostrar parte truncada con botón "Ver más"
-            const parteVisible = descripcion.substring(0, 50) + "...";
+            const parteVisible = descripcion.substring(0, 80) + "...";
             html += `
                 <div class="descripcion">${parteVisible}</div>
                 <div class="descripcion-oculta" style="display: none;">
@@ -108,9 +108,9 @@ function generarDescripcionMovil(descripcion) {
     } else if (tallas.length === 1) {
         // Una talla, mostrar como texto estático
         html += `<div class="talla-visible">${tallas[0]}</div>`;
-        if (resto) {
+        if (resto && resto.length > 40) {
             html += `
-                <div class="descripcion-resto">${resto.substring(0, 30)}...</div>
+                <div class="descripcion-resto">${resto.substring(0, 40)}...</div>
                 <div class="descripcion-oculta" style="display: none;">
                     ${resto}
                 </div>
@@ -118,6 +118,8 @@ function generarDescripcionMovil(descripcion) {
                     Ver más
                 </button>
             `;
+        } else if (resto) {
+            html += `<div class="descripcion-resto">${resto}</div>`;
         }
     } else {
         // Múltiples tallas, mostrar botones selector
@@ -131,9 +133,9 @@ function generarDescripcionMovil(descripcion) {
         });
         html += '</div>';
         
-        if (resto) {
+        if (resto && resto.length > 40) {
             html += `
-                <div class="descripcion-resto">${resto.substring(0, 30)}...</div>
+                <div class="descripcion-resto">${resto.substring(0, 40)}...</div>
                 <div class="descripcion-oculta" style="display: none;">
                     ${resto}
                 </div>
@@ -141,6 +143,8 @@ function generarDescripcionMovil(descripcion) {
                     Ver más
                 </button>
             `;
+        } else if (resto) {
+            html += `<div class="descripcion-resto">${resto}</div>`;
         }
     }
     
