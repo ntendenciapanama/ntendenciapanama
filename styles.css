@@ -1771,6 +1771,26 @@ body.seccion-saldos-activa .pag-btn.activa {
         position: relative;
     }
     
+    .bottom-nav-item.catalogo-item {
+        position: relative;
+    }
+    
+    .catalogo-descargas {
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--oferta-rojo);
+        color: white;
+        font-size: 9px;
+        padding: 3px 8px;
+        border-radius: 12px;
+        white-space: nowrap;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+    }
+    
     .bottom-nav-badge {
         position: absolute;
         top: 0;

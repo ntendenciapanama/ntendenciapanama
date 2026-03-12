@@ -49,6 +49,9 @@ function initBanner() {
 
 initBanner();
 
+// Inicializar contador de descargas del catálogo
+actualizarContadorVisual();
+
 /* --- RESPONSIVIDAD --- */
 function ajustarPaginacionDinamica() {
     const ancho = window.innerWidth;
@@ -233,6 +236,199 @@ function cerrarImagen() {
     document.getElementById('lightbox').style.display = 'none';
     document.body.style.overflow = 'auto';
     document.body.classList.remove('lightbox-active');
+}
+
+/* --- FUNCIÓN PARA GENERAR CATÁLOGO PDF --- */
+function generarCatalogoPDF() {
+    // Detectar si es móvil
+    const esMovil = window.innerWidth <= 768;
+    
+    if (esMovil) {
+        // Mostrar confirmación en móvil
+        const confirmar = confirm('¿Deseas descargar el catálogo completo de NTENDENCIA PANAMÁ?\n\nIncluye todos nuestros productos con imágenes y precios\nEl archivo pesa aproximadamente 2-3MB');
+        
+        if (!confirmar) {
+            return; // Usuario canceló
+        }
+    }
+    
+    // Continuar con la generación
+    generarCatalogoPDFReal();
+}
+
+function generarCatalogoPDFReal() {
+    if (!catalogoCompleto || catalogoCompleto.length === 0) {
+        mostrarNotificacion("Cargando catálogo, espera un momento...");
+        return;
+    }
+    
+    try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        
+        // 1. Portada del catálogo
+        agregarPortadaCatalogo(pdf);
+        
+        // 2. Productos por páginas
+        let y = 20;
+        let pagina = 1;
+        catalogoCompleto.forEach((producto, index) => {
+            // Verificar si necesitamos nueva página
+            if (y > 230) {
+                pdf.addPage();
+                y = 20;
+                pagina++;
+            }
+            
+            // Agregar header de página
+            if (index === 0 || (index > 0 && index % 4 === 0)) {
+                if (index > 0) pdf.addPage();
+                agregarHeaderPagina(pdf, pagina);
+                y = 40;
+            }
+            
+            // Agregar producto
+            y = agregarProductoCatalogo(pdf, producto, y);
+        });
+        
+        // 3. Página final de contacto
+        pdf.addPage();
+        agregarPaginaContacto(pdf);
+        
+        // 4. Guardar y actualizar contador
+        pdf.save('NTENDencia-Panama-Catalogo.pdf');
+        incrementarContadorDescargas();
+        
+        mostrarNotificacion("¡Catálogo descargado con éxito!");
+        
+    } catch(error) {
+        console.error("Error generando catálogo:", error);
+        mostrarNotificacion("Error al generar catálogo, intenta de nuevo");
+    }
+}
+
+function agregarPortadaCatalogo(pdf) {
+    // Fondo rojo vino completo
+    pdf.setFillColor(65, 0, 32); // #410020
+    pdf.rect(0, 0, 210, 297, 'F');
+    
+    // Logo NTENDENCIA PANAMÁ (simulado con texto dorado)
+    pdf.setTextColor(212, 175, 55); // Dorado
+    pdf.setFontSize(36);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('NTENDENCIA', 105, 80, { align: 'center' });
+    pdf.text('PANAMÁ', 105, 110, { align: 'center' });
+    
+    // Título CATÁLOGO 2026
+    pdf.setTextColor(255, 255, 255); // Blanco
+    pdf.setFontSize(28);
+    pdf.text('CATÁLOGO 2026', 105, 150, { align: 'center' });
+    
+    // Descripción
+    pdf.setFontSize(16);
+    pdf.text('Tienda Virtual', 105, 180, { align: 'center' });
+    pdf.text('Coordinamos pedidos por WhatsApp', 105, 200, { align: 'center' });
+    
+    // Redes sociales
+    pdf.setFontSize(12);
+    pdf.text('📱 @ntendenciapanama', 105, 230, { align: 'center' });
+    pdf.text('🎵 @ntendenciapanama', 105, 245, { align: 'center' });
+    pdf.text('📸 @ntendenciapanama', 105, 260, { align: 'center' });
+}
+
+function agregarHeaderPagina(pdf, pagina) {
+    // Header con logo y número de página
+    pdf.setTextColor(65, 0, 32); // Rojo vino
+    pdf.setFontSize(16);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('NTENDENCIA PANAMÁ - 2026', 105, 25, { align: 'center' });
+    
+    pdf.setFontSize(10);
+    pdf.setTextColor(128, 128, 128);
+    pdf.text(`Página ${pagina}`, 105, 32, { align: 'center' });
+}
+
+function agregarProductoCatalogo(pdf, producto, y) {
+    // Marco del producto
+    pdf.setDrawColor(200, 200, 200);
+    pdf.rect(15, y - 5, 180, 50);
+    
+    // Intentar agregar imagen
+    try {
+        pdf.addImage(`images/${producto.codigo}/1.jpg`, 'JPEG', 20, y, 35, 35);
+    } catch(e) {
+        // Si no hay imagen, agregar placeholder
+        pdf.setFillColor(240, 240, 240);
+        pdf.rect(20, y, 35, 35, 'F');
+        pdf.setTextColor(128, 128, 128);
+        pdf.setFontSize(8);
+        pdf.text('Sin imagen', 37.5, y + 20, { align: 'center' });
+    }
+    
+    // Información del producto
+    pdf.setTextColor(0, 0, 0);
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    const nombreCorto = producto.nombre.substring(0, 25);
+    pdf.text(nombreCorto, 65, y + 10);
+    
+    pdf.setFontSize(10);
+    pdf.setFont(undefined, 'normal');
+    pdf.text(`Código: ${producto.codigo}`, 65, y + 20);
+    
+    // Precio destacado
+    pdf.setTextColor(65, 0, 32); // Rojo vino
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text(`$${producto.precio.toFixed(2)}`, 65, y + 30);
+    
+    // Separador
+    pdf.setDrawColor(220, 220, 220);
+    pdf.line(15, y + 50, 195, y + 50);
+    
+    return y + 60; // Espacio para siguiente producto
+}
+
+function agregarPaginaContacto(pdf) {
+    // Header
+    pdf.setTextColor(65, 0, 32);
+    pdf.setFontSize(16);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('NTENDENCIA PANAMÁ - CONTACTO', 105, 25, { align: 'center' });
+    
+    // Información de contacto
+    pdf.setTextColor(0, 0, 0);
+    pdf.setFontSize(14);
+    pdf.text('📞 WhatsApp: +507 6771-0645', 105, 80, { align: 'center' });
+    pdf.text('📍 Entrega: Coordinar por WhatsApp', 105, 100, { align: 'center' });
+    pdf.text('🛒 Tienda: ntendenciapanama.vercel.app', 105, 120, { align: 'center' });
+    
+    // Redes sociales
+    pdf.setFontSize(12);
+    pdf.text('📱 Instagram: @ntendenciapanama', 105, 150, { align: 'center' });
+    pdf.text('🎵 TikTok: @ntendenciapanama', 105, 170, { align: 'center' });
+    
+    // Mensaje final
+    pdf.setTextColor(65, 0, 32);
+    pdf.setFontSize(14);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('¡Gracias por tu interés!', 105, 220, { align: 'center' });
+    pdf.text('Te esperamos pronto 💕', 105, 240, { align: 'center' });
+}
+
+function incrementarContadorDescargas() {
+    let descargas = localStorage.getItem('catalogo-descargas') || '0';
+    descargas = parseInt(descargas) + 1;
+    localStorage.setItem('catalogo-descargas', descargas.toString());
+    actualizarContadorVisual();
+}
+
+function actualizarContadorVisual() {
+    const contador = document.getElementById('catalogo-descargas');
+    if (contador) {
+        let descargas = localStorage.getItem('catalogo-descargas') || '0';
+        contador.textContent = `${descargas} descargas`;
+    }
 }
 
 /* --- LÓGICA DEL CARRITO --- */
