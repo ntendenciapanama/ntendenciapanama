@@ -303,7 +303,7 @@ function generarCatalogoPDFNativo() {
     }
 }
 
-async function crearHTMLCatalogoPDF() {
+function crearHTMLCatalogoPDF() {
     const fecha = new Date();
     const año = fecha.getFullYear();
     
@@ -384,6 +384,7 @@ async function crearHTMLCatalogoPDF() {
             object-fit: cover;
             margin-bottom: 15px;
             border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         .producto h3 {
@@ -489,12 +490,13 @@ async function crearHTMLCatalogoPDF() {
             const producto = catalogoCompleto[j];
             const nombreLimpio = limpiarTextoPDF(producto.nombre);
             
-            // Intentar cargar imagen y convertirla a base64
-            const imgBase64 = await cargarImagenComoBase64(producto.codigo);
+            // Usar URL absoluta para las imágenes
+            const imageUrl = window.location.origin + `/images/${producto.codigo}/1.jpg`;
             
             html += `
             <div class="producto">
-                <img src="${imgBase64}" alt="${nombreLimpio}" class="producto-img">
+                <img src="${imageUrl}" alt="${nombreLimpio}" class="producto-img" 
+                     onerror="this.src='${window.location.origin}/images/${producto.codigo}/1.png'; this.onerror='this.src=\"${window.location.origin}/logo.png\"';">
                 <h3>${nombreLimpio}</h3>
                 <div class="codigo">Código: ${producto.codigo}</div>
                 <div class="precio">$${producto.precio.toFixed(2)}</div>
