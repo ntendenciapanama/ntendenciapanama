@@ -577,146 +577,202 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Función simple para descargar catálogo
+// Función simple para descargar catálogo PDF dinámico
 function descargarCatalogo() {
-    try {
-        // Mostrar indicador de progreso
-        const btn = document.getElementById('btn-descargar-catalogo');
-        if (btn) {
-            btn.innerHTML = '⏳ DESCARGANDO...';
-            btn.disabled = true;
-        }
+try {
+    // Mostrar indicador de progreso
+    const btn = document.getElementById('btn-descargar-catalogo');
+    if (btn) {
+        btn.innerHTML = '⏳ DESCARGANDO...';
+        btn.disabled = true;
+    }
 
-        // Obtener TODOS los productos
-        const productos = todosLosProductos;
-        
-        if (productos.length === 0) {
-            alert('No hay productos para descargar');
-            return;
-        }
+    // Obtener productos ACTUALES (en tiempo real)
+    const productos = todosLosProductos;
+    
+    if (productos.length === 0) {
+        alert('No hay productos para descargar');
+        return;
+    }
 
-        // Crear HTML del catálogo
-        let html = `
+    // Crear HTML del catálogo con paginación
+    let html = `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Catálogo NTENDENCIA PANAMÁ</title>
+    <title>Catálogo NTENDENCIA PANAMÁ 2026</title>
     <style>
+        @page { margin: 1cm; size: A4; }
         body { 
             font-family: Arial, sans-serif; 
-            margin: 20px; 
+            margin: 0; 
+            padding: 20px;
             background: white;
         }
-        .header { 
+        .portada { 
             text-align: center; 
             margin-bottom: 40px; 
             border-bottom: 3px solid #410020;
-            padding-bottom: 20px;
+            padding-bottom: 30px;
+            page-break-after: always;
         }
-        .title { 
-            font-size: 32px; 
+        .titulo-portada { 
+            font-size: 36px; 
             font-weight: bold; 
             color: #410020;
+            margin-bottom: 15px;
+        }
+        .subtitulo-portada { 
+            font-size: 20px; 
+            color: #666;
             margin-bottom: 10px;
         }
-        .date { 
+        .fecha-portada { 
             font-size: 16px; 
-            color: #666;
+            color: #888;
         }
-        .product { 
-            margin-bottom: 40px; 
-            padding: 20px; 
-            border: 2px solid #410020;
+        .pagina-header { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            border-bottom: 2px solid #410020;
+            padding-bottom: 10px;
+        }
+        .numero-pagina { 
+            font-size: 14px; 
+            color: #888;
+            margin-bottom: 10px;
+        }
+        .productos-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 20px; 
+            margin-bottom: 20px;
+        }
+        .producto { 
+            border: 2px solid #410020; 
+            padding: 15px; 
+            text-align: center;
+            break-inside: avoid;
             page-break-inside: avoid;
         }
-        .product img { 
-            width: 300px; 
-            height: 300px; 
-            margin-bottom: 15px;
+        .producto img { 
+            width: 180px; 
+            height: 180px; 
+            margin-bottom: 10px;
             object-fit: cover;
             border: 1px solid #ddd;
         }
-        .name { 
-            font-size: 20px; 
+        .producto-codigo { 
+            font-size: 12px; 
             font-weight: bold; 
-            margin-bottom: 8px;
             color: #410020;
-        }
-        .code { 
-            font-size: 16px; 
-            color: #666;
             margin-bottom: 5px;
         }
-        .price { 
-            font-size: 24px; 
+        .producto-nombre { 
+            font-size: 14px; 
+            font-weight: bold; 
+            margin-bottom: 5px;
+            color: #333;
+            min-height: 40px;
+        }
+        .producto-precio { 
+            font-size: 16px; 
             font-weight: bold; 
             color: #410020;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
-        .description { 
-            font-size: 14px; 
+        .producto-descripcion { 
+            font-size: 11px; 
             color: #666;
-            line-height: 1.4;
+            line-height: 1.3;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="title">NTENDENCIA PANAMÁ</div>
-        <div class="date">Catálogo Completo - ${new Date().toLocaleDateString('es-PA')}</div>
+    <!-- PORTADA -->
+    <div class="portada">
+        <div class="titulo-portada">NTENDENCIA PANAMÁ</div>
+        <div class="subtitulo-portada">CATÁLOGO DE PRODUCTOS</div>
+        <div class="fecha-portada">${new Date().toLocaleDateString('es-PA')}</div>
     </div>
+
+    <!-- PÁGINAS DE PRODUCTOS -->
 `;
 
-        // Agregar todos los productos
-        productos.forEach(product => {
+    // Calcular páginas
+    const productosPorPagina = 6;
+    const totalPaginas = Math.ceil(productos.length / productosPorPagina);
+
+    for (let pagina = 0; pagina < totalPaginas; pagina++) {
+        const inicio = pagina * productosPorPagina;
+        const fin = Math.min(inicio + productosPorPagina, productos.length);
+        const productosPagina = productos.slice(inicio, fin);
+
+        // Agregar número de página excepto en la portada
+        if (pagina > 0) {
             html += `
-    <div class="product">
-        <img src="${product.imagen}" onerror="this.src='https://via.placeholder.com/300x300/410020/ffffff?text=IMG'" alt="${product.nombre}">
-        <div class="code">${product.codigo || ''}</div>
-        <div class="name">${product.nombre || ''}</div>
-        <div class="price">$${product.precio || '0'}</div>
-        <div class="description">${product.descripcion || ''}</div>
+    <div class="pagina-header">
+        <div class="numero-pagina">Página ${pagina}</div>
     </div>
+    <div class="page-break"></div>
 `;
+        }
+
+        html += `<div class="productos-grid">`;
+
+        // Agregar productos de esta página
+        productosPagina.forEach(product => {
+            html += `
+        <div class="producto">
+            <img src="${product.imagen}" onerror="this.src='https://via.placeholder.com/180x180/410020/ffffff?text=IMG'" alt="${product.nombre}">
+            <div class="producto-codigo">${product.codigo || ''}</div>
+            <div class="producto-nombre">${product.nombre || ''}</div>
+            <div class="producto-precio">$${product.precio || '0'}</div>
+            <div class="producto-descripcion">${(product.descripcion || '').substring(0, 100)}</div>
+        </div>
+    `;
         });
 
-        html += `
+        html += `</div>`;
+    }
+
+    html += `
 </body>
 </html>`;
 
-        // Crear blob y descargar
-        const blob = new Blob([html], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `catalogo-ntendencia-${new Date().toISOString().split('T')[0]}.html`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        URL.revokeObjectURL(url);
-        
-        // Restaurar botón
-        if (btn) {
-            btn.innerHTML = '📥 DESCARGAR CATÁLOGO';
-            btn.disabled = false;
-        }
-        
-        // Mostrar éxito
-        alert('✅ Catálogo descargado exitosamente!\n\nAbre el archivo y usa:\n• Ctrl+P (Windows) o Cmd+P (Mac)\n• "Guardar como PDF"\n\n🎯 Listo para imprimir o compartir!');
-        
-    } catch (error) {
-        console.error('Error descargando catálogo:', error);
-        
-        // Restaurar botón
-        const btn = document.getElementById('btn-descargar-catalogo');
-        if (btn) {
-            btn.innerHTML = '📥 DESCARGAR CATÁLOGO';
-            btn.disabled = false;
-        }
-        
-        alert('❌ Error al descargar. Intenta nuevamente.');
+    // Crear blob y descargar
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `catalogo-ntendencia-2026-${new Date().toISOString().split('T')[0]}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+    
+    // Restaurar botón
+    if (btn) {
+        btn.innerHTML = '📥 DESCARGAR CATÁLOGO';
+        btn.disabled = false;
     }
+    
+    // Mostrar éxito
+    alert(`✅ Catálogo descargado exitosamente!\n\n📊 Total productos: ${productos.length}\n📄 Total páginas: ${totalPaginas}\n📅 Productos por página: ${productosPorPagina}\n\nAbre el archivo y usa:\n• Ctrl+P (Windows) o Cmd+P (Mac)\n• "Guardar como PDF"\n\n🎯 Listo para imprimir o compartir!`);
+    
+} catch (error) {
+    console.error('Error descargando catálogo:', error);
+    
+    // Restaurar botón
+    const btn = document.getElementById('btn-descargar-catalogo');
+    if (btn) {
+        btn.innerHTML = '📥 DESCARGAR CATÁLOGO';
+        btn.disabled = false;
+    }
+    
+    alert('❌ Error al descargar. Por favor intenta nuevamente.');
+}
 }
