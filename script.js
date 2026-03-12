@@ -291,6 +291,7 @@ function dibujarCarrito() {
         total += p.precio;
         lista.innerHTML += `
             <div class="item-carrito">
+                <img src="images/${p.codigo}/1.jpg" alt="${p.nombre}" class="miniatura-carrito">
                 <div>
                     <strong>${p.nombre}</strong>
                     <small style="display:block; color:#666;">Cód: ${p.codigo}</small>
