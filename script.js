@@ -589,27 +589,20 @@ try {
 // Crear documento HTML para convertir a PDF
 const htmlContent = this.createHTMLCatalog(productos);
 
-// Crear un blob con HTML
+// Crear un blob con HTML y descargar directamente
 const blob = new Blob([htmlContent], { type: 'text/html' });
 const url = URL.createObjectURL(blob);
 
-// Abrir en nueva ventana para imprimir como PDF
-const printWindow = window.open(url, '_blank');
+// Descargar directamente como archivo HTML
+const link = document.createElement('a');
+link.href = url;
+link.download = `catalogo-ntendencia-${new Date().toISOString().split('T')[0]}.html`;
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
 
-if (printWindow) {
-printWindow.onload = () => {
-setTimeout(() => {
-printWindow.print();
-setTimeout(() => {
-printWindow.close();
-URL.revokeObjectURL(url);
-}, 1000);
-}, 500);
-};
-} else {
-// Si popup bloqueado, descargar HTML
-this.downloadHTMLFile(htmlContent);
-}
+// Notificar al usuario
+mostrarNotificacion(' Catálogo descargado como HTML - Abre el archivo y usa "Imprimir" > "Guardar como PDF"');
 
 } catch (error) {
 console.error('Error:', error);
@@ -626,73 +619,78 @@ let html = `
 <meta charset="UTF-8">
 <title>Catálogo NTENDENCIA PANAMÁ</title>
 <style>
-@page { margin: 1cm; size: A4; }
+@page { margin: 0.5cm; size: A4; }
 body { 
 font-family: 'Helvetica', Arial, sans-serif; 
 margin: 0; 
-padding: 20px;
+padding: 15px;
 background: white;
 }
 .header { 
 text-align: center; 
-margin-bottom: 30px; 
+margin-bottom: 20px; 
 border-bottom: 3px solid #410020;
-padding-bottom: 20px;
+padding-bottom: 15px;
 }
 .title { 
-font-size: 28px; 
+font-size: 24px; 
 font-weight: bold; 
 color: #410020;
-margin-bottom: 10px;
+margin-bottom: 8px;
 }
 .subtitle { 
-font-size: 18px; 
+font-size: 16px; 
 color: #666;
 margin-bottom: 5px;
 }
 .date { 
-font-size: 14px; 
+font-size: 12px; 
 color: #888;
 }
 .product-grid { 
 display: grid; 
-grid-template-columns: 1fr 1fr; 
-gap: 30px; 
-margin-bottom: 30px;
+grid-template-columns: 1fr 1fr 1fr; 
+gap: 15px; 
+margin-bottom: 20px;
 }
 .product { 
 border: 1px solid #ddd; 
-padding: 15px; 
+padding: 10px; 
 text-align: center; 
 break-inside: avoid;
 page-break-inside: avoid;
+background: white;
 }
 .product img { 
-max-width: 150px; 
-max-height: 150px; 
-margin-bottom: 10px;
+width: 120px; 
+height: 120px; 
+margin-bottom: 8px;
+object-fit: cover;
+border-radius: 4px;
 }
 .code { 
 font-weight: bold; 
-font-size: 12px; 
+font-size: 10px; 
 color: #410020;
-margin-bottom: 5px;
+margin-bottom: 4px;
 }
 .name { 
-font-size: 14px; 
-margin-bottom: 5px;
-min-height: 40px;
+font-size: 12px; 
+margin-bottom: 4px;
+min-height: 30px;
+font-weight: 600;
 }
 .price { 
-font-size: 16px; 
+font-size: 14px; 
 font-weight: bold; 
 color: #410020;
-margin-bottom: 5px;
+margin-bottom: 4px;
 }
 .description { 
-font-size: 11px; 
+font-size: 9px; 
 color: #666;
-line-height: 1.3;
+line-height: 1.2;
+min-height: 40px;
 }
 .page-break { 
 page-break-before: always; 
@@ -712,8 +710,8 @@ body { margin: 0; }
 </div>
 `;
 
-// Agregar productos
-let productsPerPage = 4;
+// Agregar productos - 6 por página
+let productsPerPage = 6;
 for (let i = 0; i < productos.length; i++) {
 if (i > 0 && i % productsPerPage === 0) {
 html += '<div class="page-break"></div>';
@@ -722,11 +720,11 @@ html += '<div class="page-break"></div>';
 const product = productos[i];
 html += `
 <div class="product">
-<img src="${product.imagen}" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='" alt="${product.nombre}">
+<img src="${product.imagen}" onerror="this.src='https://via.placeholder.com/120x120/410020/ffffff?text=IMG'" alt="${product.nombre}">
 <div class="code">${product.codigo || ''}</div>
 <div class="name">${product.nombre || ''}</div>
 <div class="price">$${product.precio || '0'}</div>
-<div class="description">${(product.descripcion || '').substring(0, 100)}</div>
+<div class="description">${(product.descripcion || '').substring(0, 80)}</div>
 </div>
 `;
 }
