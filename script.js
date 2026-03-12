@@ -492,58 +492,11 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
         productosFiltrados = catalogoCompleto.filter(p => 
             p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
         );
-    }
     paginaActual = 1;
     mostrarProductos();
 });
 
-/* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN MÓVIL --- */
-function generarDescripcionMovil(descripcion) {
-    // En desktop, mostrar descripción completa
-    if (window.innerWidth > 768) {
-        return `<div class="descripcion">${descripcion}</div>`;
-    }
-    
-    // En móvil, mostrar solo la talla y botón para expandir
-    const matchTalla = descripcion.match(/Talla[s]?:?\s*([A-Z0-9\/\-]+)/i);
-    let parteVisible = '';
-    let restoDescripcion = descripcion;
-
-    if (matchTalla && matchTalla[0]) {
-        // Extraer solo "Talla M" (sin punto ni nada más)
-        parteVisible = matchTalla[0].trim();
-        // Quitar la parte de la talla del resto de la descripción
-        restoDescripcion = descripcion.replace(parteVisible, '').trim();
-    } else {
-        // Si no encuentra "Talla", muestra las primeras 2 palabras como fallback
-        const palabras = descripcion.split(' ');
-        const palabrasVisibles = Math.min(2, palabras.length);
-        parteVisible = palabras.slice(0, palabrasVisibles).join(' ');
-        restoDescripcion = palabras.slice(palabrasVisibles).join(' ').trim();
-    }
-    
-    // En móvil, mostrar estructura con botón
-    let html = '<div class="descripcion-movil">';
-    
-    // Siempre mostrar solo la talla
-    html += `<div class="talla-visible">${parteVisible}</div>`;
-    
-    // Si hay más contenido, agregarlo oculto con botón
-    if (restoDescripcion) {
-        html += `
-            <div class="descripcion-oculta" style="display: none;">
-                ${restoDescripcion}
-            </div>
-            <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
-                Ver más
-            </button>
-        `;
-    }
-    
-    html += '</div>';
-    return html;
-}
-
+/* --- FUNCIÓN TOGGLE DESCRIPCIÓN --- */
 function toggleDescripcion(boton) {
     const descripcionOculta = boton.previousElementSibling;
     const imgContainer = boton.closest('.producto').querySelector('.main-img-container');
