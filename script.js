@@ -272,11 +272,27 @@ function generarCatalogoPDFNativo() {
             const blob = isBlob ? pdfContent : new Blob([pdfContent], { type: mimeType });
             const url = URL.createObjectURL(blob);
             
-            // Descargar directamente
+            // Forzar descarga directa
             const link = document.createElement('a');
             link.href = url;
             link.download = 'NTENDencia-Panama-Catalogo.pdf';
-            link.click();
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            // Forzar click en múltiples navegadores
+            if (navigator.msSaveBlob) {
+                // Para IE/Edge
+                navigator.msSaveBlob(blob, 'NTENDencia-Panama-Catalogo.pdf');
+            } else {
+                // Para Chrome, Firefox, Safari
+                link.click();
+            }
+            
+            // Limpiar
+            setTimeout(() => {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 100);
             
             // Intentar abrir en nueva pestaña si es posible
             try {
