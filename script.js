@@ -3,7 +3,6 @@ let todosLosProductos = []; // Solo premium
 let productosFiltrados = [];
 let catalogoCompleto = []; // Incluye saldos para el buscador
 let carrito = [];
-let tallasSeleccionadas = {}; // Guardar tallas seleccionadas por producto
 
 let productosPorPagina = 1000; // Mostrar todos los productos (sin paginación) 
 let paginaActual = 1;
@@ -49,102 +48,6 @@ function initBanner() {
 }
 
 initBanner();
-
-/* --- FUNCIÓN MÁGICA DE DETECCIÓN DE TALLAS --- */
-function analizarDescripcion(descripcion) {
-    if (!descripcion) return { tallas: [], resto: "" };
-    
-    // Separar por comas y limpiar
-    const partes = descripcion.split(',').map(p => p.trim());
-    const tallas = [];
-    let resto = [];
-    let encontrandoTallas = true;
-    
-    partes.forEach(parte => {
-        if (encontrandoTallas && parte.toLowerCase().startsWith('talla')) {
-            tallas.push(parte);
-        } else {
-            encontrandoTallas = false;
-            resto.push(parte);
-        }
-    });
-    
-    return {
-        tallas: tallas,
-        resto: resto.join(', ').trim()
-    };
-}
-
-/* --- FUNCIÓN PARA GUARDAR TALLA SELECCIONADA --- */
-function actualizarTallaSeleccionada(codigo, talla) {
-    tallasSeleccionadas[codigo] = talla;
-}
-
-/* --- FUNCIÓN PARA GENERAR HTML DE DESCRIPCIÓN --- */
-function generarDescripcionMovil(descripcion) {
-    const { tallas, resto } = analizarDescripcion(descripcion);
-    
-    let html = '<div class="descripcion-movil">';
-    
-    if (tallas.length === 0) {
-        // No hay tallas, mostrar descripción completa
-        html += `<div class="descripcion">${descripcion}</div>`;
-    } else if (tallas.length === 1) {
-        // Una talla, mostrar como texto estático
-        html += `<div class="talla-visible">${tallas[0]}</div>`;
-        if (resto) {
-            html += `
-                <div class="descripcion-oculta" style="display: none;">
-                    ${resto}
-                </div>
-                <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
-                    Ver más
-                </button>
-            `;
-        }
-    } else {
-        // Múltiples tallas, mostrar botones selector
-        html += '<div class="selector-tallas">';
-        tallas.forEach(talla => {
-            html += `
-                <button class="btn-talla" onclick="seleccionarTalla('${talla}', this)">
-                    ${talla}
-                </button>
-            `;
-        });
-        html += '</div>';
-        
-        if (resto) {
-            html += `
-                <div class="descripcion-resto">${resto}</div>
-                <div class="descripcion-oculta" style="display: none;">
-                    ${resto}
-                </div>
-                <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
-                    Ver más
-                </button>
-            `;
-        }
-    }
-    
-    html += '</div>';
-    return html;
-}
-
-/* --- FUNCIÓN PARA SELECCIONAR TALLA --- */
-function seleccionarTalla(talla, boton) {
-    // Encontrar el código del producto
-    const productoDiv = boton.closest('.producto');
-    const codigo = productoDiv.querySelector('.btn-añadir-lista').getAttribute('onclick').match(/'([^']+)'/)[1];
-    
-    // Guardar talla seleccionada
-    tallasSeleccionadas[codigo] = talla;
-    
-    // Actualizar estado visual de botones
-    const todosBotones = productoDiv.querySelectorAll('.btn-talla');
-    todosBotones.forEach(btn => btn.classList.remove('seleccionado'));
-    boton.classList.add('seleccionado');
-}
 
 /* --- RESPONSIVIDAD --- */
 function ajustarPaginacionDinamica() {
@@ -334,58 +237,27 @@ function cerrarImagen() {
 
 /* --- LÓGICA DEL CARRITO --- */
 function añadirAlCarrito(codigo) {
+    const yaExiste = carrito.find(x => x.codigo === codigo);
+    if (yaExiste) {
+        mostrarNotificacion("Este producto ya está en lista");
+        return;
+    }
     const p = catalogoCompleto.find(x => x.codigo === codigo);
-    if (!p) return;
-    
-    // Analizar si el producto tiene múltiples tallas
-    const { tallas } = analizarDescripcion(p.descripcion);
-    
-    if (tallas.length > 1) {
-        // Hay múltiples tallas, validar que se haya seleccionado una
-        const tallaSeleccionada = tallasSeleccionadas[codigo];
-        if (!tallaSeleccionada) {
-            mostrarNotificacion("Por favor selecciona una talla");
-            return;
+    if (p) { 
+        carrito.push(p); 
+        const contador = document.getElementById('contador-carrito');
+        if (contador) contador.innerText = carrito.length;
+        // Actualizar badge en bottom nav (móvil)
+        const badge = document.getElementById('bottom-nav-badge');
+        if (badge) {
+            badge.innerText = carrito.length;
+            badge.style.display = carrito.length > 0 ? 'flex' : 'none';
         }
-        
-        // Verificar si ya existe el producto con la misma talla
-        const yaExiste = carrito.find(x => 
-            x.codigo === codigo && x.tallaSeleccionada === tallaSeleccionada
-        );
-        if (yaExiste) {
-            mostrarNotificacion("Esta talla ya está en tu lista");
-            return;
+        const btn = document.getElementById('btn-carrito');
+        if (btn) {
+            btn.style.transform = "scale(1.2)";
+            setTimeout(() => btn.style.transform = "scale(1)", 200);
         }
-        
-        // Agregar producto con talla
-        const productoConTalla = {...p, tallaSeleccionada};
-        carrito.push(productoConTalla);
-    } else {
-        // Una talla o ninguna, comportamiento normal
-        const yaExiste = carrito.find(x => x.codigo === codigo);
-        if (yaExiste) {
-            mostrarNotificacion("Este producto ya está en lista");
-            return;
-        }
-        carrito.push(p);
-    }
-    
-    // Actualizar contador
-    const contador = document.getElementById('contador-carrito');
-    if (contador) contador.innerText = carrito.length;
-    
-    // Actualizar badge en bottom nav (móvil)
-    const badge = document.getElementById('bottom-nav-badge');
-    if (badge) {
-        badge.innerText = carrito.length;
-        badge.style.display = carrito.length > 0 ? 'flex' : 'none';
-    }
-    
-    // Animación del botón
-    const btn = document.getElementById('btn-carrito');
-    if (btn) {
-        btn.style.transform = "scale(1.2)";
-        setTimeout(() => btn.style.transform = "scale(1)", 200);
     }
 }
 
@@ -417,14 +289,12 @@ function dibujarCarrito() {
     }
     carrito.forEach((p, i) => {
         total += p.precio;
-        const tallaInfo = p.tallaSeleccionada ? `<small style="display:block; color:#E0C080;">Talla: ${p.tallaSeleccionada}</small>` : '';
         lista.innerHTML += `
             <div class="item-carrito">
                 <img src="images/${p.codigo}/1.jpg" alt="${p.nombre}" class="miniatura-carrito">
                 <div>
                     <strong>${p.nombre}</strong>
                     <small style="display:block; color:#666;">Cód: ${p.codigo}</small>
-                    ${tallaInfo}
                 </div>
                 <div style="display:flex; align-items:center; gap:15px;">
                     <span style="font-weight:bold;">$${p.precio.toFixed(2)}</span>
@@ -457,9 +327,6 @@ function enviarPedidoWhatsApp() {
     carrito.forEach((p, index) => {
         txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
         txt += `    🏷️ _Cód: ${p.codigo}_\n`;
-        if (p.tallaSeleccionada) {
-            txt += `    📏 Talla: *${p.tallaSeleccionada}*\n`;
-        }
         txt += `    💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
@@ -492,11 +359,58 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
         productosFiltrados = catalogoCompleto.filter(p => 
             p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
         );
+    }
     paginaActual = 1;
     mostrarProductos();
 });
 
-/* --- FUNCIÓN TOGGLE DESCRIPCIÓN --- */
+/* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN MÓVIL --- */
+function generarDescripcionMovil(descripcion) {
+    // En desktop, mostrar descripción completa
+    if (window.innerWidth > 768) {
+        return `<div class="descripcion">${descripcion}</div>`;
+    }
+    
+    // En móvil, mostrar solo la talla y botón para expandir
+    const matchTalla = descripcion.match(/Talla[s]?:?\s*([A-Z0-9\/\-]+)/i);
+    let parteVisible = '';
+    let restoDescripcion = descripcion;
+
+    if (matchTalla && matchTalla[0]) {
+        // Extraer solo "Talla M" (sin punto ni nada más)
+        parteVisible = matchTalla[0].trim();
+        // Quitar la parte de la talla del resto de la descripción
+        restoDescripcion = descripcion.replace(parteVisible, '').trim();
+    } else {
+        // Si no encuentra "Talla", muestra las primeras 2 palabras como fallback
+        const palabras = descripcion.split(' ');
+        const palabrasVisibles = Math.min(2, palabras.length);
+        parteVisible = palabras.slice(0, palabrasVisibles).join(' ');
+        restoDescripcion = palabras.slice(palabrasVisibles).join(' ').trim();
+    }
+    
+    // En móvil, mostrar estructura con botón
+    let html = '<div class="descripcion-movil">';
+    
+    // Siempre mostrar solo la talla
+    html += `<div class="talla-visible">${parteVisible}</div>`;
+    
+    // Si hay más contenido, agregarlo oculto con botón
+    if (restoDescripcion) {
+        html += `
+            <div class="descripcion-oculta" style="display: none;">
+                ${restoDescripcion}
+            </div>
+            <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
+                Ver más
+            </button>
+        `;
+    }
+    
+    html += '</div>';
+    return html;
+}
+
 function toggleDescripcion(boton) {
     const descripcionOculta = boton.previousElementSibling;
     const imgContainer = boton.closest('.producto').querySelector('.main-img-container');
