@@ -190,7 +190,7 @@ fetch(URL_SHEET)
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
             const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
-            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
+            const precioOferta = parseFloat(limpiar(columnas[9]).replace('$', '')) || 0; // Columna I (9) para ofertas
             const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
 
             return {
