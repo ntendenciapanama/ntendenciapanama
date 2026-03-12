@@ -366,11 +366,7 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
 
 /* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN MÓVIL --- */
 function generarDescripcionMovil(descripcion) {
-    // En desktop, mostrar descripción completa
-    if (window.innerWidth > 768) {
-        return `<div class="descripcion">${descripcion}</div>`;
-    }
-    
+    // Ahora tanto en desktop como en móvil usamos la misma lógica de tallas
     // En móvil, mostrar solo la talla y botón para expandir
     const matchTalla = descripcion.match(/Talla[s]?:?\s*([A-Z0-9\/\-]+)/i);
     let parteVisible = '';
