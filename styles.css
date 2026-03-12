@@ -1543,11 +1543,11 @@ body.seccion-saldos-activa .pag-btn.activa {
         border-radius: 8px;
         border-left: 3px solid var(--marca-secundario);
         margin-bottom: 4px;
-        font-size: 0.65rem;
+        font-size: 0.65rem !important;
     }
     
     .descripcion-oculta {
-        font-size: 0.6rem;
+        font-size: 0.6rem !important;
         color: var(--gris-texto);
         background: #fdfaf2;
         padding: 6px;
@@ -1559,12 +1559,12 @@ body.seccion-saldos-activa .pag-btn.activa {
     
     .btn-ver-mas {
         width: 100%;
-        padding: 6px 8px;
+        padding: 6px 8px !important;
         background: var(--marca-secundario);
         color: var(--marca-primario);
         border: none;
         border-radius: 6px;
-        font-size: 0.6rem;
+        font-size: 0.6rem !important;
         font-weight: 600;
         cursor: pointer;
         margin-top: 4px;
