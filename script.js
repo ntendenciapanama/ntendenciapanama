@@ -673,47 +673,55 @@ class PDFGenerator {
         pdf.pages.push(pdf.currentPage);
     }
 
-    // Generar PDF como Blob
+    // Generar PDF como Blob (CORREGIDO - PDF válido)
     async generatePDFBlob(pdf) {
-        // Crear contenido PDF básico
+        // Crear contenido PDF válido
         let pdfContent = '%PDF-1.4\n';
-        
         const objects = [];
         let objId = 1;
-        
-        // Procesar cada página
         const pages = [];
+        
+        // Para cada página, crear stream de contenido válido
         for (let page = 0; page <= pdf.currentPage; page++) {
             const pageObjects = pdf.objects.filter(obj => obj.page === page);
             
-            // Crear contenido de página
-            let pageContent = 'BT\n';
-            let currentY = this.pageHeight - this.margin;
+            // Crear contenido de página con sintaxis PDF correcta
+            let pageContent = 'q\n'; // Save graphics state
             
+            // Procesar objetos de texto
             for (const obj of pageObjects) {
                 if (obj.type === 'text') {
-                    pageContent += `/${obj.isBold ? 'Helvetica-Bold' : 'Helvetica'} ${obj.fontSize} Tf\n`;
-                    pageContent += `${obj.x} ${currentY - obj.y} Td\n`;
-                    pageContent += `(${obj.text}) Tj\n`;
+                    const fontName = obj.isBold ? 'F2' : 'F1';
+                    const fontSize = obj.fontSize;
+                    const x = obj.x;
+                    const y = this.pageHeight - obj.y; // Invertir Y para PDF
+                    
+                    pageContent += `BT\n`;
+                    pageContent += `/${fontName} ${fontSize} Tf\n`;
+                    pageContent += `${x} ${y} Td\n`;
+                    pageContent += `(${this.escapePDFString(obj.text)}) Tj\n`;
+                    pageContent += `ET\n`;
                 }
             }
-            pageContent += 'ET\n';
             
-            // Comprimir contenido (simple)
-            const compressed = this.simpleCompress(pageContent);
+            pageContent += 'Q\n'; // Restore graphics state
             
-            // Agregar objeto de página
+            // Longitud del contenido
+            const contentLength = pageContent.length;
+            
+            // Objeto de contenido de página
             objects.push({
                 id: objId++,
-                content: `<< /Type /Page /Parent 3 0 R /Contents ${objId} 0 R /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> >>\nendobj\n`
+                content: `<< /Length ${contentLength} >>\nstream\n${pageContent}\nendstream\nendobj\n`
             });
             
+            // Objeto de página
             objects.push({
                 id: objId++,
-                content: `<< /Length ${compressed.length} >>\nstream\n${compressed}\nendstream\nendobj\n`
+                content: `<< /Type /Page /Parent 3 0 R /Contents ${objId - 1} 0 R /Resources << /Font << /F1 4 0 R /F2 5 0 R >> /ProcSet [/PDF /Text] >> /MediaBox [0 0 ${this.pageWidth} ${this.pageHeight}] >>\nendobj\n`
             });
             
-            pages.push(`${objId - 2} 0 R`);
+            pages.push(`${objId - 1} 0 R`);
         }
         
         // Catálogo
@@ -728,21 +736,23 @@ class PDFGenerator {
             content: `<< /Type /Pages /Kids [${pages.join(' ')}] /Count ${pages.length} >>\nendobj\n`
         });
         
-        // Fuentes
+        // Fuente normal
         objects.push({
             id: 4,
-            content: `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n`
+            content: `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n`
         });
         
+        // Fuente bold
         objects.push({
             id: 5,
-            content: `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>\nendobj\n`
+            content: `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>\nendobj\n`
         });
         
-        // Generar contenido final
-        let xref = 'xref\n0 ' + (objects.length + 1) + '\n0000000000 65535 f \n';
+        // Generar contenido final con xref correcto
         let currentOffset = pdfContent.length;
+        let xref = 'xref\n0 ' + (objects.length + 1) + '\n0000000000 65535 f \n';
         
+        // Agregar objetos y calcular offsets
         for (const obj of objects) {
             const offset = currentOffset.toString().padStart(10, '0');
             xref += `${offset} 00000 n \n`;
@@ -754,14 +764,21 @@ class PDFGenerator {
             pdfContent += `${obj.id} 0 obj\n${obj.content}`;
         }
         
+        // Agregar trailer y final
         pdfContent += xref + 'trailer\n<< /Size ' + (objects.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + currentOffset + '\n%%EOF';
         
         return new Blob([pdfContent], { type: 'application/pdf' });
     }
 
-    // Compresión simple (placeholder)
-    simpleCompress(content) {
-        return content;
+    // Escapar caracteres especiales para PDF
+    escapePDFString(text) {
+        return text.toString()
+            .replace(/\\/g, '\\\\')
+            .replace(/\(/g, '\\(')
+            .replace(/\)/g, '\\)')
+            .replace(/\r/g, '\\r')
+            .replace(/\n/g, '\\n')
+            .replace(/\t/g, '\\t');
     }
 }
 
