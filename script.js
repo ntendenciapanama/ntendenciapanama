@@ -245,7 +245,7 @@ function generarCatalogoPDF() {
     
     if (esMovil) {
         // Mostrar confirmación en móvil
-        const confirmar = confirm('¿Deseas descargar el catálogo completo de NTENDENCIA PANAMÁ?\n\nIncluye todos nuestros productos con imágenes y precios\nEl archivo pesa aproximadamente 2-3MB');
+        const confirmar = confirm('¿Deseas ver el catálogo completo de NTENDENCIA PANAMÁ?\n\nSe abrirá en una nueva pestaña\nPodrás imprimirlo o guardarlo como PDF');
         
         if (!confirmar) {
             return; // Usuario canceló
@@ -253,10 +253,10 @@ function generarCatalogoPDF() {
     }
     
     // Continuar con la generación
-    generarCatalogoPDFReal();
+    generarCatalogoHTML();
 }
 
-function generarCatalogoPDFReal() {
+function generarCatalogoHTML() {
     if (!catalogoCompleto || catalogoCompleto.length === 0) {
         mostrarNotificacion("Cargando catálogo, espera un momento...");
         return;
