@@ -73,28 +73,19 @@ fetch(URL_SHEET)
 
             const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
             const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
-            const precioVentaHoy = precioOferta > 0 && precioOferta < precioBase ? precioOferta : precioBase;
-            
-            // Validación estricta para ofertas
-            const esOfertaValida = precioOferta > 0 && precioBase > 0 && precioOferta < precioBase;
-            
-            // Debug: loguear productos con ofertas para verificar
-            if (esOfertaValida) {
-                console.log(`OFERTA DETECTADA: ${limpiar(columnas[0])} - Base: $${precioBase}, Oferta: $${precioOferta}`);
-            }
+            const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
 
             return {
                 codigo: limpiar(columnas[0]),
                 nombre: limpiar(columnas[1]),
                 precio: precioVentaHoy,
                 precioOriginal: precioBase,
-                esOferta: esOfertaValida,
+                esOferta: precioOferta > 0 && precioOferta < precioBase,
                 stock: limpiar(columnas[3]),
                 descripcion: limpiar(columnas[4]) || "",
                 status: limpiar(columnas[5])?.toLowerCase(),
                 categoria: limpiar(columnas[6]) || "General",
-                totalImagenes: parseInt(limpiar(columnas[7])) || 1,
-                talla: limpiar(columnas[9]) || ""
+                totalImagenes: parseInt(limpiar(columnas[7])) || 1 
             };
         }).filter(p => {
             const tieneCodigo = p.codigo && p.codigo.length > 1;
