@@ -303,7 +303,7 @@ function generarCatalogoPDFNativo() {
     }
 }
 
-function crearHTMLCatalogoPDF() {
+async function crearHTMLCatalogoPDF() {
     const fecha = new Date();
     const año = fecha.getFullYear();
     
@@ -489,10 +489,12 @@ function crearHTMLCatalogoPDF() {
             const producto = catalogoCompleto[j];
             const nombreLimpio = limpiarTextoPDF(producto.nombre);
             
+            // Intentar cargar imagen y convertirla a base64
+            const imgBase64 = await cargarImagenComoBase64(producto.codigo);
+            
             html += `
             <div class="producto">
-                <img src="images/${producto.codigo}/1.jpg" alt="${nombreLimpio}" class="producto-img" 
-                     onerror="this.src='images/${producto.codigo}/1.png'; this.onerror='this.src=\"logo.png\"';">
+                <img src="${imgBase64}" alt="${nombreLimpio}" class="producto-img">
                 <h3>${nombreLimpio}</h3>
                 <div class="codigo">Código: ${producto.codigo}</div>
                 <div class="precio">$${producto.precio.toFixed(2)}</div>
@@ -518,6 +520,59 @@ function crearHTMLCatalogoPDF() {
 </html>`;
 
     return html;
+}
+
+async function cargarImagenComoBase64(codigo) {
+    try {
+        // Intentar cargar la imagen como base64
+        const response = await fetch(`images/${codigo}/1.jpg`);
+        if (!response.ok) {
+            // Si no hay .jpg, intentar .png
+            const responsePng = await fetch(`images/${codigo}/1.png`);
+            if (!responsePng.ok) {
+                // Si no hay imagen, usar logo como fallback
+                const logoResponse = await fetch('logo.png');
+                if (logoResponse.ok) {
+                    const blob = await logoResponse.blob();
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+                }
+                return '';
+            }
+            const blob = await responsePng.blob();
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+            });
+        }
+        const blob = await response.blob();
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(blob);
+        });
+    } catch (error) {
+        console.error(`Error cargando imagen ${codigo}:`, error);
+        // Devolver logo como fallback
+        try {
+            const logoResponse = await fetch('logo.png');
+            if (logoResponse.ok) {
+                const blob = await logoResponse.blob();
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(blob);
+                });
+            }
+        } catch (logoError) {
+            console.error('Error cargando logo:', logoError);
+        }
+        return '';
+    }
 }
 
 function limpiarTextoPDF(texto) {
