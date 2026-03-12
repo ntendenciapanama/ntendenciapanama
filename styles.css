@@ -585,7 +585,7 @@ h3 {
 .contenedor-botones { display: flex; gap: 10px; margin-top: auto; }
 
 /* =================================== */
-/* 9. CARRITO DE COMPRAS */
+/* 9. 🛒 CARRITO DE COMPRAS */
 /* =================================== */
 .modal-carrito {
     display: none; 
@@ -649,43 +649,9 @@ h3 {
     justify-content: center;
 }
 
-/* ===== RESPONSIVE DESIGN PARA CARRITO ===== */
-
-/* Tablets y pantallas medianas */
-@media (max-width: 768px) {
-    .miniatura-carrito {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .item-carrito {
-        padding: 18px 0;
-    }
-
-    .contenido-item {
-        flex-direction: row;
-        align-items: center;
-        gap: 12px;
-    }
-    
-    .info-producto {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .info-producto strong {
-        font-size: 0.9rem;
-        white-space: normal;
-        overflow: visible;
-        text-overflow: clip;
-        line-height: 1.3;
-        margin-bottom: 4px;
-    }
-    
-    .info-producto small {
-        font-size: 0.75rem;
-        margin-bottom: 4px;
-    }
+.footer-carrito { 
+    padding: 25px; 
+    background: #fafafa; 
     border-top: 1px solid #eee; 
 }
 
