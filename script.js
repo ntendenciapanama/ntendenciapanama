@@ -353,25 +353,34 @@ function enviarPDFWhatsApp() {
         // Generar PDF con el número
         const { pdf, nombreArchivo, total } = generarPDFPedido(numeroPedido);
         
-        // Mensaje para WhatsApp
+        // Convertir PDF a Base64 para adjuntar
+        const pdfBase64 = pdf.output('datauristring').split(',')[1];
+        
+        // Crear mensaje con PDF adjunto
         const mensaje = `✨ *¡PEDIDO NTENDENCIA PANAMÁ!* ✨
 
 📄 *Pedido:* #${numeroPedido}
 💰 *Total:* $${total.toFixed(2)}
 📦 *Productos:* ${carrito.length} artículos
 
-📄 He generado mi PDF con todos los detalles y fotos de los productos.
-📎 Adjunto el archivo para tu revisión.
+� *PDF Adjunto:* pedido-${numeroPedido}.pdf
+�📄 He generado mi PDF profesional con fotos de los productos.
 
 📞 *Espero tu confirmación para coordinar entrega!*
-🛍️ *NTENDENCIA PANAMÁ - Exclusividad al mejor precio*`;
+🛍️ *NTENDENCIA PANAMÁ - Exclusividad al mejor precio*
+
+---
+📄 *Para ver el PDF con imágenes:*
+🔗 Descarga automática iniciada
+📱 Revisa tus descargas`;
         
-        // Abrir WhatsApp con el mensaje
+        // Abrir WhatsApp con mensaje
         window.open(`https://wa.me/50767710645?text=${encodeURIComponent(mensaje)}`);
         
         // Descargar PDF automáticamente
         setTimeout(() => {
             pdf.save(nombreArchivo);
+            mostrarNotificacion(`PDF descargado: ${nombreArchivo}`);
         }, 1000);
         
         mostrarNotificacion(`PDF generado y WhatsApp abierto - Pedido #${numeroPedido}`);
