@@ -51,42 +51,6 @@ body {
 }
 
 /* =================================== */
-/* 🎨 ESTILOS PARA SELECTOR DE TALLAS */
-/* =================================== */
-.selector-tallas {
-    margin: 8px 0;
-}
-
-.talla-select {
-    width: 100%;
-    padding: 8px 12px;
-    border: 2px solid var(--marca-secundario);
-    border-radius: 8px;
-    background: var(--blanco);
-    color: var(--marca-primario);
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.talla-select:focus {
-    outline: none;
-    border-color: var(--marca-primario);
-    box-shadow: 0 0 0 3px rgba(65, 0, 32, 0.1);
-}
-
-.talla-select:hover {
-    border-color: var(--marca-primario);
-}
-
-.talla-select option {
-    padding: 8px;
-    font-weight: 500;
-}
-
-/* =================================== */
 /* 3. 🎯 MODO SALDOS (LOOK ESPECIAL) */
 /* =================================== */
 body.seccion-saldos-activa {

@@ -3,7 +3,6 @@ let todosLosProductos = []; // Solo premium
 let productosFiltrados = [];
 let catalogoCompleto = []; // Incluye saldos para el buscador
 let carrito = [];
-let tallasSeleccionadas = {}; // Guardar tallas seleccionadas por producto
 
 let productosPorPagina = 1000; // Mostrar todos los productos (sin paginación) 
 let paginaActual = 1;
@@ -75,7 +74,6 @@ fetch(URL_SHEET)
             const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
             const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
             const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
-            const stockNumerico = parseInt(limpiar(columnas[6])) || 1;
 
             return {
                 codigo: limpiar(columnas[0]),
@@ -83,12 +81,11 @@ fetch(URL_SHEET)
                 precio: precioVentaHoy,
                 precioOriginal: precioBase,
                 esOferta: precioOferta > 0 && precioOferta < precioBase,
-                stock: limpiar(columnas[6]),
-                stockNumerico: stockNumerico,
-                descripcion: limpiar(columnas[7]) || "",
+                stock: limpiar(columnas[3]),
+                descripcion: limpiar(columnas[4]) || "",
                 status: limpiar(columnas[5])?.toLowerCase(),
-                categoria: limpiar(columnas[4]) || "General",
-                totalImagenes: parseInt(limpiar(columnas[3])) || 1 
+                categoria: limpiar(columnas[6]) || "General",
+                totalImagenes: parseInt(limpiar(columnas[7])) || 1 
             };
         }).filter(p => {
             const tieneCodigo = p.codigo && p.codigo.length > 1;
@@ -141,7 +138,7 @@ function mostrarProductos() {
             : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
 
         // Separar la descripción: mostrar solo "Talla M" inicialmente en móvil
-        const descripcionHTML = p.descripcion ? generarDescripcionMovil(p) : '<div class="descripcion"></div>';
+        const descripcionHTML = p.descripcion ? generarDescripcionMovil(p.descripcion) : '<div class="descripcion"></div>';
 
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
@@ -240,53 +237,27 @@ function cerrarImagen() {
 
 /* --- LÓGICA DEL CARRITO --- */
 function añadirAlCarrito(codigo) {
+    const yaExiste = carrito.find(x => x.codigo === codigo);
+    if (yaExiste) {
+        mostrarNotificacion("Este producto ya está en lista");
+        return;
+    }
     const p = catalogoCompleto.find(x => x.codigo === codigo);
-    if (!p) return;
-    
-    // Verificar si el producto requiere selección de talla
-    if (p.stockNumerico > 1) {
-        const tallaSeleccionada = tallasSeleccionadas[codigo];
-        if (!tallaSeleccionada) {
-            mostrarNotificacion("Por favor selecciona una talla");
-            return;
+    if (p) { 
+        carrito.push(p); 
+        const contador = document.getElementById('contador-carrito');
+        if (contador) contador.innerText = carrito.length;
+        // Actualizar badge en bottom nav (móvil)
+        const badge = document.getElementById('bottom-nav-badge');
+        if (badge) {
+            badge.innerText = carrito.length;
+            badge.style.display = carrito.length > 0 ? 'flex' : 'none';
         }
-        
-        // Verificar si ya existe el producto con la misma talla
-        const yaExiste = carrito.find(x => x.codigo === codigo && x.tallaSeleccionada === tallaSeleccionada);
-        if (yaExiste) {
-            mostrarNotificacion("Esta talla ya está en tu lista");
-            return;
+        const btn = document.getElementById('btn-carrito');
+        if (btn) {
+            btn.style.transform = "scale(1.2)";
+            setTimeout(() => btn.style.transform = "scale(1)", 200);
         }
-        
-        // Agregar producto con talla
-        const productoConTalla = {...p, tallaSeleccionada};
-        carrito.push(productoConTalla);
-    } else {
-        // Stock = 1: comportamiento normal
-        const yaExiste = carrito.find(x => x.codigo === codigo);
-        if (yaExiste) {
-            mostrarNotificacion("Este producto ya está en lista");
-            return;
-        }
-        carrito.push(p);
-    }
-    
-    // Actualizar contador
-    const contador = document.getElementById('contador-carrito');
-    if (contador) contador.innerText = carrito.length;
-    
-    // Actualizar badge en bottom nav (móvil)
-    const badge = document.getElementById('bottom-nav-badge');
-    if (badge) {
-        badge.innerText = carrito.length;
-        badge.style.display = carrito.length > 0 ? 'flex' : 'none';
-    }
-    
-    // Animación del botón
-    const btn = document.getElementById('btn-carrito');
-    if (btn) {
-        btn.style.transform = "scale(1.2)";
-        setTimeout(() => btn.style.transform = "scale(1)", 200);
     }
 }
 
@@ -318,14 +289,12 @@ function dibujarCarrito() {
     }
     carrito.forEach((p, i) => {
         total += p.precio;
-        const tallaInfo = p.tallaSeleccionada ? `<small style="display:block; color:#E0C080;">Talla: ${p.tallaSeleccionada}</small>` : '';
         lista.innerHTML += `
             <div class="item-carrito">
                 <img src="images/${p.codigo}/1.jpg" alt="${p.nombre}" class="miniatura-carrito">
                 <div>
                     <strong>${p.nombre}</strong>
                     <small style="display:block; color:#666;">Cód: ${p.codigo}</small>
-                    ${tallaInfo}
                 </div>
                 <div style="display:flex; align-items:center; gap:15px;">
                     <span style="font-weight:bold;">$${p.precio.toFixed(2)}</span>
@@ -358,9 +327,6 @@ function enviarPedidoWhatsApp() {
     carrito.forEach((p, index) => {
         txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
         txt += `    🏷️ _Cód: ${p.codigo}_\n`;
-        if (p.tallaSeleccionada) {
-            txt += `    📏 Talla: *${p.tallaSeleccionada}*\n`;
-        }
         txt += `    💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
@@ -398,60 +364,42 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
     mostrarProductos();
 });
 
-/* --- FUNCIÓN PARA GUARDAR TALLA SELECCIONADA --- */
-function actualizarTallaSeleccionada(codigo, talla) {
-    tallasSeleccionadas[codigo] = talla;
-}
-
-/* --- FUNCIÓN PARA EXTRAER TALLAS SEGÚN STOCK --- */
-function extraerTallas(descripcion, stockNumerico) {
-    if (!descripcion || stockNumerico <= 1) {
-        return { tallas: [], resto: descripcion };
-    }
-    
-    // Separar por comas y tomar las primeras N partes donde N = stockNumerico
-    const partes = descripcion.split(',').map(p => p.trim());
-    const tallas = partes.slice(0, stockNumerico);
-    const resto = partes.slice(stockNumerico).join(', ').trim();
-    
-    return { tallas, resto };
-}
-
-/* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN MÓVIL CON SELECTOR DE TALLAS --- */
-function generarDescripcionMovil(producto) {
-    const { descripcion, stockNumerico } = producto;
-    
+/* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN MÓVIL --- */
+function generarDescripcionMovil(descripcion) {
     // En desktop, mostrar descripción completa
     if (window.innerWidth > 768) {
         return `<div class="descripcion">${descripcion}</div>`;
     }
     
-    // Extraer tallas según el stock
-    const { tallas, resto } = extraerTallas(descripcion, stockNumerico);
-    
-    // En móvil, mostrar estructura con selector de tallas si hay múltiples
-    let html = '<div class="descripcion-movil">';
-    
-    if (stockNumerico === 1 && tallas.length > 0) {
-        // Stock = 1: mostrar como texto estático
-        html += `<div class="talla-visible">${tallas[0]}</div>`;
-    } else if (stockNumerico > 1 && tallas.length > 0) {
-        // Stock > 1: mostrar selector de tallas
-        html += `
-            <div class="selector-tallas">
-                <select class="talla-select" id="talla-${producto.codigo}" onchange="actualizarTallaSeleccionada('${producto.codigo}', this.value)">
-                    <option value="">Seleccionar talla</option>
-                    ${tallas.map(talla => `<option value="${talla}">${talla}</option>`).join('')}
-                </select>
-            </div>
-        `;
+    // En móvil, mostrar solo la talla y botón para expandir
+    const matchTalla = descripcion.match(/Talla[s]?:?\s*([A-Z0-9\/\-]+)/i);
+    let parteVisible = '';
+    let restoDescripcion = descripcion;
+
+    if (matchTalla && matchTalla[0]) {
+        // Extraer solo "Talla M" (sin punto ni nada más)
+        parteVisible = matchTalla[0].trim();
+        // Quitar la parte de la talla del resto de la descripción
+        restoDescripcion = descripcion.replace(parteVisible, '').trim();
+    } else {
+        // Si no encuentra "Talla", muestra las primeras 2 palabras como fallback
+        const palabras = descripcion.split(' ');
+        const palabrasVisibles = Math.min(2, palabras.length);
+        parteVisible = palabras.slice(0, palabrasVisibles).join(' ');
+        restoDescripcion = palabras.slice(palabrasVisibles).join(' ').trim();
     }
     
+    // En móvil, mostrar estructura con botón
+    let html = '<div class="descripcion-movil">';
+    
+    // Siempre mostrar solo la talla
+    html += `<div class="talla-visible">${parteVisible}</div>`;
+    
     // Si hay más contenido, agregarlo oculto con botón
-    if (resto) {
+    if (restoDescripcion) {
         html += `
             <div class="descripcion-oculta" style="display: none;">
-                ${resto}
+                ${restoDescripcion}
             </div>
             <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
                 Ver más
