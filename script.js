@@ -61,7 +61,7 @@ function analizarDescripcion(descripcion) {
     let encontrandoTallas = true;
     
     partes.forEach(parte => {
-        if (encontrandoTallas && parte.toLowerCase().includes('talla')) {
+        if (encontrandoTallas && parte.toLowerCase().startsWith('talla')) {
             tallas.push(parte);
         } else {
             encontrandoTallas = false;
