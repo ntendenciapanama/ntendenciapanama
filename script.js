@@ -255,8 +255,8 @@ function mostrarProductos() {
                </div>`
             : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
 
-        // Separar la descripción: mostrar solo "Talla M" inicialmente en móvil
-        const descripcionHTML = p.descripcion ? generarDescripcionMovil(p.descripcion) : '<div class="descripcion"></div>';
+        // Sin descripción - solo mostrar producto con botones
+        const descripcionHTML = '<div class="descripcion"></div>';
 
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
@@ -358,38 +358,13 @@ function añadirAlCarrito(codigo) {
     const p = catalogoCompleto.find(x => x.codigo === codigo);
     if (!p) return;
     
-    // Analizar si el producto tiene múltiples tallas
-    const { tallas } = analizarDescripcion(p.descripcion);
-    
-    if (tallas.length > 1) {
-        // Hay múltiples tallas, validar que se haya seleccionado una
-        const tallaSeleccionada = tallasSeleccionadas[codigo];
-        if (!tallaSeleccionada) {
-            mostrarNotificacion("Por favor selecciona una talla");
-            return;
-        }
-        
-        // Verificar si ya existe el producto con la misma talla
-        const yaExiste = carrito.find(x => 
-            x.codigo === codigo && x.tallaSeleccionada === tallaSeleccionada
-        );
-        if (yaExiste) {
-            mostrarNotificacion("Esta talla ya está en tu lista");
-            return;
-        }
-        
-        // Agregar producto con talla
-        const productoConTalla = {...p, tallaSeleccionada};
-        carrito.push(productoConTalla);
-    } else {
-        // Una talla o ninguna, comportamiento normal
-        const yaExiste = carrito.find(x => x.codigo === codigo);
-        if (yaExiste) {
-            mostrarNotificacion("Este producto ya está en lista");
-            return;
-        }
-        carrito.push(p);
+    // Verificar si ya existe el producto
+    const yaExiste = carrito.find(x => x.codigo === codigo);
+    if (yaExiste) {
+        mostrarNotificacion("Este producto ya está en lista");
+        return;
     }
+    carrito.push(p);
     
     // Actualizar contador
     const contador = document.getElementById('contador-carrito');
@@ -478,9 +453,6 @@ function enviarPedidoWhatsApp() {
     carrito.forEach((p, index) => {
         txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
         txt += `    🏷️ _Cód: ${p.codigo}_\n`;
-        if (p.tallaSeleccionada) {
-            txt += `    📏 Talla: *${p.tallaSeleccionada}*\n`;
-        }
         txt += `    💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
