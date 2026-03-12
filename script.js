@@ -231,8 +231,155 @@ function cambiarImagenNav(paso, event) {
 
 function cerrarImagen() {
     document.getElementById('lightbox').style.display = 'none';
-    document.body.style.overflow = 'auto';
-    document.body.classList.remove('lightbox-active');
+}
+
+/* --- FUNCIONES PARA GENERAR PDF --- */
+function generarNumeroPedido() {
+    const fecha = new Date();
+    const año = fecha.getFullYear(); // Año actual automático
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    const hora = String(fecha.getHours()).padStart(2, '0');
+    const minuto = String(fecha.getMinutes()).padStart(2, '0');
+    const segundo = String(fecha.getSeconds()).padStart(2, '0');
+    
+    return `NT-${año}${mes}${dia}-${hora}${minuto}${segundo}`;
+}
+
+function generarPDFPedido(numeroPedido) {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    
+    // Configurar fuentes
+    pdf.setFontSize(20);
+    
+    // Logo grande en la parte superior
+    try {
+        pdf.addImage('logo.png', 'PNG', 85, 15, 40, 20);
+    } catch(e) {
+        pdf.text('NTENDENCIA PANAMÁ', 105, 25, { align: 'center' });
+    }
+    
+    // Franja de color marca
+    pdf.setFillColor(65, 0, 32); // Color marca
+    pdf.rect(0, 40, 210, 35, 'F');
+    
+    // Información de contacto en franja
+    pdf.setFontSize(10);
+    pdf.setTextColor(255, 255, 255);
+    pdf.text('📞 WhatsApp: +507 6771-0645', 10, 50);
+    pdf.text('📍 Entrega: Coordinar por WhatsApp', 10, 57);
+    pdf.text('🛒 Tienda: ntendenciapanama.vercel.app', 10, 64);
+    pdf.text('📱 Instagram: ntendenciapanama', 10, 71);
+    pdf.text('🎵 TikTok: ntendenciapanama', 10, 78);
+    
+    // Número de pedido y fecha/hora (derecha)
+    const fecha = new Date();
+    pdf.text(`#${numeroPedido}`, 200, 50, { align: 'right' });
+    pdf.text(`📅 ${fecha.toLocaleDateString()}`, 200, 57, { align: 'right' });
+    pdf.text(`🕒 ${fecha.toLocaleTimeString()}`, 200, 64, { align: 'right' });
+    
+    // Resetear color para productos
+    pdf.setTextColor(0, 0, 0);
+    pdf.setFontSize(12);
+    
+    // Lista de productos
+    let y = 90;
+    let total = 0;
+    
+    carrito.forEach((p, i) => {
+        // Nombre del producto y precio alineados
+        pdf.setFontSize(11);
+        pdf.setFont(undefined, 'bold');
+        pdf.text(p.nombre.substring(0, 35), 20, y);
+        pdf.text(`💰 $${p.precio.toFixed(2)}`, 190, y, { align: 'right' });
+        
+        // Imagen del producto
+        try {
+            pdf.addImage(`images/${p.codigo}/1.jpg`, 'JPEG', 20, y + 5, 25, 25);
+        } catch(e) {
+            // Si no hay imagen, continuar sin ella
+        }
+        
+        // Código del producto
+        pdf.setFontSize(9);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(`🏷️ Cód: ${p.codigo}`, 50, y + 15);
+        
+        y += 35;
+        total += p.precio;
+    });
+    
+    // Línea separadora antes del total
+    pdf.setLineWidth(0.5);
+    pdf.line(20, y, 190, y);
+    y += 10;
+    
+    // Total final
+    pdf.setFontSize(16);
+    pdf.setFont(undefined, 'bold');
+    pdf.text(`💰 TOTAL FINAL: $${total.toFixed(2)}`, 105, y, { align: 'center' });
+    
+    y += 20;
+    
+    // Mensaje para el cliente
+    pdf.setFontSize(10);
+    pdf.setFont(undefined, 'normal');
+    pdf.text('💌 MENSAJE PARA EL CLIENTE:', 20, y);
+    y += 7;
+    pdf.setFontSize(9);
+    const mensaje = '"¡Gracias por tu pedido en NTENDENCIA PANAMÁ! Nos contactaremos pronto para';
+    pdf.text(mensaje, 20, y);
+    y += 5;
+    pdf.text('coordinar entrega. ¡Te esperamos pronto! 💕"', 20, y);
+    
+    // Guardar PDF con nombre del pedido
+    const nombreArchivo = `pedido-${numeroPedido}.pdf`;
+    pdf.save(nombreArchivo);
+    
+    return { pdf, nombreArchivo, numeroPedido, total };
+}
+
+function enviarPDFWhatsApp() {
+    if (carrito.length === 0) {
+        mostrarNotificacion("Tu carrito está vacío");
+        return;
+    }
+    
+    try {
+        // 🔥 SOLO AHORA generar número de pedido (cuando realmente se envía)
+        const numeroPedido = generarNumeroPedido();
+        
+        // Generar PDF con el número
+        const { pdf, nombreArchivo, total } = generarPDFPedido(numeroPedido);
+        
+        // Mensaje para WhatsApp
+        const mensaje = `✨ *¡PEDIDO NTENDENCIA PANAMÁ!* ✨
+
+📄 *Pedido:* #${numeroPedido}
+💰 *Total:* $${total.toFixed(2)}
+📦 *Productos:* ${carrito.length} artículos
+
+📄 He generado mi PDF con todos los detalles y fotos de los productos.
+📎 Adjunto el archivo para tu revisión.
+
+📞 *Espero tu confirmación para coordinar entrega!*
+🛍️ *NTENDENCIA PANAMÁ - Exclusividad al mejor precio*`;
+        
+        // Abrir WhatsApp con el mensaje
+        window.open(`https://wa.me/50767710645?text=${encodeURIComponent(mensaje)}`);
+        
+        // Descargar PDF automáticamente
+        setTimeout(() => {
+            pdf.save(nombreArchivo);
+        }, 1000);
+        
+        mostrarNotificacion(`PDF generado y WhatsApp abierto - Pedido #${numeroPedido}`);
+        
+    } catch(error) {
+        console.error("Error generando PDF:", error);
+        mostrarNotificacion("Error al generar PDF, intenta de nuevo");
+    }
 }
 
 /* --- LÓGICA DEL CARRITO --- */
@@ -319,22 +466,8 @@ function quitarDelCarrito(i) {
 }
 
 function enviarPedidoWhatsApp() {
-    if (carrito.length === 0) return;
-    let txt = "✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n";
-    txt += "Me encantaron estos productos de su catálogo y me gustaría consultar disponibilidad: \n";
-    txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
-    let total = 0;
-    carrito.forEach((p, index) => {
-        txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
-        txt += `    🏷️ _Cód: ${p.codigo}_\n`;
-        txt += `    💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
-        total += p.precio;
-    });
-    txt += "━━━━━━━━━━━━━━━━━━━━\n";
-    txt += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
-    txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
-    txt += "🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
-    window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
+    // Reemplazado por la nueva función de PDF
+    enviarPDFWhatsApp();
 }
 
 function scrollToTop() {
