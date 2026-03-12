@@ -192,10 +192,8 @@ fetch(URL_SHEET)
             const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
             const precioOferta = parseFloat(limpiar(columnas[9]).replace('$', '')) || 0; // Columna I (9) para ofertas
             
-            // Debug: mostrar valores de oferta para el producto V-X047B
-            if (limpiar(columnas[0]) === 'V-X047B') {
-                console.log(`V-X047B - Precio Base: $${precioBase}, Precio Oferta: $${precioOferta}, Columna I9: "${columnas[9]}"`);
-            }
+            // Debug: mostrar valores de oferta para TODOS los productos
+            console.log(`Código: ${limpiar(columnas[0])}, Precio Base: $${precioBase}, Precio Oferta: $${precioOferta}, esOferta: ${precioOferta > 0 && precioOferta < precioBase}`);
             
             const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
 
