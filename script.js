@@ -572,339 +572,273 @@ style.textContent = `
         to {
             transform: translateX(100%);
             opacity: 0;
-        }
-    }
 `;
 document.head.appendChild(style);
 
-/* --- SISTEMA PDF NATIVO SIN TERCEROS --- */
-class PDFGenerator {
-    constructor() {
-        this.pageWidth = 595; // A4 width in points
-        this.pageHeight = 842; // A4 height in points
-        this.margin = 40;
-        this.contentWidth = this.pageWidth - (this.margin * 2);
-        this.contentHeight = this.pageHeight - (this.margin * 2);
-    }
+/* --- SISTEMA PDF NATIVO SIMPLE Y ROBUSTO --- */
+class SimplePDFGenerator {
+constructor() {
+this.pageWidth = 595; // A4 width in points
+this.pageHeight = 842; // A4 height in points
+this.margin = 40;
+}
 
-    // Convertir imagen a base64 nativamente
-    async imageToBase64(url) {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                // Calcular dimensiones manteniendo aspect ratio
-                const maxWidth = 200;
-                const maxHeight = 200;
-                let width = img.width;
-                let height = img.height;
-                
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height = (maxWidth / width) * height;
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width = (maxHeight / height) * width;
-                        height = maxHeight;
-                    }
-                }
-                
-                canvas.width = width;
-                canvas.height = height;
-                
-                ctx.drawImage(img, 0, 0, width, height);
-                const base64 = canvas.toDataURL('image/jpeg', 0.8);
-                resolve(base64);
-            };
-            
-            img.onerror = () => resolve('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==');
-            
-            img.src = url;
-        });
-    }
+// Crear PDF simple que SÍ funciona
+async generatePDF(productos) {
+try {
+// Crear documento HTML para convertir a PDF
+const htmlContent = this.createHTMLCatalog(productos);
 
-    // Crear objeto PDF simple
-    createPDFDocument() {
-        const pdf = {
-            objects: [],
-            pages: [],
-            currentPage: 0
-        };
-        return pdf;
-    }
+// Crear un blob con HTML
+const blob = new Blob([htmlContent], { type: 'text/html' });
+const url = URL.createObjectURL(blob);
 
-    // Agregar texto al PDF
-    addText(pdf, text, x, y, fontSize = 12, isBold = false) {
-        const textObj = {
-            type: 'text',
-            text: text,
-            x: x,
-            y: y,
-            fontSize: fontSize,
-            isBold: isBold,
-            page: pdf.currentPage
-        };
-        pdf.objects.push(textObj);
-    }
+// Abrir en nueva ventana para imprimir como PDF
+const printWindow = window.open(url, '_blank');
 
-    // Agregar imagen al PDF
-    addImage(pdf, base64Data, x, y, width, height) {
-        const imageObj = {
-            type: 'image',
-            data: base64Data,
-            x: x,
-            y: y,
-            width: width,
-            height: height,
-            page: pdf.currentPage
-        };
-        pdf.objects.push(imageObj);
-    }
+if (printWindow) {
+printWindow.onload = () => {
+setTimeout(() => {
+printWindow.print();
+setTimeout(() => {
+printWindow.close();
+URL.revokeObjectURL(url);
+}, 1000);
+}, 500);
+};
+} else {
+// Si popup bloqueado, descargar HTML
+this.downloadHTMLFile(htmlContent);
+}
 
-    // Nueva página
-    newPage(pdf) {
-        pdf.currentPage++;
-        pdf.pages.push(pdf.currentPage);
-    }
+} catch (error) {
+console.error('Error:', error);
+this.fallbackPDF(productos);
+}
+}
 
-    // Generar PDF como Blob (CORREGIDO - PDF válido)
-    async generatePDFBlob(pdf) {
-        // Crear contenido PDF válido
-        let pdfContent = '%PDF-1.4\n';
-        const objects = [];
-        let objId = 1;
-        const pages = [];
-        
-        // Para cada página, crear stream de contenido válido
-        for (let page = 0; page <= pdf.currentPage; page++) {
-            const pageObjects = pdf.objects.filter(obj => obj.page === page);
-            
-            // Crear contenido de página con sintaxis PDF correcta
-            let pageContent = 'q\n'; // Save graphics state
-            
-            // Procesar objetos de texto
-            for (const obj of pageObjects) {
-                if (obj.type === 'text') {
-                    const fontName = obj.isBold ? 'F2' : 'F1';
-                    const fontSize = obj.fontSize;
-                    const x = obj.x;
-                    const y = this.pageHeight - obj.y; // Invertir Y para PDF
-                    
-                    pageContent += `BT\n`;
-                    pageContent += `/${fontName} ${fontSize} Tf\n`;
-                    pageContent += `${x} ${y} Td\n`;
-                    pageContent += `(${this.escapePDFString(obj.text)}) Tj\n`;
-                    pageContent += `ET\n`;
-                }
-            }
-            
-            pageContent += 'Q\n'; // Restore graphics state
-            
-            // Longitud del contenido
-            const contentLength = pageContent.length;
-            
-            // Objeto de contenido de página
-            objects.push({
-                id: objId++,
-                content: `<< /Length ${contentLength} >>\nstream\n${pageContent}\nendstream\nendobj\n`
-            });
-            
-            // Objeto de página
-            objects.push({
-                id: objId++,
-                content: `<< /Type /Page /Parent 3 0 R /Contents ${objId - 1} 0 R /Resources << /Font << /F1 4 0 R /F2 5 0 R >> /ProcSet [/PDF /Text] >> /MediaBox [0 0 ${this.pageWidth} ${this.pageHeight}] >>\nendobj\n`
-            });
-            
-            pages.push(`${objId - 1} 0 R`);
-        }
-        
-        // Catálogo
-        objects.push({
-            id: 1,
-            content: `<< /Type /Catalog /Pages 2 0 R >>\nendobj\n`
-        });
-        
-        // Pages tree
-        objects.push({
-            id: 2,
-            content: `<< /Type /Pages /Kids [${pages.join(' ')}] /Count ${pages.length} >>\nendobj\n`
-        });
-        
-        // Fuente normal
-        objects.push({
-            id: 4,
-            content: `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n`
-        });
-        
-        // Fuente bold
-        objects.push({
-            id: 5,
-            content: `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>\nendobj\n`
-        });
-        
-        // Generar contenido final con xref correcto
-        let currentOffset = pdfContent.length;
-        let xref = 'xref\n0 ' + (objects.length + 1) + '\n0000000000 65535 f \n';
-        
-        // Agregar objetos y calcular offsets
-        for (const obj of objects) {
-            const offset = currentOffset.toString().padStart(10, '0');
-            xref += `${offset} 00000 n \n`;
-            currentOffset += obj.content.length;
-        }
-        
-        // Agregar todos los objetos
-        for (const obj of objects) {
-            pdfContent += `${obj.id} 0 obj\n${obj.content}`;
-        }
-        
-        // Agregar trailer y final
-        pdfContent += xref + 'trailer\n<< /Size ' + (objects.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + currentOffset + '\n%%EOF';
-        
-        return new Blob([pdfContent], { type: 'application/pdf' });
-    }
+// Crear HTML del catálogo
+createHTMLCatalog(productos) {
+let html = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Catálogo NTENDENCIA PANAMÁ</title>
+<style>
+@page { margin: 1cm; size: A4; }
+body { 
+font-family: 'Helvetica', Arial, sans-serif; 
+margin: 0; 
+padding: 20px;
+background: white;
+}
+.header { 
+text-align: center; 
+margin-bottom: 30px; 
+border-bottom: 3px solid #410020;
+padding-bottom: 20px;
+}
+.title { 
+font-size: 28px; 
+font-weight: bold; 
+color: #410020;
+margin-bottom: 10px;
+}
+.subtitle { 
+font-size: 18px; 
+color: #666;
+margin-bottom: 5px;
+}
+.date { 
+font-size: 14px; 
+color: #888;
+}
+.product-grid { 
+display: grid; 
+grid-template-columns: 1fr 1fr; 
+gap: 30px; 
+margin-bottom: 30px;
+}
+.product { 
+border: 1px solid #ddd; 
+padding: 15px; 
+text-align: center; 
+break-inside: avoid;
+page-break-inside: avoid;
+}
+.product img { 
+max-width: 150px; 
+max-height: 150px; 
+margin-bottom: 10px;
+}
+.code { 
+font-weight: bold; 
+font-size: 12px; 
+color: #410020;
+margin-bottom: 5px;
+}
+.name { 
+font-size: 14px; 
+margin-bottom: 5px;
+min-height: 40px;
+}
+.price { 
+font-size: 16px; 
+font-weight: bold; 
+color: #410020;
+margin-bottom: 5px;
+}
+.description { 
+font-size: 11px; 
+color: #666;
+line-height: 1.3;
+}
+.page-break { 
+page-break-before: always; 
+break-before: page;
+}
+@media print {
+body { margin: 0; }
+.no-print { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="title">NTENDENCIA PANAMÁ</div>
+<div class="subtitle">CATÁLOGO DE PRODUCTOS</div>
+<div class="date">${new Date().toLocaleDateString('es-PA')}</div>
+</div>
+`;
 
-    // Escapar caracteres especiales para PDF
-    escapePDFString(text) {
-        return text.toString()
-            .replace(/\\/g, '\\\\')
-            .replace(/\(/g, '\\(')
-            .replace(/\)/g, '\\)')
-            .replace(/\r/g, '\\r')
-            .replace(/\n/g, '\\n')
-            .replace(/\t/g, '\\t');
-    }
+// Agregar productos
+let productsPerPage = 4;
+for (let i = 0; i < productos.length; i++) {
+if (i > 0 && i % productsPerPage === 0) {
+html += '<div class="page-break"></div>';
+}
+
+const product = productos[i];
+html += `
+<div class="product">
+<img src="${product.imagen}" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='" alt="${product.nombre}">
+<div class="code">${product.codigo || ''}</div>
+<div class="name">${product.nombre || ''}</div>
+<div class="price">$${product.precio || '0'}</div>
+<div class="description">${(product.descripcion || '').substring(0, 100)}</div>
+</div>
+`;
+}
+
+html += `
+</body>
+</html>`;
+return html;
+}
+
+// Descargar como archivo HTML
+downloadHTMLFile(htmlContent) {
+const blob = new Blob([htmlContent], { type: 'text/html' });
+const url = URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.href = url;
+link.download = `catalogo-ntendencia-${new Date().toISOString().split('T')[0]}.html`;
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+URL.revokeObjectURL(url);
+
+mostrarNotificacion(' Catálogo descargado como HTML - Abre y selecciona "Imprimir como PDF"');
+}
+
+// Método fallback simple
+fallbackPDF(productos) {
+let textContent = 'NTENDENCIA PANAMÁ - CATÁLOGO DE PRODUCTOS\n';
+textContent += 'Fecha: ' + new Date().toLocaleDateString('es-PA') + '\n\n';
+
+productos.forEach((product, index) => {
+textContent += `${index + 1}. ${product.codigo || ''}\n`;
+textContent += ` ${product.nombre || ''}\n`;
+textContent += ` Precio: $${product.precio || '0'}\n`;
+textContent += ` ${product.descripcion || ''}\n\n`;
+});
+
+const blob = new Blob([textContent], { type: 'text/plain' });
+const url = URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.href = url;
+link.download = `catalogo-ntendencia-${new Date().toISOString().split('T')[0]}.txt`;
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+URL.revokeObjectURL(url);
+}
 }
 
 // Función principal para generar catálogo PDF
 async function generarCatalogoPDF() {
-    try {
-        // Mostrar indicador de progreso
-        const btnPDF = document.getElementById('btn-generar-pdf');
-        if (btnPDF) {
-            btnPDF.innerHTML = '⏳ Generando PDF...';
-            btnPDF.disabled = true;
-        }
+try {
+// Mostrar indicador de progreso
+const btnPDF = document.getElementById('btn-generar-pdf');
+if (btnPDF) {
+btnPDF.innerHTML = '⏳ Generando catálogo...';
+btnPDF.disabled = true;
+}
 
-        const pdfGen = new PDFGenerator();
-        const pdf = pdfGen.createPDFDocument();
+// Obtener productos actuales
+const productos = productosFiltrados.length > 0 ? productosFiltrados : todosLosProductos;
         
-        // Obtener productos actuales
-        const productos = productosFiltrados.length > 0 ? productosFiltrados : todosLosProductos;
-        
-        if (productos.length === 0) {
-            alert('No hay productos para generar el catálogo');
-            return;
-        }
+if (productos.length === 0) {
+alert('No hay productos para generar el catálogo');
+return;
+}
 
-        // Portada
-        pdfGen.addText(pdf, 'NTENDENCIA PANAMÁ', pdfGen.pageWidth / 2 - 80, pdfGen.pageHeight - 100, 24, true);
-        pdfGen.addText(pdf, 'CATÁLOGO DE PRODUCTOS', pdfGen.pageWidth / 2 - 70, pdfGen.pageHeight - 130, 18, true);
-        pdfGen.addText(pdf, new Date().toLocaleDateString('es-PA'), pdfGen.pageWidth / 2 - 30, pdfGen.pageHeight - 160, 12);
-        pdfGen.newPage(pdf);
-
-        // Procesar productos
-        let currentY = 0;
-        let productsPerPage = 4;
-        let productCount = 0;
-
-        for (let i = 0; i < productos.length; i++) {
-            const producto = productos[i];
-            
-            // Nueva página cada 4 productos
-            if (productCount > 0 && productCount % productsPerPage === 0) {
-                pdfGen.newPage(pdf);
-                currentY = 0;
-            }
-
-            // Convertir imagen a base64
-            const imgBase64 = await pdfGen.imageToBase64(producto.imagen);
-            
-            // Posición del producto
-            const row = Math.floor(productCount / 2);
-            const col = productCount % 2;
-            const x = pdfGen.margin + (col * (pdfGen.contentWidth / 2));
-            const y = pdfGen.pageHeight - pdfGen.margin - 50 - (row * 180);
-
-            // Agregar imagen
-            pdfGen.addImage(pdf, imgBase64, x, y - 120, 120, 120);
-            
-            // Agregar texto
-            pdfGen.addText(pdf, producto.codigo?.substring(0, 15) || '', x, y - 10, 10, true);
-            pdfGen.addText(pdf, producto.nombre?.substring(0, 25) || '', x, y - 25, 9);
-            pdfGen.addText(pdf, '$' + (producto.precio || '0'), x, y - 40, 10, true);
-            
-            if (producto.descripcion) {
-                const desc = producto.descripcion.substring(0, 40);
-                pdfGen.addText(pdf, desc, x, y - 55, 8);
-            }
-
-            productCount++;
-        }
-
-        // Generar blob y descargar
-        const pdfBlob = await pdfGen.generatePDFBlob(pdf);
-        const url = URL.createObjectURL(pdfBlob);
+// Usar el sistema simple HTML->PDF
+const pdfGen = new SimplePDFGenerator();
+await pdfGen.generatePDF(productos);
         
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `catalogo-ntendencia-${new Date().toISOString().split('T')[0]}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+// Restaurar botón
+if (btnPDF) {
+btnPDF.innerHTML = '📄 Descargar Catálogo PDF';
+btnPDF.disabled = false;
+}
         
-        URL.revokeObjectURL(url);
+} catch (error) {
+console.error('Error generando catálogo:', error);
         
-        // Restaurar botón
-        if (btnPDF) {
-            btnPDF.innerHTML = '📄 Descargar Catálogo PDF';
-            btnPDF.disabled = false;
-        }
+// Restaurar botón
+const btnPDF = document.getElementById('btn-generar-pdf');
+if (btnPDF) {
+btnPDF.innerHTML = '📄 Descargar Catálogo PDF';
+btnPDF.disabled = false;
+}
         
-        // Mostrar éxito
-        mostrarNotificacion('✅ Catálogo PDF generado exitosamente');
-        
-    } catch (error) {
-        console.error('Error generando PDF:', error);
-        
-        // Restaurar botón
-        const btnPDF = document.getElementById('btn-generar-pdf');
-        if (btnPDF) {
-            btnPDF.innerHTML = '📄 Descargar Catálogo PDF';
-            btnPDF.disabled = false;
-        }
-        
-        alert('Error al generar el PDF. Por favor intenta nuevamente.');
-    }
+mostrarNotificacion('Error al generar el catálogo. Por favor intenta nuevamente.');
+}
 }
 
 // Función para mostrar notificaciones
 function mostrarNotificacion(mensaje) {
-    const notificacion = document.createElement('div');
-    notificacion.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #4CAF50;
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        z-index: 10000;
-        font-family: 'Poppins', sans-serif;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        animation: slideInRight 0.3s ease;
-    `;
-    notificacion.textContent = mensaje;
-    document.body.appendChild(notificacion);
+const notificacion = document.createElement('div');
+notificacion.style.cssText = `
+position: fixed;
+top: 20px;
+right: 20px;
+background: #4CAF50;
+color: white;
+padding: 15px 20px;
+border-radius: 8px;
+z-index: 10000;
+font-family: 'Poppins', sans-serif;
+box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+animation: slideInRight 0.3s ease;
+`;
+notificacion.textContent = mensaje;
+document.body.appendChild(notificacion);
     
-    setTimeout(() => {
-        notificacion.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => document.body.removeChild(notificacion), 300);
-    }, 3000);
+setTimeout(() => {
+notificacion.style.animation = 'slideOutRight 0.3s ease';
+setTimeout(() => document.body.removeChild(notificacion), 300);
+}, 3000);
 }
