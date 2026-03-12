@@ -576,3 +576,318 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+/* --- SISTEMA PDF NATIVO SIN TERCEROS --- */
+class PDFGenerator {
+    constructor() {
+        this.pageWidth = 595; // A4 width in points
+        this.pageHeight = 842; // A4 height in points
+        this.margin = 40;
+        this.contentWidth = this.pageWidth - (this.margin * 2);
+        this.contentHeight = this.pageHeight - (this.margin * 2);
+    }
+
+    // Convertir imagen a base64 nativamente
+    async imageToBase64(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Calcular dimensiones manteniendo aspect ratio
+                const maxWidth = 200;
+                const maxHeight = 200;
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = (maxWidth / width) * height;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = (maxHeight / height) * width;
+                        height = maxHeight;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                ctx.drawImage(img, 0, 0, width, height);
+                const base64 = canvas.toDataURL('image/jpeg', 0.8);
+                resolve(base64);
+            };
+            
+            img.onerror = () => resolve('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==');
+            
+            img.src = url;
+        });
+    }
+
+    // Crear objeto PDF simple
+    createPDFDocument() {
+        const pdf = {
+            objects: [],
+            pages: [],
+            currentPage: 0
+        };
+        return pdf;
+    }
+
+    // Agregar texto al PDF
+    addText(pdf, text, x, y, fontSize = 12, isBold = false) {
+        const textObj = {
+            type: 'text',
+            text: text,
+            x: x,
+            y: y,
+            fontSize: fontSize,
+            isBold: isBold,
+            page: pdf.currentPage
+        };
+        pdf.objects.push(textObj);
+    }
+
+    // Agregar imagen al PDF
+    addImage(pdf, base64Data, x, y, width, height) {
+        const imageObj = {
+            type: 'image',
+            data: base64Data,
+            x: x,
+            y: y,
+            width: width,
+            height: height,
+            page: pdf.currentPage
+        };
+        pdf.objects.push(imageObj);
+    }
+
+    // Nueva página
+    newPage(pdf) {
+        pdf.currentPage++;
+        pdf.pages.push(pdf.currentPage);
+    }
+
+    // Generar PDF como Blob
+    async generatePDFBlob(pdf) {
+        // Crear contenido PDF básico
+        let pdfContent = '%PDF-1.4\n';
+        
+        const objects = [];
+        let objId = 1;
+        
+        // Procesar cada página
+        const pages = [];
+        for (let page = 0; page <= pdf.currentPage; page++) {
+            const pageObjects = pdf.objects.filter(obj => obj.page === page);
+            
+            // Crear contenido de página
+            let pageContent = 'BT\n';
+            let currentY = this.pageHeight - this.margin;
+            
+            for (const obj of pageObjects) {
+                if (obj.type === 'text') {
+                    pageContent += `/${obj.isBold ? 'Helvetica-Bold' : 'Helvetica'} ${obj.fontSize} Tf\n`;
+                    pageContent += `${obj.x} ${currentY - obj.y} Td\n`;
+                    pageContent += `(${obj.text}) Tj\n`;
+                }
+            }
+            pageContent += 'ET\n';
+            
+            // Comprimir contenido (simple)
+            const compressed = this.simpleCompress(pageContent);
+            
+            // Agregar objeto de página
+            objects.push({
+                id: objId++,
+                content: `<< /Type /Page /Parent 3 0 R /Contents ${objId} 0 R /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> >>\nendobj\n`
+            });
+            
+            objects.push({
+                id: objId++,
+                content: `<< /Length ${compressed.length} >>\nstream\n${compressed}\nendstream\nendobj\n`
+            });
+            
+            pages.push(`${objId - 2} 0 R`);
+        }
+        
+        // Catálogo
+        objects.push({
+            id: 1,
+            content: `<< /Type /Catalog /Pages 2 0 R >>\nendobj\n`
+        });
+        
+        // Pages tree
+        objects.push({
+            id: 2,
+            content: `<< /Type /Pages /Kids [${pages.join(' ')}] /Count ${pages.length} >>\nendobj\n`
+        });
+        
+        // Fuentes
+        objects.push({
+            id: 4,
+            content: `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n`
+        });
+        
+        objects.push({
+            id: 5,
+            content: `<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>\nendobj\n`
+        });
+        
+        // Generar contenido final
+        let xref = 'xref\n0 ' + (objects.length + 1) + '\n0000000000 65535 f \n';
+        let currentOffset = pdfContent.length;
+        
+        for (const obj of objects) {
+            const offset = currentOffset.toString().padStart(10, '0');
+            xref += `${offset} 00000 n \n`;
+            currentOffset += obj.content.length;
+        }
+        
+        // Agregar todos los objetos
+        for (const obj of objects) {
+            pdfContent += `${obj.id} 0 obj\n${obj.content}`;
+        }
+        
+        pdfContent += xref + 'trailer\n<< /Size ' + (objects.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + currentOffset + '\n%%EOF';
+        
+        return new Blob([pdfContent], { type: 'application/pdf' });
+    }
+
+    // Compresión simple (placeholder)
+    simpleCompress(content) {
+        return content;
+    }
+}
+
+// Función principal para generar catálogo PDF
+async function generarCatalogoPDF() {
+    try {
+        // Mostrar indicador de progreso
+        const btnPDF = document.getElementById('btn-generar-pdf');
+        if (btnPDF) {
+            btnPDF.innerHTML = '⏳ Generando PDF...';
+            btnPDF.disabled = true;
+        }
+
+        const pdfGen = new PDFGenerator();
+        const pdf = pdfGen.createPDFDocument();
+        
+        // Obtener productos actuales
+        const productos = productosFiltrados.length > 0 ? productosFiltrados : todosLosProductos;
+        
+        if (productos.length === 0) {
+            alert('No hay productos para generar el catálogo');
+            return;
+        }
+
+        // Portada
+        pdfGen.addText(pdf, 'NTENDENCIA PANAMÁ', pdfGen.pageWidth / 2 - 80, pdfGen.pageHeight - 100, 24, true);
+        pdfGen.addText(pdf, 'CATÁLOGO DE PRODUCTOS', pdfGen.pageWidth / 2 - 70, pdfGen.pageHeight - 130, 18, true);
+        pdfGen.addText(pdf, new Date().toLocaleDateString('es-PA'), pdfGen.pageWidth / 2 - 30, pdfGen.pageHeight - 160, 12);
+        pdfGen.newPage(pdf);
+
+        // Procesar productos
+        let currentY = 0;
+        let productsPerPage = 4;
+        let productCount = 0;
+
+        for (let i = 0; i < productos.length; i++) {
+            const producto = productos[i];
+            
+            // Nueva página cada 4 productos
+            if (productCount > 0 && productCount % productsPerPage === 0) {
+                pdfGen.newPage(pdf);
+                currentY = 0;
+            }
+
+            // Convertir imagen a base64
+            const imgBase64 = await pdfGen.imageToBase64(producto.imagen);
+            
+            // Posición del producto
+            const row = Math.floor(productCount / 2);
+            const col = productCount % 2;
+            const x = pdfGen.margin + (col * (pdfGen.contentWidth / 2));
+            const y = pdfGen.pageHeight - pdfGen.margin - 50 - (row * 180);
+
+            // Agregar imagen
+            pdfGen.addImage(pdf, imgBase64, x, y - 120, 120, 120);
+            
+            // Agregar texto
+            pdfGen.addText(pdf, producto.codigo?.substring(0, 15) || '', x, y - 10, 10, true);
+            pdfGen.addText(pdf, producto.nombre?.substring(0, 25) || '', x, y - 25, 9);
+            pdfGen.addText(pdf, '$' + (producto.precio || '0'), x, y - 40, 10, true);
+            
+            if (producto.descripcion) {
+                const desc = producto.descripcion.substring(0, 40);
+                pdfGen.addText(pdf, desc, x, y - 55, 8);
+            }
+
+            productCount++;
+        }
+
+        // Generar blob y descargar
+        const pdfBlob = await pdfGen.generatePDFBlob(pdf);
+        const url = URL.createObjectURL(pdfBlob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `catalogo-ntendencia-${new Date().toISOString().split('T')[0]}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        URL.revokeObjectURL(url);
+        
+        // Restaurar botón
+        if (btnPDF) {
+            btnPDF.innerHTML = '📄 Descargar Catálogo PDF';
+            btnPDF.disabled = false;
+        }
+        
+        // Mostrar éxito
+        mostrarNotificacion('✅ Catálogo PDF generado exitosamente');
+        
+    } catch (error) {
+        console.error('Error generando PDF:', error);
+        
+        // Restaurar botón
+        const btnPDF = document.getElementById('btn-generar-pdf');
+        if (btnPDF) {
+            btnPDF.innerHTML = '📄 Descargar Catálogo PDF';
+            btnPDF.disabled = false;
+        }
+        
+        alert('Error al generar el PDF. Por favor intenta nuevamente.');
+    }
+}
+
+// Función para mostrar notificaciones
+function mostrarNotificacion(mensaje) {
+    const notificacion = document.createElement('div');
+    notificacion.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4CAF50;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        font-family: 'Poppins', sans-serif;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        animation: slideInRight 0.3s ease;
+    `;
+    notificacion.textContent = mensaje;
+    document.body.appendChild(notificacion);
+    
+    setTimeout(() => {
+        notificacion.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => document.body.removeChild(notificacion), 300);
+    }, 3000);
+}
