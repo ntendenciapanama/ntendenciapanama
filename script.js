@@ -83,8 +83,9 @@ function actualizarTallaSeleccionada(codigo, talla) {
 /* --- FUNCIÓN PARA GENERAR HTML DE DESCRIPCIÓN --- */
 function generarDescripcionMovil(descripcion) {
     const { tallas, resto } = analizarDescripcion(descripcion);
+    const esMovil = window.innerWidth <= 768;
     
-    let html = '<div class="descripcion-movil">';
+    let html = `<div class="descripcion-${esMovil ? 'movil' : 'desktop'}">`;
     
     if (tallas.length === 0) {
         // No hay tallas, mostrar descripción completa
@@ -479,9 +480,6 @@ function focusSearch() {
     if (buscador) {
         buscador.focus({preventScroll: true});
         // No hacer scroll en móvil para evitar descuadre
-        if (window.innerWidth > 768) {
-            buscador.scrollIntoView({behavior: 'smooth', block: 'center'});
-        }
     }
 }
 document.getElementById('buscador')?.addEventListener('input', (e) => {
@@ -492,6 +490,7 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
         productosFiltrados = catalogoCompleto.filter(p => 
             p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
         );
+    }
     paginaActual = 1;
     mostrarProductos();
 });
@@ -500,15 +499,16 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
 function toggleDescripcion(boton) {
     const descripcionOculta = boton.previousElementSibling;
     const imgContainer = boton.closest('.producto').querySelector('.main-img-container');
+    const esMovil = window.innerWidth <= 768;
     
     if (descripcionOculta.style.display === 'none') {
         // Mostrar descripción
         descripcionOculta.style.display = 'block';
         boton.textContent = 'Ver menos';
         
-        // Agrandar imagen
+        // Agrandar imagen según dispositivo
         if (imgContainer) {
-            imgContainer.style.height = '180px';
+            imgContainer.style.height = esMovil ? '180px' : '350px';
         }
         
         // Agregar clase expandida al producto
@@ -518,16 +518,16 @@ function toggleDescripcion(boton) {
         descripcionOculta.style.display = 'none';
         boton.textContent = 'Ver más';
         
-        // Restaurar tamaño de imagen
+        // Restaurar tamaño de imagen según dispositivo
         if (imgContainer) {
-            imgContainer.style.height = '140px';
+            imgContainer.style.height = esMovil ? '140px' : '300px';
         }
         
         // Quitar clase expandida
         boton.closest('.producto').classList.remove('descripcion-expandida');
     }
 }
-
+/* ... */
 /* --- CATEGORÍAS --- */
 function generarCategorias() {
     const cont = document.getElementById('categorias');
