@@ -610,8 +610,6 @@ function actualizarContadorVisual() {
 /* --- LÓGICA DEL CARRITO --- */
 function añadirAlCarrito(codigo) {
     const yaExiste = carrito.find(x => x.codigo === codigo);
-    const yaExisteIndex = carrito.findIndex(x => x.codigo === codigo);
-    if (yaExisteIndex !== -1) {
     if (yaExiste) {
         mostrarNotificacion("Este producto ya está en lista");
         return;
