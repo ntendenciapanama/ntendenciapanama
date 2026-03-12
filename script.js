@@ -331,7 +331,10 @@ async function crearPDFReal() {
 }
 
 async function crearPDFManual() {
-    // Crear PDF simple sin imágenes pero con toda la información
+    // Crear PDF simple pero funcional sin imágenes
+    const fecha = new Date();
+    const año = fecha.getFullYear();
+    
     let pdfContent = `%PDF-1.4
 1 0 obj
 << /Type /Catalog
@@ -360,7 +363,7 @@ endobj
 endobj
 
 4 0 obj
-<< /Length 2000
+<< /Length 3000
 >>
 stream
 BT
@@ -404,9 +407,9 @@ Q`;
         // Actualizar progreso
         actualizarProgreso(i, catalogoCompleto.length);
         
+        // Nueva página si es necesario
         if (yPos < 150) {
-            pdfContent += `
-BT
+            pdfContent += `BT
 /F1 12 Tf
 72 720 Td
 (--- Página ${Math.floor(i/8) + 2} ---) Tj
@@ -415,8 +418,7 @@ Q`;
             yPos = 700;
         }
         
-        pdfContent += `
-BT
+        pdfContent += `BT
 /F1 11 Tf
 72 ${yPos} Td
 (${nombreLimpio}) Tj
@@ -434,8 +436,7 @@ Q
     }
 
     // Agregar contacto
-    pdfContent += `
-BT
+    pdfContent += `BT
 /F1 14 Tf
 72 100 Td
 (CONTACTO) Tj
