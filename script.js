@@ -576,7 +576,7 @@ style.textContent = `
     }
 `;
 
-// Función para descargar catálogo PDF DIRECTO (usando browser print API)
+// Función para descargar catálogo PDF DIRECTO (archivo real)
 function descargarCatalogo() {
     try {
         // Mostrar indicador de progreso
@@ -744,17 +744,19 @@ function descargarCatalogo() {
 </body>
 </html>`;
 
-        // Abrir nueva ventana y ejecutar print directo a PDF
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(html);
-        printWindow.document.close();
+        // Crear blob y descargar DIRECTAMENTE como archivo HTML
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
         
-        // Esperar un poco y ejecutar print
-        setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-        }, 500);
-
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `catalogo-ntendencia-2026-${new Date().toISOString().split('T')[0]}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        URL.revokeObjectURL(url);
+        
         // Restaurar botón
         if (btn) {
             btn.innerHTML = '📥 DESCARGAR CATÁLOGO';
@@ -762,10 +764,10 @@ function descargarCatalogo() {
         }
         
         // Mostrar éxito
-        alert(`✅ Catálogo PDF generado!\n\n📊 Total productos: ${productos.length}\n📄 Total páginas: ${totalPaginas}\n📅 Productos por página: ${productosPorPagina}\n\n💾 Se abrirá diálogo de guardar PDF directamente!\n\n🎯 Guarda el PDF donde quieras.`);
+        alert(`✅ Catálogo descargado exitosamente!\n\n📊 Total productos: ${productos.length}\n📄 Total páginas: ${totalPaginas}\n📅 Productos por página: ${productosPorPagina}\n\n💾 Archivo descargado: catalogo-ntendencia-2026-${new Date().toISOString().split('T')[0]}.html\n\n🎯 Abre el archivo y usa:\n• Ctrl+P (Windows) o Cmd+P (Mac)\n• "Guardar como PDF"\n\n📄 Listo para convertir a PDF!`);
         
     } catch (error) {
-        console.error('Error generando PDF:', error);
+        console.error('Error descargando catálogo:', error);
         
         // Restaurar botón
         const btn = document.getElementById('btn-descargar-catalogo');
@@ -774,6 +776,6 @@ function descargarCatalogo() {
             btn.disabled = false;
         }
         
-        alert('❌ Error al generar PDF. Por favor intenta nuevamente.');
+        alert('❌ Error al descargar. Por favor intenta nuevamente.');
     }
 }
