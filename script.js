@@ -129,18 +129,6 @@ fetch(URL_SHEET)
         todosLosProductos = listaInvertida.filter(p => p.categoria.toLowerCase() !== 'saldos');
         productosFiltrados = todosLosProductos;
         
-        // --- LÓGICA DE BÚSQUEDA POR URL ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const buscarTerm = urlParams.get('buscar');
-        if (buscarTerm) {
-            productosFiltrados = catalogoCompleto.filter(p => 
-                p.codigo.toLowerCase() === buscarTerm.toLowerCase()
-            );
-            // Si hay un término de búsqueda, asegurar que el buscador lo muestre
-            const buscador = document.getElementById('buscador');
-            if (buscador) buscador.value = buscarTerm;
-        }
-
         generarCategorias();
         mostrarProductos();
     })
@@ -468,8 +456,7 @@ function enviarPedidoWhatsApp() {
         if (p.tallaElegida) {
             txt += ` | 📏 Talla: *${p.tallaElegida}*`;
         }
-        txt += `\n   � Ver: https://ntendenciapanama.vercel.app/?buscar=${p.codigo}`;
-        txt += `\n   �💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
+        txt += `\n   💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
     
