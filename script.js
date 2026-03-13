@@ -441,8 +441,11 @@ function quitarDelCarrito(i) {
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
     
-    // Generar un número de orden aleatorio para control
-    const numOrden = Math.floor(1000 + Math.random() * 9000);
+    // Generar un número de orden único combinando Fecha + Random
+    const ahora = new Date();
+    const diaMes = ahora.getDate().toString().padStart(2, '0') + (ahora.getMonth() + 1).toString().padStart(2, '0');
+    const numAzar = Math.floor(1000 + Math.random() * 9000);
+    const numOrden = `${diaMes}-${numAzar}`;
     
     // Emojis literales (asegura que el archivo sea guardado en UTF-8)
     const eBrillo = "✨";
