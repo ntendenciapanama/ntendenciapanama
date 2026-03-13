@@ -530,176 +530,62 @@ async function generarCatalogoPDF() {
     
     // Colores de Marca
     const colorVino = [65, 0, 32];
-    const colorDorado = [184, 134, 11];
-    const colorVerdeBoutique = [0, 65, 49]; // #004131 (Verde Esmeralda)
-    const colorGrisClaro = [240, 240, 240];
+    const colorDorado = [220, 180, 100]; // Un dorado más brillante
+    const colorTexto = [50, 50, 50];
 
     try {
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '<span>⏳ Preparando Estilo Boutique...</span>';
+            btn.innerHTML = '<span>⏳ Creando Diseño...</span>';
             btn.style.opacity = '0.7';
         }
 
         const doc = new jsPDF('p', 'mm', 'a4');
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
-        const margin = 12;
+        const margin = 10;
         
-        // --- PÁGINA 1: PORTADA IMPACTANTE ---
+        // --- PÁGINA 1: PORTADA MINIMALISTA ---
         doc.setFillColor(...colorVino);
         doc.rect(0, 0, pageWidth, pageHeight, 'F');
         
-        // Franja Lateral Verde Boutique
-        doc.setFillColor(...colorVerdeBoutique);
-        doc.rect(0, 0, 15, pageHeight, 'F');
+        // Círculos sutiles de fondo
+        doc.setFillColor(255, 255, 255, 0.05);
+        doc.circle(40, 80, 30, 'F');
+        doc.circle(pageWidth - 50, pageHeight - 100, 50, 'F');
 
-        // Texto Portada
         doc.setTextColor(255, 255, 255);
         doc.setFont("playfair", "bold");
-        doc.setFontSize(36);
-        doc.text("NTENDENCIA", pageWidth / 2 + 7, 70, { align: "center" });
-        doc.text("PANAMÁ", pageWidth / 2 + 7, 85, { align: "center" });
+        doc.setFontSize(38);
+        doc.text("NTENDENCIA PANAMÁ", pageWidth / 2, pageHeight / 2 - 20, { align: "center" });
         
-        doc.setDrawColor(...colorVerdeBoutique);
-        doc.setLineWidth(1);
-        doc.line(40, 100, pageWidth - 40, 100);
-
-        doc.setFontSize(16);
         doc.setFont("poppins", "normal");
-        doc.text("CATÁLOGO DE EXCLUSIVIDAD", pageWidth / 2 + 7, 115, { align: "center" });
-
-        doc.setFontSize(80);
-        doc.setFont("playfair", "bold");
-        doc.setTextColor(255, 255, 255, 0.2); // Sutil
-        doc.text("2026", pageWidth / 2 + 7, pageHeight / 2 + 30, { align: "center" });
-
+        doc.setFontSize(16);
         doc.setTextColor(...colorDorado);
-        doc.setFontSize(24);
-        doc.text("COLECCIÓN PREMIUM", pageWidth / 2 + 7, pageHeight - 50, { align: "center" });
-        
-        // --- PÁGINAS DE PRODUCTOS (Layout 1 Grande + 4 Pequeños) ---
+        doc.text("CATÁLOGO DIGITAL 2026", pageWidth / 2, pageHeight / 2, { align: "center" });
+
+        // --- PÁGINAS DE PRODUCTOS (Layout Dinámico) ---
         const listaParaPDF = productosFiltrados;
-        const itemsPorPagina = 5; // 1 Grande + 4 Pequeños
+        const itemsPorPagina = 3; // Layout de 3 productos por página
 
         for (let i = 0; i < listaParaPDF.length; i += itemsPorPagina) {
             doc.addPage();
             
-            // Fondo de página muy suave
-            doc.setFillColor(252, 252, 252);
-            doc.rect(0, 0, pageWidth, pageHeight, 'F');
-            
-            // Pie de página elegante
+            // Pie de página
             doc.setFontSize(8);
             doc.setTextColor(150, 150, 150);
-            doc.setFont("poppins", "normal");
-            doc.text(`NTENDENCIA PANAMÁ | Página ${doc.internal.getNumberOfPages()}`, pageWidth / 2, pageHeight - 8, { align: "center" });
+            doc.text(`NTENDENCIA PANAMÁ | ${doc.internal.getNumberOfPages()}`, pageWidth / 2, pageHeight - 8, { align: "center" });
 
-            // 1. PRODUCTO GRANDE (Izquierda)
-            const pGrande = listaParaPDF[i];
-            if (pGrande) {
-                const xG = margin;
-                const yG = margin;
-                const wG = (pageWidth / 2) - margin - 5;
-                const hG = pageHeight - (margin * 2) - 15;
+            const productosDePagina = listaParaPDF.slice(i, i + itemsPorPagina);
 
-                // Marco sutil Verde
-                doc.setDrawColor(...colorVerdeBoutique);
-                doc.setLineWidth(0.5);
-                doc.rect(xG, yG, wG, hG);
-
-                try {
-                    const imgObj = await getBase64Image(`images/${pGrande.codigo}/1.jpg`);
-                    const ratio = imgObj.width / imgObj.height;
-                    let finalW = wG - 4;
-                    let finalH = finalW / ratio;
-                    
-                    if (finalH > hG - 25) {
-                        finalH = hG - 25;
-                        finalW = finalH * ratio;
-                    }
-                    
-                    doc.addImage(imgObj.data, 'JPEG', xG + (wG - finalW)/2, yG + 5, finalW, finalH);
-                } catch(e) { /* Error img */ }
-
-                // Info Producto Grande
-                doc.setFillColor(...colorVerdeBoutique);
-                doc.rect(xG, yG + hG - 15, wG, 15, 'F');
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(10);
-                doc.setFont("poppins", "bold");
-                doc.text(pGrande.nombre.toUpperCase(), xG + wG/2, yG + hG - 9, { align: "center" });
-                
-                // Precio Grande (Etiqueta dorada)
-                doc.setFillColor(...colorDorado);
-                doc.rect(xG + wG - 30, yG + 10, 25, 10, 'F');
-                doc.setTextColor(255, 255, 255);
-                doc.text(`$${pGrande.precio.toFixed(2)}`, xG + wG - 17.5, yG + 16.5, { align: "center" });
-            }
-
-            // 2. PRODUCTOS PEQUEÑOS (Derecha, 2x2)
-            const xInicio = (pageWidth / 2) + 5;
-            const yInicio = margin;
-            const wP = (pageWidth / 2) - margin - 5;
-            const hP = (pageHeight - (margin * 2) - 15) / 2 - 5;
-
-            for (let j = 0; j < 4; j++) {
-                const pIndex = i + 1 + j;
-                const p = listaParaPDF[pIndex];
-                if (!p) break;
-
-                const col = j % 1; // 1 columna en la mitad derecha
-                const row = j; // 4 filas pero las agruparemos en 2x2 mejor
-                
-                // Ajuste a 2x2 en la mitad derecha
-                const subCol = j % 2;
-                const subRow = Math.floor(j / 2);
-                const subW = (wP - 5) / 2;
-                const subH = (hP * 2) / 2;
-
-                const x = xInicio + (subCol * (subW + 5));
-                const y = yInicio + (subRow * (subH + 10));
-
-                // Recuadro producto pequeño
-                doc.setDrawColor(...colorGrisClaro);
-                doc.rect(x, y, subW, subH);
-
-                try {
-                    const imgObj = await getBase64Image(`images/${p.codigo}/1.jpg`);
-                    const ratio = imgObj.width / imgObj.height;
-                    let finalW = subW - 2;
-                    let finalH = finalW / ratio;
-                    if (finalH > subH - 12) {
-                        finalH = subH - 12;
-                        finalW = finalH * ratio;
-                    }
-                    doc.addImage(imgObj.data, 'JPEG', x + (subW - finalW)/2, y + 2, finalW, finalH);
-                } catch(e) {}
-
-                // Nombre y Precio
-                doc.setTextColor(...colorVerdeBoutique);
-                doc.setFontSize(7);
-                doc.setFont("poppins", "bold");
-                const nRec = p.nombre.length > 20 ? p.nombre.substring(0, 17) + "..." : p.nombre;
-                doc.text(nRec.toUpperCase(), x + subW/2, y + subH - 6, { align: "center" });
-                
-                // Precio pequeño sobre foto
-                doc.setFillColor(...colorVino);
-                doc.rect(x + subW - 14, y + 2, 12, 5, 'F');
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(6);
-                doc.text(`$${p.precio.toFixed(0)}`, x + subW - 8, y + 5.5, { align: "center" });
-                
-                doc.setTextColor(100, 100, 100);
-                doc.setFontSize(5);
-                doc.text(`Cod: ${p.codigo}`, x + subW/2, y + subH - 2, { align: "center" });
-            }
+            // Layout para 3 productos
+            if (productosDePagina.length > 0) await dibujarProducto(doc, productosDePagina[0], { x: margin, y: margin, w: pageWidth - margin*2, h: 80 });
+            if (productosDePagina.length > 1) await dibujarProducto(doc, productosDePagina[1], { x: margin, y: margin + 90, w: (pageWidth/2) - margin*1.5, h: 150 });
+            if (productosDePagina.length > 2) await dibujarProducto(doc, productosDePagina[2], { x: (pageWidth/2) + margin*0.5, y: margin + 90, w: (pageWidth/2) - margin*1.5, h: 150 });
         }
 
         doc.save(`NTENDENCIA_CATALOGO_2026.pdf`);
-        if (typeof mostrarNotificacion === 'function') {
-            mostrarNotificacion("¡Catálogo Boutique Generado!");
-        }
+        if (typeof mostrarNotificacion === 'function') mostrarNotificacion("¡Catálogo Boutique Generado!");
 
     } catch (error) {
         console.error("Error:", error);
@@ -710,6 +596,67 @@ async function generarCatalogoPDF() {
             btn.innerHTML = originalText;
             btn.style.opacity = '1';
         }
+    }
+}
+
+async function dibujarProducto(doc, producto, pos) {
+    const cornerRadius = 15;
+
+    // 1. Sombra sutil (simulada con un recuadro gris)
+    doc.setFillColor(220, 220, 220);
+    doc.roundedRect(pos.x + 2, pos.y + 2, pos.w, pos.h, cornerRadius, cornerRadius, 'F');
+
+    // 2. Recuadro de fondo Rojo Vino
+    doc.setFillColor(65, 0, 32);
+    doc.roundedRect(pos.x, pos.y, pos.w, pos.h, cornerRadius, cornerRadius, 'F');
+
+    // 3. Imagen (flotante y con aspect ratio correcto)
+    const imgW = pos.w * 0.6; // La imagen ocupa el 60% del ancho de la tarjeta
+    const imgX = pos.x + pos.w - imgW - 10;
+    try {
+        const imgObj = await getBase64Image(`images/${producto.codigo}/1.jpg`);
+        const ratio = imgObj.width / imgObj.height;
+        let finalW = imgW;
+        let finalH = finalW / ratio;
+        if (finalH > pos.h - 20) {
+            finalH = pos.h - 20;
+            finalW = finalH * ratio;
+        }
+        doc.addImage(imgObj.data, 'JPEG', imgX + (imgW - finalW)/2, pos.y + 10, finalW, finalH);
+    } catch (e) { /* silent fail */ }
+
+    // 4. Círculo de Precio (Dorado)
+    const precioRadius = 14;
+    doc.setFillColor(220, 180, 100);
+    doc.circle(imgX + precioRadius + 5, pos.y + pos.h - precioRadius - 5, precioRadius, 'F');
+    doc.setTextColor(50, 50, 50);
+    doc.setFont("poppins", "bold");
+    doc.setFontSize(12);
+    doc.text(`$${producto.precio.toFixed(2)}`, imgX + precioRadius + 5, pos.y + pos.h - precioRadius - 2, { align: "center" });
+
+    // 5. Información del producto (izquierda)
+    const textX = pos.x + 15;
+    const textY = pos.y + 20;
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("poppins", "normal");
+    doc.setFontSize(8);
+    doc.text("NUEVA COLECCIÓN", textX, textY);
+
+    doc.setFont("playfair", "bold");
+    doc.setFontSize(16);
+    const nombreLimpio = producto.nombre.length > 25 ? producto.nombre.substring(0, 22) + "..." : producto.nombre;
+    doc.text(nombreLimpio.toUpperCase(), textX, textY + 10);
+
+    doc.setDrawColor(255, 255, 255);
+    doc.setLineWidth(0.2);
+    doc.line(textX, textY + 13, textX + 40, textY + 13);
+
+    doc.setFont("poppins", "normal");
+    doc.setFontSize(8);
+    doc.text(`CÓDIGO: ${producto.codigo}`, textX, textY + 22);
+    if (producto.tallas && producto.tallas.length > 0) {
+        const tallasTexto = Array.isArray(producto.tallas) ? producto.tallas.join(', ') : producto.tallas;
+        doc.text(`TALLAS: ${tallasTexto}`, textX, textY + 28);
     }
 }
 
