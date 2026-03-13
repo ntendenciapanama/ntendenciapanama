@@ -536,101 +536,96 @@ async function generarCatalogoPDF() {
         const doc = new jsPDF('p', 'mm', 'a4');
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
-        const margin = 15;
-        const colWidth = (pageWidth - (margin * 3)) / 2; // 2 columnas
-        const imgHeight = 60;
+        const margin = 20;
         
-        let x = margin;
-        let y = 40;
-        let col = 0;
+        // --- PÁGINA 1: PORTADA ---
+        doc.setFillColor(65, 0, 32); // Borgoña
+        doc.rect(0, 0, pageWidth, pageHeight, 'F');
+        
+        // Logo en la portada (si existe)
+        try {
+            const logoData = await getBase64Image('logo.png');
+            doc.addImage(logoData, 'PNG', (pageWidth/2) - 30, (pageHeight/2) - 80, 60, 60);
+        } catch(e) {}
 
-        // --- PORTADA ---
-        doc.setFillColor(65, 0, 32); // var(--marca-primario)
-        doc.rect(0, 0, pageWidth, 40, 'F');
-        
         doc.setTextColor(255, 255, 255);
         doc.setFont("playfair", "bold");
-        doc.setFontSize(22);
-        doc.text("NTENDENCIA PANAMA CATALOGO 2026", pageWidth / 2, 25, { align: "center" });
+        doc.setFontSize(28);
+        doc.text("NTENDENCIA PANAMA", pageWidth / 2, pageHeight / 2, { align: "center" });
+        doc.setFontSize(24);
+        doc.text("CATALOGO 2026", pageWidth / 2, (pageHeight / 2) + 15, { align: "center" });
         
-        doc.setFontSize(10);
+        doc.setFontSize(14);
         doc.setFont("poppins", "normal");
-        doc.text("EXCLUSIVIDAD AL MEJOR PRECIO", pageWidth / 2, 33, { align: "center" });
+        doc.text("EXCLUSIVIDAD AL MEJOR PRECIO", pageWidth / 2, (pageHeight / 2) + 35, { align: "center" });
+        doc.text(new Date().toLocaleDateString(), pageWidth / 2, pageHeight - 20, { align: "center" });
 
-        doc.setTextColor(65, 0, 32);
-        
-        // Iterar sobre los productos que se están mostrando (productosFiltrados)
+        // --- PÁGINAS DE PRODUCTOS ---
         const listaParaPDF = productosFiltrados;
+        const itemsPorPagina = 4;
+        const colWidth = (pageWidth - (margin * 3)) / 2;
+        const imgHeight = 85; // Imagen más grande ya que hay solo 4 por página
 
         for (let i = 0; i < listaParaPDF.length; i++) {
             const p = listaParaPDF[i];
-
-            // Si no cabe en la página actual, crear una nueva
-            if (y + imgHeight + 35 > pageHeight - margin) {
+            const itemIndexEnPagina = i % itemsPorPagina;
+            
+            // Si es el primer item de una página (y no es la portada), añadir página
+            if (itemIndexEnPagina === 0) {
                 doc.addPage();
-                // Cabecera mini en nuevas páginas
-                doc.setFillColor(65, 0, 32);
-                doc.rect(0, 0, pageWidth, 15, 'F');
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(10);
-                doc.text("NTENDENCIA PANAMÁ | Catálogo", margin, 10);
                 doc.setTextColor(65, 0, 32);
-                y = 25;
-                col = 0;
-                x = margin;
             }
 
-            // --- DIBUJAR PRODUCTO ---
-            // 1. Intentar cargar imagen
+            // Calcular X e Y (Layout 2x2)
+            const col = itemIndexEnPagina % 2;
+            const row = Math.floor(itemIndexEnPagina / 2);
+            
+            const x = margin + (col * (colWidth + margin));
+            const y = margin + (row * ((pageHeight - (margin * 2)) / 2));
+
+            // 1. Imagen del producto
             try {
                 const imgData = await getBase64Image(`images/${p.codigo}/1.jpg`);
+                // Usar object-fit: contain proporcionalmente
                 doc.addImage(imgData, 'JPEG', x, y, colWidth, imgHeight);
             } catch (e) {
-                // Fallback a logo si no hay imagen
                 try {
                     const logoData = await getBase64Image('logo.png');
-                    doc.addImage(logoData, 'PNG', x + (colWidth/4), y + 10, colWidth/2, colWidth/2);
+                    doc.addImage(logoData, 'PNG', x + (colWidth/4), y + 20, colWidth/2, colWidth/2);
                 } catch(err) {}
-                doc.setFontSize(8);
+                doc.setFontSize(10);
                 doc.text("Imagen no disponible", x + (colWidth/2), y + imgHeight/2, { align: "center" });
             }
 
-            // 2. Info del producto
-            doc.setFontSize(10);
+            // 2. Información debajo de la imagen
+            const infoY = y + imgHeight + 8;
+            
+            doc.setFontSize(11);
             doc.setFont("poppins", "bold");
-            const nombreLimpio = p.nombre.length > 30 ? p.nombre.substring(0, 27) + "..." : p.nombre;
-            doc.text(nombreLimpio.toUpperCase(), x + (colWidth/2), y + imgHeight + 8, { align: "center" });
+            doc.setTextColor(65, 0, 32);
+            const nombreLimpio = p.nombre.length > 35 ? p.nombre.substring(0, 32) + "..." : p.nombre;
+            doc.text(nombreLimpio.toUpperCase(), x + (colWidth/2), infoY, { align: "center" });
 
-            doc.setFontSize(12);
+            doc.setFontSize(14);
             doc.setTextColor(184, 134, 11); // Dorado
-            doc.text(`$${p.precio.toFixed(2)}`, x + (colWidth/2), y + imgHeight + 15, { align: "center" });
+            doc.text(`$${p.precio.toFixed(2)}`, x + (colWidth/2), infoY + 8, { align: "center" });
 
             doc.setTextColor(100, 100, 100);
-            doc.setFontSize(8);
+            doc.setFontSize(9);
             doc.setFont("poppins", "normal");
-            doc.text(`Cód: ${p.codigo}`, x + (colWidth/2), y + imgHeight + 20, { align: "center" });
+            doc.text(`Cód: ${p.codigo}`, x + (colWidth/2), infoY + 14, { align: "center" });
 
             if (p.tallas && p.tallas.length > 0) {
-                doc.text(`Tallas: ${p.tallas.join(', ')}`, x + (colWidth/2), y + imgHeight + 25, { align: "center" });
-            }
-
-            // Actualizar coordenadas para el siguiente
-            if (col === 0) {
-                col = 1;
-                x = margin + colWidth + margin;
-            } else {
-                col = 0;
-                x = margin;
-                y += imgHeight + 45;
+                doc.text(`Tallas: ${p.tallas.join(', ')}`, x + (colWidth/2), infoY + 20, { align: "center" });
             }
         }
 
-        doc.save(`Catalogo_NTendencia_${new Date().getTime()}.pdf`);
-        mostrarNotificacion("¡Catálogo PDF descargado con éxito!");
+        doc.save(`Catalogo_NTendencia_2026.pdf`);
+        mostrarNotificacion("¡Catálogo PDF generado!");
 
     } catch (error) {
         console.error("Error generando PDF:", error);
-        alert("Hubo un error al generar el PDF. Inténtalo de nuevo.");
+        alert("Hubo un error al generar el PDF.");
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
