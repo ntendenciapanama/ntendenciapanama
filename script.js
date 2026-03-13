@@ -386,15 +386,15 @@ function dibujarCarrito() {
         lista.innerHTML += `
             <div class="item-carrito">
                 <img src="images/${p.codigo}/1.jpg" alt="${p.nombre}" class="miniatura-carrito">
-                <div>
-                    <strong>${p.nombre}</strong>
-                    <div style="display:flex; flex-direction:column; gap:2px;">
-                        <small style="color:#666;">Cód: ${p.codigo}</small>
+                <div class="info-item-carrito">
+                    <strong class="nombre-producto-carrito">${p.nombre}</strong>
+                    <div class="detalles-producto-carrito">
+                        <small class="codigo-producto">Cód: ${p.codigo}</small>
                         ${tallaHTML}
                     </div>
                 </div>
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <span style="font-weight:bold;">$${p.precio.toFixed(2)}</span>
+                <div class="acciones-item-carrito">
+                    <span class="precio-item-carrito">$${p.precio.toFixed(2)}</span>
                     <button class="btn-quitar" onclick="quitarDelCarrito(${i})">✕</button>
                 </div>
             </div>`;

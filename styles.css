@@ -800,6 +800,47 @@ h3 {
     border: 1px solid #e0e0e0;
 }
 
+.info-item-carrito {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left; /* Asegurar alineación a la izquierda */
+    min-width: 0; /* Permitir que el texto se ajuste y no desborde */
+}
+
+.nombre-producto-carrito {
+    font-size: 0.9rem;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    display: block;
+    color: #333;
+}
+
+.detalles-producto-carrito {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.codigo-producto {
+    color: #888;
+    font-size: 0.75rem;
+}
+
+.acciones-item-carrito {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.precio-item-carrito {
+    font-weight: 800;
+    color: var(--marca-primario);
+    font-size: 1rem;
+}
+
 .btn-quitar { 
     background: #fff0f0; 
     color: var(--oferta-rojo); 
@@ -812,6 +853,12 @@ h3 {
     display: flex; 
     align-items: center; 
     justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-quitar:hover {
+    background: #ffe0e0;
+    transform: scale(1.1);
 }
 
 .footer-carrito { 
