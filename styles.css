@@ -545,6 +545,66 @@ h3 {
 }
 
 /* =================================== */
+/* 7.5 📏 SELECTOR DE TALLAS */
+/* =================================== */
+.selector-tallas {
+    margin: 10px 0;
+    text-align: center;
+}
+
+.etiqueta-talla {
+    font-size: 0.7rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.opciones-tallas {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.talla-btn {
+    min-width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: var(--marca-primario);
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+}
+
+.talla-btn.activa {
+    background: var(--marca-primario);
+    color: white;
+    border-color: var(--marca-primario);
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(65, 0, 32, 0.2);
+}
+
+.talla-btn:hover:not(.activa) {
+    border-color: var(--marca-primario);
+    background: #fdfaf2;
+}
+
+.talla-carrito {
+    font-size: 0.75rem;
+    color: var(--marca-primario);
+    font-weight: 700;
+}
+
+/* =================================== */
 /* 8. 🔘 BOTONES (CAMBIA BOTONES AQUÍ) */
 /* =================================== */
 .whatsapp-btn, .btn-añadir-lista { 

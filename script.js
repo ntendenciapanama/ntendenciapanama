@@ -85,7 +85,8 @@ fetch(URL_SHEET)
                 descripcion: limpiar(columnas[4]) || "",
                 status: limpiar(columnas[5])?.toLowerCase(),
                 categoria: limpiar(columnas[6]) || "General",
-                totalImagenes: parseInt(limpiar(columnas[7])) || 1 
+                totalImagenes: parseInt(limpiar(columnas[7])) || 1,
+                tallas: limpiar(columnas[9]) ? limpiar(columnas[9]).split(',').map(s => s.trim()) : [] 
             };
         }).filter(p => {
             const tieneCodigo = p.codigo && p.codigo.length > 1;
@@ -122,14 +123,12 @@ function mostrarProductos() {
 
     lista.forEach(p => {
         const div = document.createElement('div');
-        // REPARACIÓN: Se añade 'tiene-oferta' para activar el marco amarillo si es oferta
         const claseSaldos = p.categoria.toLowerCase() === 'saldos' ? 'producto-saldo' : '';
         const claseOferta = p.esOferta ? 'tiene-oferta' : '';
         div.className = `producto ${claseSaldos} ${claseOferta}`;
+        div.setAttribute('data-codigo', p.codigo);
         
         const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
-        
-        // REPARACIÓN: Estructura de precio ajustada para el CSS de columna
         const precioHTML = p.esOferta 
             ? `<div class="precio">
                 <span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> 
@@ -137,7 +136,24 @@ function mostrarProductos() {
                </div>`
             : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
 
-        // Separar la descripción
+        // Generar Selector de Tallas
+        let tallasHTML = "";
+        if (p.tallas && p.tallas.length > 0) {
+            tallasHTML = `
+                <div class="selector-tallas">
+                    <p class="etiqueta-talla">Selecciona tu talla:</p>
+                    <div class="opciones-tallas">
+                        ${p.tallas.map((t, idx) => `
+                            <button class="talla-btn ${idx === 0 ? 'activa' : ''}" 
+                                    onclick="seleccionarTalla('${p.codigo}', '${t}', this)">
+                                ${t}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
         const descripcionHTML = p.descripcion ? generarDescripcion(p.descripcion) : '<div class="descripcion-container"></div>';
 
         div.innerHTML = `
@@ -151,9 +167,10 @@ function mostrarProductos() {
             <div class="producto-info">
                 ${precioHTML}
                 <h3>${p.nombre}</h3>
+                ${tallasHTML}
                 ${descripcionHTML}
                 <div class="contenedor-botones">
-                    <a href="https://wa.me/50767710645?text=Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})" class="whatsapp-btn" target="_blank">WhatsApp</a>
+                    <a href="javascript:void(0)" onclick="comprarWhatsAppDirecto('${p.codigo}')" class="whatsapp-btn">WhatsApp</a>
                     <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
                 </div>
             </div>
@@ -161,6 +178,31 @@ function mostrarProductos() {
         contenedor.appendChild(div);
     });
     actualizarPaginacion();
+}
+
+/* --- LÓGICA DE SELECCIÓN DE TALLA --- */
+let tallasSeleccionadasPorCodigo = {}; // Objeto para guardar la talla elegida por producto
+
+function seleccionarTalla(codigo, talla, boton) {
+    tallasSeleccionadasPorCodigo[codigo] = talla;
+    
+    // Quitar clase activa de otros botones en la misma tarjeta
+    const contenedor = boton.closest('.opciones-tallas');
+    contenedor.querySelectorAll('.talla-btn').forEach(b => b.classList.remove('activa'));
+    boton.classList.add('activa');
+}
+
+function comprarWhatsAppDirecto(codigo) {
+    const p = catalogoCompleto.find(x => x.codigo === codigo);
+    if (!p) return;
+    
+    // Si tiene tallas y no se ha seleccionado una, tomar la primera por defecto
+    const talla = tallasSeleccionadasPorCodigo[codigo] || (p.tallas && p.tallas.length > 0 ? p.tallas[0] : "");
+    
+    let msg = `Hola NTendencia! Me interesa: ${p.nombre} (${p.codigo})`;
+    if (talla) msg += ` - Talla: ${talla}`;
+    
+    window.open(`https://wa.me/50767710645?text=${encodeURIComponent(msg)}`);
 }
 
 /* --- LÓGICA DE GALERÍA (LIGHTBOX) --- */
@@ -237,27 +279,36 @@ function cerrarImagen() {
 
 /* --- LÓGICA DEL CARRITO --- */
 function añadirAlCarrito(codigo) {
-    const yaExiste = carrito.find(x => x.codigo === codigo);
+    const p = catalogoCompleto.find(x => x.codigo === codigo);
+    if (!p) return;
+
+    // Obtener la talla seleccionada (o la primera por defecto si tiene tallas)
+    const tallaSeleccionada = tallasSeleccionadasPorCodigo[codigo] || (p.tallas && p.tallas.length > 0 ? p.tallas[0] : "");
+
+    // Permitir añadir el mismo código pero con diferente talla
+    const yaExiste = carrito.find(x => x.codigo === codigo && x.tallaElegida === tallaSeleccionada);
     if (yaExiste) {
-        mostrarNotificacion("Este producto ya está en lista");
+        mostrarNotificacion("Esta pieza (Talla " + tallaSeleccionada + ") ya está en tu lista");
         return;
     }
-    const p = catalogoCompleto.find(x => x.codigo === codigo);
-    if (p) { 
-        carrito.push(p); 
-        const contador = document.getElementById('contador-carrito');
-        if (contador) contador.innerText = carrito.length;
-        // Actualizar badge en bottom nav (móvil)
-        const badge = document.getElementById('bottom-nav-badge');
-        if (badge) {
-            badge.innerText = carrito.length;
-            badge.style.display = carrito.length > 0 ? 'flex' : 'none';
-        }
-        const btn = document.getElementById('btn-carrito');
-        if (btn) {
-            btn.style.transform = "scale(1.2)";
-            setTimeout(() => btn.style.transform = "scale(1)", 200);
-        }
+
+    // Guardar una copia del producto con la talla elegida
+    const itemCarrito = { ...p, tallaElegida: tallaSeleccionada };
+    carrito.push(itemCarrito); 
+
+    const contador = document.getElementById('contador-carrito');
+    if (contador) contador.innerText = carrito.length;
+    
+    const badge = document.getElementById('bottom-nav-badge');
+    if (badge) {
+        badge.innerText = carrito.length;
+        badge.style.display = carrito.length > 0 ? 'flex' : 'none';
+    }
+    
+    const btn = document.getElementById('btn-carrito');
+    if (btn) {
+        btn.style.transform = "scale(1.2)";
+        setTimeout(() => btn.style.transform = "scale(1)", 200);
     }
 }
 
@@ -289,12 +340,17 @@ function dibujarCarrito() {
     }
     carrito.forEach((p, i) => {
         total += p.precio;
+        const tallaHTML = p.tallaElegida ? `<span class="talla-carrito">Talla: ${p.tallaElegida}</span>` : "";
+        
         lista.innerHTML += `
             <div class="item-carrito">
                 <img src="images/${p.codigo}/1.jpg" alt="${p.nombre}" class="miniatura-carrito">
                 <div>
                     <strong>${p.nombre}</strong>
-                    <small style="display:block; color:#666;">Cód: ${p.codigo}</small>
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <small style="color:#666;">Cód: ${p.codigo}</small>
+                        ${tallaHTML}
+                    </div>
                 </div>
                 <div style="display:flex; align-items:center; gap:15px;">
                     <span style="font-weight:bold;">$${p.precio.toFixed(2)}</span>
@@ -327,6 +383,9 @@ function enviarPedidoWhatsApp() {
     carrito.forEach((p, index) => {
         txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
         txt += `    🏷️ _Cód: ${p.codigo}_\n`;
+        if (p.tallaElegida) {
+            txt += `    📏 Talla: *${p.tallaElegida}*\n`;
+        }
         txt += `    💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
