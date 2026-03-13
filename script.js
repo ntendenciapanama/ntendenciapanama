@@ -542,22 +542,16 @@ async function generarCatalogoPDF() {
         doc.setFillColor(65, 0, 32); // Borgoña
         doc.rect(0, 0, pageWidth, pageHeight, 'F');
         
-        // Logo en la portada (si existe)
-        try {
-            const logoData = await getBase64Image('logo.png');
-            doc.addImage(logoData, 'PNG', (pageWidth/2) - 30, (pageHeight/2) - 80, 60, 60);
-        } catch(e) {}
-
         doc.setTextColor(255, 255, 255);
         doc.setFont("playfair", "bold");
         doc.setFontSize(28);
-        doc.text("NTENDENCIA PANAMA", pageWidth / 2, pageHeight / 2, { align: "center" });
+        doc.text("NTENDENCIA PANAMA", pageWidth / 2, (pageHeight / 2) - 10, { align: "center" });
         doc.setFontSize(24);
-        doc.text("CATALOGO 2026", pageWidth / 2, (pageHeight / 2) + 15, { align: "center" });
+        doc.text("CATALOGO 2026", pageWidth / 2, (pageHeight / 2) + 5, { align: "center" });
         
         doc.setFontSize(14);
         doc.setFont("poppins", "normal");
-        doc.text("EXCLUSIVIDAD AL MEJOR PRECIO", pageWidth / 2, (pageHeight / 2) + 35, { align: "center" });
+        doc.text("EXCLUSIVIDAD AL MEJOR PRECIO", pageWidth / 2, (pageHeight / 2) + 25, { align: "center" });
         doc.text(new Date().toLocaleDateString(), pageWidth / 2, pageHeight - 20, { align: "center" });
 
         // --- PÁGINAS DE PRODUCTOS ---
