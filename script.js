@@ -646,6 +646,20 @@ function getBase64Image(url) {
     });
 }
 
+/* --- FUNCIONES MODAL PDF --- */
+function mostrarModalPDF() {
+    document.getElementById('modal-pdf').style.display = 'flex';
+}
+
+function cerrarModalPDF() {
+    document.getElementById('modal-pdf').style.display = 'none';
+}
+
+function confirmarDescargaPDF() {
+    cerrarModalPDF();
+    generarCatalogoPDF();
+}
+
 /* --- CATEGORÍAS --- */
 function generarCategorias() {
     const cont = document.getElementById('categorias');
