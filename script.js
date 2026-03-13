@@ -115,8 +115,8 @@ fetch(URL_SHEET)
             };
         }).filter(p => {
             if (!p) return false;
-            const tieneCodigo = p.codigo && p.codigo.length > 1 && p.codigo.toLowerCase() !== "código";
-            const estaVendido = p.status === 'vendido' || p.status === 'vrai';
+            const tieneCodigo = p.codigo && p.codigo.length > 1;
+            const estaVendido = p.status === 'true' || p.status === '1' || p.status === 'vendido' || p.status === 'vrai';
             return tieneCodigo && !estaVendido;
         });
 
