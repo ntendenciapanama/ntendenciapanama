@@ -444,30 +444,43 @@ function enviarPedidoWhatsApp() {
     // Generar un número de orden aleatorio para control
     const numOrden = Math.floor(1000 + Math.random() * 9000);
     
-    let txt = "✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n";
-    txt += `🆔 *ORDEN:* #NP-${numOrden}\n\n`;
-    txt += "Me gustaría consultar la disponibilidad de estos artículos:\n";
+    // Emojis en formato Unicode para máxima compatibilidad (PC y Celular)
+    const eBrillo = "\u2728"; // ✨
+    const eID = "\uD83D\uDCC4"; // 📄 (Hoja/ID)
+    const eItem = "\uD83D\uDECD\uFE0F"; // 🛍️ (Bolsa de compras)
+    const eEtiqueta = "\uD83C\uDFF7\uFE0F"; // 🏷️
+    const eRegla = "\uD83D\uDCCF"; // 📏
+    const eDinero = "\uD83D\uDCB0"; // 💰
+    const eCheck = "\u2705"; // ✅
+    const eUbi = "\uD83D\uDCCD"; // 📍
+    const eCamion = "\uD83D\uDE9A"; // 🚚
+    const eManos = "\uD83D\uDE4F"; // 🙏
+    const eFuego = "\uD83D\uDD25"; // 🔥
+
+    let txt = `${eBrillo} *¡HOLA NTENDENCIA PANAMÁ!* ${eBrillo}\n`;
+    txt += `${eID} *ORDEN:* #NP-${numOrden}\n\n`;
+    txt += `${eFuego} Me gustaría consultar la disponibilidad de estos artículos:\n`;
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
     
     let total = 0;
     carrito.forEach((p, index) => {
-        txt += `*${index + 1}. ${p.nombre.toUpperCase()}*\n`;
-        txt += `   🏷️ Cód: ${p.codigo}`;
+        txt += `${eItem} *${index + 1}. ${p.nombre.toUpperCase()}*\n`;
+        txt += `   ${eEtiqueta} Cód: ${p.codigo}`;
         if (p.tallaElegida) {
-            txt += ` | 📏 Talla: *${p.tallaElegida}*`;
+            txt += ` | ${eRegla} Talla: *${p.tallaElegida}*`;
         }
-        txt += `\n   💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
+        txt += `\n   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
     
     txt += "━━━━━━━━━━━━━━━━━━━━\n";
-    txt += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
+    txt += `${eCheck} *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
     
-    txt += "📍 *INFORMACIÓN DE ENTREGA:*\n";
-    txt += "Podemos coordinar los detalles de su entrega directamente por esta vía. Contamos con retiro en *Plaza Terronal* y *Plaza Galería*, o envíos a todo Panamá mediante *Ferguson, Jedidias y Fletes Chavales*.\n\n";
+    txt += `${eUbi} *INFORMACIÓN DE ENTREGA:*\n`;
+    txt += `Podemos coordinar los detalles de su entrega directamente por esta vía. Contamos con retiro en *Plaza Terronal* y *Plaza Galería*, o envíos ${eCamion} a todo Panamá mediante *Ferguson, Jedidias y Fletes Chavales*.\n\n`;
     
-    txt += "🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
+    txt += `${eManos} _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_`;
     
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
