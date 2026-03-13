@@ -170,19 +170,29 @@ function mostrarProductos() {
         // Generar Selector de Tallas
         let tallasHTML = "";
         if (p.tallas && p.tallas.length > 0) {
-            tallasHTML = `
-                <div class="selector-tallas">
-                    <p class="etiqueta-talla">Selecciona tu talla:</p>
-                    <div class="opciones-tallas">
-                        ${p.tallas.map((t, idx) => `
-                            <button class="talla-btn ${idx === 0 ? 'activa' : ''}" 
-                                    onclick="seleccionarTalla('${p.codigo}', '${t}', this)">
-                                ${t}
-                            </button>
-                        `).join('')}
+            if (p.tallas.length === 1) {
+                // Caso 1: Solo una talla (Estático)
+                tallasHTML = `
+                    <div class="selector-tallas unica">
+                        <p class="talla-unica-texto">Talla: <span>${p.tallas[0]}</span></p>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                // Caso 2: Múltiples tallas (Menú interactivo)
+                tallasHTML = `
+                    <div class="selector-tallas">
+                        <p class="etiqueta-talla">Selecciona tu talla:</p>
+                        <div class="opciones-tallas">
+                            ${p.tallas.map((t, idx) => `
+                                <button class="talla-btn ${idx === 0 ? 'activa' : ''}" 
+                                        onclick="seleccionarTalla('${p.codigo}', '${t}', this)">
+                                    ${t}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         const descripcionHTML = p.descripcion ? generarDescripcion(p.descripcion) : '<div class="descripcion-container"></div>';
