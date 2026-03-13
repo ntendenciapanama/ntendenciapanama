@@ -464,10 +464,10 @@ function enviarPedidoWhatsApp() {
     txt += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
     
-    txt += "� *INFORMACIÓN DE ENTREGA:*\n";
-    txt += "Podemos coordinar los detalles de su entrega directamente por esta vía. Contamos con retiro en *Plaza Terronal* y *Plaza Galeria*, o envíos a todo Panamá mediante *Ferguson, Jedidias y Fletes Chavalez*.\n\n";
+    txt += "📍 *INFORMACIÓN DE ENTREGA:*\n";
+    txt += "Podemos coordinar los detalles de su entrega directamente por esta vía. Contamos con retiro en *Plaza Terronal* y *Plaza Galería*, o envíos a todo Panamá mediante *Ferguson, Jedidias y Fletes Chavales*.\n\n";
     
-    txt += "�🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
+    txt += "🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
     
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
