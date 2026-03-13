@@ -84,9 +84,8 @@ fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
         const todasLasFilas = csvText.split(/\r?\n/);
-        // Si tu fórmula empieza en A3, las filas de datos reales empiezan desde la fila 1 del CSV (índice 0 es cabecera o fila 1)
-        // Probaremos con slice(0) para capturar todo y filtrar después
-        const filasDeProductos = todasLasFilas;
+        // Saltar las primeras 2 filas (Título "EXPORTACION" y Encabezados)
+        const filasDeProductos = todasLasFilas.slice(2);
         
         const productosMapeados = filasDeProductos.map(fila => {
             if (!fila.trim()) return null;
@@ -94,8 +93,7 @@ fetch(URL_SHEET)
             const columnas = parsearCSVLine(fila);
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
-            // Mapeo basado en tu nueva fórmula:
-            // 0:A (Cód), 1:D (Nombre), 2:F (Precio), 3:G (Stock), 4:H (Desc), 5:Status, 6:J (Cat), 7:K (Fotos), 8:L (Oferta), 9:M (Tallas)
+            // Mapeo basado en tu fórmula (0:A, 1:D, 2:F, 3:G, 4:H, 5:Status, 6:J, 7:K, 8:L, 9:M)
             const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
             const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
             const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
@@ -115,9 +113,10 @@ fetch(URL_SHEET)
             };
         }).filter(p => {
             if (!p) return false;
-            const tieneCodigo = p.codigo && p.codigo.length > 1;
-            const estaVendido = p.status === 'true' || p.status === '1' || p.status === 'vendido' || p.status === 'vrai';
-            return tieneCodigo && !estaVendido;
+            // Filtro de seguridad por si hay filas vacías al final
+            const tieneCodigoValido = p.codigo && p.codigo.length > 1;
+            const estaVendido = p.status === 'vendido' || p.status === 'vrai';
+            return tieneCodigoValido && !estaVendido;
         });
 
         console.log("Productos cargados:", productosMapeados.length);
