@@ -151,6 +151,45 @@ header {
 .icon-whatsapp { color: var(--whatsapp); }
 .icon-tiktok { color: var(--tiktok); }
 
+.btn-catalogo-desktop {
+    display: none; /* Oculto en móvil por defecto */
+    background: var(--marca-secundario);
+    color: var(--marca-primario);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    align-items: center;
+    gap: 8px;
+    margin-left: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn-catalogo-desktop span {
+    font-size: 1.1rem;
+}
+
+.btn-catalogo-desktop:hover {
+    background: var(--marca-dorado-brillante);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.btn-catalogo-desktop:active {
+    transform: translateY(-1px) scale(1);
+}
+
+@media (min-width: 769px) {
+    .btn-catalogo-desktop {
+        display: flex;
+    }
+}
+
 @media (min-width: 769px) {
     .bottom-nav {
         display: none;
