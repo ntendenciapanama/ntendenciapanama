@@ -397,7 +397,7 @@ function generarDescripcion(descripcion) {
             </div>
             <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
                 Ver más
-            </div>
+            </button>
         `;
     }
     
