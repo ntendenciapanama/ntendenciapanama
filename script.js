@@ -444,18 +444,18 @@ function enviarPedidoWhatsApp() {
     // Generar un número de orden aleatorio para control
     const numOrden = Math.floor(1000 + Math.random() * 9000);
     
-    // Emojis en formato Unicode para máxima compatibilidad (PC y Celular)
-    const eBrillo = "\u2728"; // ✨
-    const eID = "\uD83D\uDCC4"; // 📄 (Hoja/ID)
-    const eItem = "\uD83D\uDECD\uFE0F"; // 🛍️ (Bolsa de compras)
-    const eEtiqueta = "\uD83C\uDFF7\uFE0F"; // 🏷️
-    const eRegla = "\uD83D\uDCCF"; // 📏
-    const eDinero = "\uD83D\uDCB0"; // 💰
-    const eCheck = "\u2705"; // ✅
-    const eUbi = "\uD83D\uDCCD"; // 📍
-    const eCamion = "\uD83D\uDE9A"; // 🚚
-    const eManos = "\uD83D\uDE4F"; // 🙏
-    const eFuego = "\uD83D\uDD25"; // 🔥
+    // Emojis literales (asegura que el archivo sea guardado en UTF-8)
+    const eBrillo = "✨";
+    const eID = "🆔";
+    const eItem = "🛍️";
+    const eEtiqueta = "🏷️";
+    const eRegla = "📏";
+    const eDinero = "💰";
+    const eCheck = "✅";
+    const eUbi = "📍";
+    const eCamion = "🚚";
+    const eManos = "🙏";
+    const eFuego = "🔥";
 
     let txt = `${eBrillo} *¡HOLA NTENDENCIA PANAMÁ!* ${eBrillo}\n`;
     txt += `${eID} *ORDEN:* #NP-${numOrden}\n\n`;
@@ -482,7 +482,9 @@ function enviarPedidoWhatsApp() {
     
     txt += `${eManos} _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_`;
     
-    window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
+    // Usamos api.whatsapp.com que es más estable en PC que wa.me para mensajes con muchos emojis
+    const url = `https://api.whatsapp.com/send?phone=50767710645&text=${encodeURIComponent(txt)}`;
+    window.open(url, '_blank');
 }
 
 function scrollToTop() {
