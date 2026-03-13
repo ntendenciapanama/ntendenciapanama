@@ -155,25 +155,33 @@ header {
     .bottom-nav {
         display: none;
     }
-    
+}
+
+@media (min-width: 1025px) {
     #productos {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 320px));
-        justify-content: center;
-        gap: 30px;
-        padding: 40px;
-        max-width: 1400px;
-        margin: 0 auto;
+        grid-template-columns: repeat(5, 1fr); /* 5 productos por fila exactos */
+        gap: 20px;
+        padding: 30px 20px;
+        max-width: 100%; /* Ocupar todo el ancho */
+        margin: 0;
     }
     
     .producto {
-        border-radius: 20px;
-        max-width: 320px;
+        max-width: none; /* Quitar limitación de ancho */
         width: 100%;
-        margin: 0 auto;
+        margin: 0;
     }
 
     .main-img-container {
-        height: 280px;
+        height: 300px; /* Recuperar altura para que luzcan las prendas */
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    #productos {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        padding: 20px;
     }
 }
 
