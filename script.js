@@ -366,40 +366,19 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
 
 /* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN --- */
 function generarDescripcion(descripcion) {
-    // Buscar talla en la descripción (ej: "Talla M", "Tallas: S, M", "Talla 38")
-    const matchTalla = descripcion.match(/Talla[s]?:?\s*([A-Z0-9\/\-]+)/i);
-    let parteVisible = '';
-    let restoDescripcion = descripcion;
-
-    if (matchTalla && matchTalla[0]) {
-        // Extraer solo la talla encontrada
-        parteVisible = matchTalla[0].trim();
-        // Quitar la parte de la talla del resto de la descripción para el "Ver más"
-        restoDescripcion = descripcion.replace(parteVisible, '').trim();
-    } else {
-        // Fallback: mostrar las primeras 2 palabras
-        const palabras = descripcion.split(' ');
-        const palabrasVisibles = Math.min(2, palabras.length);
-        parteVisible = palabras.slice(0, palabrasVisibles).join(' ');
-        restoDescripcion = palabras.slice(palabrasVisibles).join(' ').trim();
-    }
+    if (!descripcion || descripcion.trim() === "") return '<div class="descripcion-container"></div>';
     
     let html = '<div class="descripcion-container">';
     
-    // Parte siempre visible (Talla)
-    html += `<div class="talla-visible">${parteVisible}</div>`;
-    
-    // Si hay más contenido, agregarlo oculto con botón
-    if (restoDescripcion && restoDescripcion.length > 0) {
-        html += `
-            <div class="descripcion-oculta" style="display: none;">
-                ${restoDescripcion}
-            </div>
-            <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
-                Ver más
-            </button>
-        `;
-    }
+    // Todo el contenido oculto inicialmente
+    html += `
+        <div class="descripcion-oculta" style="display: none;">
+            ${descripcion}
+        </div>
+        <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
+            Ver detalles
+        </button>
+    `;
     
     html += '</div>';
     return html;

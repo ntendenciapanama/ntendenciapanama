@@ -500,25 +500,22 @@ h3 {
 .descripcion-container {
     font-size: 0.85rem; 
     color: var(--gris-texto); 
-    background: #fdfaf2; 
-    padding: 12px; 
+    background: transparent; /* Fondo transparente para que solo se vea el botón */
+    padding: 0; 
     border-radius: 10px; 
-    margin-bottom: 15px; 
-    border-left: 4px solid var(--marca-secundario); 
+    margin-bottom: 10px; 
+    border-left: none; /* Quitar borde izquierdo */
     text-align: center; 
     line-height: 1.4;
     transition: all 0.3s ease;
 }
 
-.talla-visible {
-    font-weight: 700;
-    color: var(--marca-primario);
-}
-
 .descripcion-oculta {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px dashed rgba(0,0,0,0.1);
+    background: #fdfaf2;
+    padding: 12px;
+    border-radius: 10px;
+    border-left: 4px solid var(--marca-secundario);
+    margin-bottom: 10px;
     font-weight: 400;
 }
 
@@ -529,18 +526,18 @@ h3 {
     font-weight: 700;
     font-size: 0.75rem;
     cursor: pointer;
-    padding: 6px 15px;
+    padding: 6px 18px;
     border-radius: 20px;
-    margin-top: 10px;
+    margin-top: 0;
     display: inline-block;
     width: auto;
     transition: all 0.3s ease;
 }
 
 .btn-ver-mas:hover {
-    background: var(--marca-secundario);
+    background: var(--marca-primario);
     color: white;
-    border-color: var(--marca-secundario);
+    border-color: var(--marca-primario);
 }
 
 .producto.descripcion-expandida {
