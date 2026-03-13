@@ -61,16 +61,41 @@ function ajustarPaginacionDinamica() {
 ajustarPaginacionDinamica();
 
 /* --- CARGA DE DATOS --- */
+function parsearCSVLine(linea) {
+    const columnas = [];
+    let celdaActual = '';
+    let dentroDeComillas = false;
+    for (let i = 0; i < linea.length; i++) {
+        const char = linea[i];
+        if (char === '"') {
+            dentroDeComillas = !dentroDeComillas;
+        } else if (char === ',' && !dentroDeComillas) {
+            columnas.push(celdaActual.trim());
+            celdaActual = '';
+        } else {
+            celdaActual += char;
+        }
+    }
+    columnas.push(celdaActual.trim());
+    return columnas;
+}
+
 fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
         const todasLasFilas = csvText.split(/\r?\n/);
-        const filasDeProductos = todasLasFilas.slice(2);
+        // Si tu fórmula empieza en A3, las filas de datos reales empiezan desde la fila 1 del CSV (índice 0 es cabecera o fila 1)
+        // Probaremos con slice(0) para capturar todo y filtrar después
+        const filasDeProductos = todasLasFilas;
         
         const productosMapeados = filasDeProductos.map(fila => {
-            const columnas = fila.match(/(".*?"|[^",\r\n]+)(?=\s*,|\s*$)/g) || [];
+            if (!fila.trim()) return null;
+            
+            const columnas = parsearCSVLine(fila);
             const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
 
+            // Mapeo basado en tu nueva fórmula:
+            // 0:A (Cód), 1:D (Nombre), 2:F (Precio), 3:G (Stock), 4:H (Desc), 5:Status, 6:J (Cat), 7:K (Fotos), 8:L (Oferta), 9:M (Tallas)
             const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
             const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
             const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
@@ -89,10 +114,16 @@ fetch(URL_SHEET)
                 tallas: limpiar(columnas[9]) ? limpiar(columnas[9]).split(',').map(s => s.trim()) : [] 
             };
         }).filter(p => {
-            const tieneCodigo = p.codigo && p.codigo.length > 1;
-            const estaVendido = p.status === 'true' || p.status === '1' || p.status === 'vendido' || p.status === 'vrai';
+            if (!p) return false;
+            const tieneCodigo = p.codigo && p.codigo.length > 1 && p.codigo.toLowerCase() !== "código";
+            const estaVendido = p.status === 'vendido' || p.status === 'vrai';
             return tieneCodigo && !estaVendido;
         });
+
+        console.log("Productos cargados:", productosMapeados.length);
+        if (productosMapeados.length > 0) {
+            console.log("Ejemplo de tallas del primer producto:", productosMapeados[0].tallas);
+        }
 
         const listaInvertida = productosMapeados.reverse();
         catalogoCompleto = listaInvertida;
