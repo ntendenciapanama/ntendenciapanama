@@ -137,8 +137,8 @@ function mostrarProductos() {
                </div>`
             : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
 
-        // Separar la descripción
-        const descripcionHTML = p.descripcion ? generarDescripcion(p.descripcion) : '<div class="descripcion-container"></div>';
+        // Separar la descripción: mostrar solo "Talla M" inicialmente en móvil
+        const descripcionHTML = p.descripcion ? generarDescripcionMovil(p.descripcion) : '<div class="descripcion"></div>';
 
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
@@ -364,33 +364,39 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
     mostrarProductos();
 });
 
-/* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN --- */
-function generarDescripcion(descripcion) {
-    // Buscar talla en la descripción (ej: "Talla M", "Tallas: S, M", "Talla 38")
+/* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN MÓVIL --- */
+function generarDescripcionMovil(descripcion) {
+    // En desktop, mostrar descripción completa
+    if (window.innerWidth > 768) {
+        return `<div class="descripcion">${descripcion}</div>`;
+    }
+    
+    // En móvil, mostrar solo la talla y botón para expandir
     const matchTalla = descripcion.match(/Talla[s]?:?\s*([A-Z0-9\/\-]+)/i);
     let parteVisible = '';
     let restoDescripcion = descripcion;
 
     if (matchTalla && matchTalla[0]) {
-        // Extraer solo la talla encontrada
+        // Extraer solo "Talla M" (sin punto ni nada más)
         parteVisible = matchTalla[0].trim();
-        // Quitar la parte de la talla del resto de la descripción para el "Ver más"
+        // Quitar la parte de la talla del resto de la descripción
         restoDescripcion = descripcion.replace(parteVisible, '').trim();
     } else {
-        // Fallback: mostrar las primeras 2 palabras
+        // Si no encuentra "Talla", muestra las primeras 2 palabras como fallback
         const palabras = descripcion.split(' ');
         const palabrasVisibles = Math.min(2, palabras.length);
         parteVisible = palabras.slice(0, palabrasVisibles).join(' ');
         restoDescripcion = palabras.slice(palabrasVisibles).join(' ').trim();
     }
     
-    let html = '<div class="descripcion-container">';
+    // En móvil, mostrar estructura con botón
+    let html = '<div class="descripcion-movil">';
     
-    // Parte siempre visible (Talla)
+    // Siempre mostrar solo la talla
     html += `<div class="talla-visible">${parteVisible}</div>`;
     
     // Si hay más contenido, agregarlo oculto con botón
-    if (restoDescripcion && restoDescripcion.length > 0) {
+    if (restoDescripcion) {
         html += `
             <div class="descripcion-oculta" style="display: none;">
                 ${restoDescripcion}
@@ -407,19 +413,32 @@ function generarDescripcion(descripcion) {
 
 function toggleDescripcion(boton) {
     const descripcionOculta = boton.previousElementSibling;
-    const productoCard = boton.closest('.producto');
-    const imgContainer = productoCard.querySelector('.main-img-container');
+    const imgContainer = boton.closest('.producto').querySelector('.main-img-container');
     
     if (descripcionOculta.style.display === 'none') {
+        // Mostrar descripción
         descripcionOculta.style.display = 'block';
         boton.textContent = 'Ver menos';
-        productoCard.classList.add('descripcion-expandida');
-        if (imgContainer) imgContainer.style.height = '180px';
+        
+        // Agrandar imagen
+        if (imgContainer) {
+            imgContainer.style.height = '180px';
+        }
+        
+        // Agregar clase expandida al producto
+        boton.closest('.producto').classList.add('descripcion-expandida');
     } else {
+        // Ocultar descripción
         descripcionOculta.style.display = 'none';
         boton.textContent = 'Ver más';
-        productoCard.classList.remove('descripcion-expandida');
-        if (imgContainer) imgContainer.style.height = '140px';
+        
+        // Restaurar tamaño de imagen
+        if (imgContainer) {
+            imgContainer.style.height = '140px';
+        }
+        
+        // Quitar clase expandida
+        boton.closest('.producto').classList.remove('descripcion-expandida');
     }
 }
 
