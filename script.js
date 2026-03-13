@@ -203,7 +203,7 @@ function mostrarProductos() {
                 <img src="images/${p.codigo}/1.jpg" 
                      alt="${p.nombre}" 
                      loading="lazy" 
-                     onerror="this.onerror=null; this.src='images/${p.codigo}/1.png'; this.setAttribute('onerror', 'console.error(\'IMAGEN NO ENCONTRADA para el producto:\', \'${p.codigo}\'); this.src=\'logo.png\'')">
+                     onerror="this.onerror=null; this.src='images/${p.codigo}/1.png'; this.setAttribute('onerror', 'console.error(\"IMAGEN NO ENCONTRADA para el producto:\", \"${p.codigo}\"); this.src=\"logo.png\"')">
             </div>
             <div class="producto-info">
                 ${precioHTML}
