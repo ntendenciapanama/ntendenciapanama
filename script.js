@@ -203,7 +203,7 @@ function mostrarProductos() {
                 <img src="images/${p.codigo}/1.jpg" 
                      alt="${p.nombre}" 
                      loading="lazy" 
-                     onerror="this.onerror=null; this.src='images/${p.codigo}/1.png'; this.setAttribute('onerror', 'console.error(\"IMAGEN NO ENCONTRADA para el producto:\", \"${p.codigo}\"); this.src=\"logo.png\"')">
+                     onerror="handleImageError(this, '${p.codigo}')">
             </div>
             <div class="producto-info">
                 ${precioHTML}
@@ -219,6 +219,30 @@ function mostrarProductos() {
         contenedor.appendChild(div);
     });
     actualizarPaginacion();
+}
+
+/* --- MANEJO DE ERRORES DE IMAGEN --- */
+function handleImageError(img, codigo) {
+    const fallbackPng = `images/${codigo}/1.png`;
+    
+    // Si ya estamos intentando cargar el PNG y también falla...
+    if (img.src.includes(fallbackPng)) {
+        console.error(`IMAGEN NO ENCONTRADA (JPG y PNG) para el producto:`, codigo);
+        img.src = 'logo.png'; // Cargar el logo como último recurso
+        
+        // Buscar la tarjeta del producto y reemplazar el nombre por el código de error
+        const productoCard = img.closest('.producto');
+        if (productoCard) {
+            const titleElement = productoCard.querySelector('h3');
+            if (titleElement) {
+                titleElement.innerHTML = `<span style="color:red; font-size:0.8em;">CÓDIGO CON ERROR:</span><br>${codigo}`;
+            }
+        }
+        img.onerror = null; // Evitar bucles infinitos si el logo también falla
+    } else {
+        // Si el JPG falló, intentar cargar el PNG
+        img.src = fallbackPng;
+    }
 }
 
 /* --- LÓGICA DE SELECCIÓN DE TALLA --- */
