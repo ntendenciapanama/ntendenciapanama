@@ -137,8 +137,8 @@ function mostrarProductos() {
                </div>`
             : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
 
-        // Separar la descripción: mostrar solo "Talla M" inicialmente en móvil
-        const descripcionHTML = p.descripcion ? generarDescripcionMovil(p.descripcion) : '<div class="descripcion"></div>';
+        // Separar la descripción
+        const descripcionHTML = p.descripcion ? generarDescripcion(p.descripcion) : '<div class="descripcion-container"></div>';
 
         div.innerHTML = `
             <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
@@ -364,46 +364,40 @@ document.getElementById('buscador')?.addEventListener('input', (e) => {
     mostrarProductos();
 });
 
-/* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN MÓVIL --- */
-function generarDescripcionMovil(descripcion) {
-    // En desktop, mostrar descripción completa
-    if (window.innerWidth > 768) {
-        return `<div class="descripcion">${descripcion}</div>`;
-    }
-    
-    // En móvil, mostrar solo la talla y botón para expandir
+/* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN --- */
+function generarDescripcion(descripcion) {
+    // Buscar talla en la descripción (ej: "Talla M", "Tallas: S, M", "Talla 38")
     const matchTalla = descripcion.match(/Talla[s]?:?\s*([A-Z0-9\/\-]+)/i);
     let parteVisible = '';
     let restoDescripcion = descripcion;
 
     if (matchTalla && matchTalla[0]) {
-        // Extraer solo "Talla M" (sin punto ni nada más)
+        // Extraer solo la talla encontrada
         parteVisible = matchTalla[0].trim();
-        // Quitar la parte de la talla del resto de la descripción
+        // Quitar la parte de la talla del resto de la descripción para el "Ver más"
         restoDescripcion = descripcion.replace(parteVisible, '').trim();
     } else {
-        // Si no encuentra "Talla", muestra las primeras 2 palabras como fallback
+        // Fallback: mostrar las primeras 2 palabras
         const palabras = descripcion.split(' ');
         const palabrasVisibles = Math.min(2, palabras.length);
         parteVisible = palabras.slice(0, palabrasVisibles).join(' ');
         restoDescripcion = palabras.slice(palabrasVisibles).join(' ').trim();
     }
     
-    // En móvil, mostrar estructura con botón
-    let html = '<div class="descripcion-movil">';
+    let html = '<div class="descripcion-container">';
     
-    // Siempre mostrar solo la talla
+    // Parte siempre visible (Talla)
     html += `<div class="talla-visible">${parteVisible}</div>`;
     
     // Si hay más contenido, agregarlo oculto con botón
-    if (restoDescripcion) {
+    if (restoDescripcion && restoDescripcion.length > 0) {
         html += `
             <div class="descripcion-oculta" style="display: none;">
                 ${restoDescripcion}
             </div>
             <button class="btn-ver-mas" onclick="toggleDescripcion(this)">
                 Ver más
-            </button>
+            </div>
         `;
     }
     
@@ -413,32 +407,19 @@ function generarDescripcionMovil(descripcion) {
 
 function toggleDescripcion(boton) {
     const descripcionOculta = boton.previousElementSibling;
-    const imgContainer = boton.closest('.producto').querySelector('.main-img-container');
+    const productoCard = boton.closest('.producto');
+    const imgContainer = productoCard.querySelector('.main-img-container');
     
     if (descripcionOculta.style.display === 'none') {
-        // Mostrar descripción
         descripcionOculta.style.display = 'block';
         boton.textContent = 'Ver menos';
-        
-        // Agrandar imagen
-        if (imgContainer) {
-            imgContainer.style.height = '180px';
-        }
-        
-        // Agregar clase expandida al producto
-        boton.closest('.producto').classList.add('descripcion-expandida');
+        productoCard.classList.add('descripcion-expandida');
+        if (imgContainer) imgContainer.style.height = '180px';
     } else {
-        // Ocultar descripción
         descripcionOculta.style.display = 'none';
         boton.textContent = 'Ver más';
-        
-        // Restaurar tamaño de imagen
-        if (imgContainer) {
-            imgContainer.style.height = '140px';
-        }
-        
-        // Quitar clase expandida
-        boton.closest('.producto').classList.remove('descripcion-expandida');
+        productoCard.classList.remove('descripcion-expandida');
+        if (imgContainer) imgContainer.style.height = '140px';
     }
 }
 
