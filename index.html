@@ -21,6 +21,10 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Librerías para PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -107,6 +111,27 @@
         box-sizing: border-box;
     ">
     </nav>
+
+    <!-- Botón de descarga de catálogo PDF -->
+    <div style="text-align: center; padding: 20px 0; background: #fdfaf2;">
+        <button id="btn-pdf" onclick="generarCatalogoPDF()" style="
+            background: var(--marca-primario);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(65, 0, 32, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        ">
+            <span>📄 Descargar Catálogo PDF</span>
+        </button>
+    </div>
     
     <main id="productos"></main>
     <div id="paginacion"></div>

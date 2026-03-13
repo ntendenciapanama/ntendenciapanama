@@ -4,7 +4,7 @@ let productosFiltrados = [];
 let catalogoCompleto = []; // Incluye saldos para el buscador
 let carrito = [];
 
-let productosPorPagina = 1000; // Mostrar todos los productos (sin paginación) 
+let productosPorPagina = 20; // Mostrar 20 productos por página
 let paginaActual = 1;
 
 let imgIndex = 1;
@@ -520,6 +520,141 @@ function toggleDescripcion(boton) {
         boton.textContent = 'Ver más';
         productoCard.classList.remove('descripcion-expandida');
     }
+}
+
+/* --- LÓGICA DE CATÁLOGO PDF --- */
+async function generarCatalogoPDF() {
+    const { jsPDF } = window.jspdf;
+    const btn = document.getElementById('btn-pdf');
+    const originalText = btn.innerHTML;
+    
+    try {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ Generando PDF...</span>';
+        btn.style.opacity = '0.7';
+
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 15;
+        const colWidth = (pageWidth - (margin * 3)) / 2; // 2 columnas
+        const imgHeight = 60;
+        
+        let x = margin;
+        let y = 40;
+        let col = 0;
+
+        // --- PORTADA ---
+        doc.setFillColor(65, 0, 32); // var(--marca-primario)
+        doc.rect(0, 0, pageWidth, 40, 'F');
+        
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("playfair", "bold");
+        doc.setFontSize(22);
+        doc.text("NTENDENCIA PANAMA CATALOGO 2026", pageWidth / 2, 25, { align: "center" });
+        
+        doc.setFontSize(10);
+        doc.setFont("poppins", "normal");
+        doc.text("EXCLUSIVIDAD AL MEJOR PRECIO", pageWidth / 2, 33, { align: "center" });
+
+        doc.setTextColor(65, 0, 32);
+        
+        // Iterar sobre los productos que se están mostrando (productosFiltrados)
+        const listaParaPDF = productosFiltrados;
+
+        for (let i = 0; i < listaParaPDF.length; i++) {
+            const p = listaParaPDF[i];
+
+            // Si no cabe en la página actual, crear una nueva
+            if (y + imgHeight + 35 > pageHeight - margin) {
+                doc.addPage();
+                // Cabecera mini en nuevas páginas
+                doc.setFillColor(65, 0, 32);
+                doc.rect(0, 0, pageWidth, 15, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(10);
+                doc.text("NTENDENCIA PANAMÁ | Catálogo", margin, 10);
+                doc.setTextColor(65, 0, 32);
+                y = 25;
+                col = 0;
+                x = margin;
+            }
+
+            // --- DIBUJAR PRODUCTO ---
+            // 1. Intentar cargar imagen
+            try {
+                const imgData = await getBase64Image(`images/${p.codigo}/1.jpg`);
+                doc.addImage(imgData, 'JPEG', x, y, colWidth, imgHeight);
+            } catch (e) {
+                // Fallback a logo si no hay imagen
+                try {
+                    const logoData = await getBase64Image('logo.png');
+                    doc.addImage(logoData, 'PNG', x + (colWidth/4), y + 10, colWidth/2, colWidth/2);
+                } catch(err) {}
+                doc.setFontSize(8);
+                doc.text("Imagen no disponible", x + (colWidth/2), y + imgHeight/2, { align: "center" });
+            }
+
+            // 2. Info del producto
+            doc.setFontSize(10);
+            doc.setFont("poppins", "bold");
+            const nombreLimpio = p.nombre.length > 30 ? p.nombre.substring(0, 27) + "..." : p.nombre;
+            doc.text(nombreLimpio.toUpperCase(), x + (colWidth/2), y + imgHeight + 8, { align: "center" });
+
+            doc.setFontSize(12);
+            doc.setTextColor(184, 134, 11); // Dorado
+            doc.text(`$${p.precio.toFixed(2)}`, x + (colWidth/2), y + imgHeight + 15, { align: "center" });
+
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(8);
+            doc.setFont("poppins", "normal");
+            doc.text(`Cód: ${p.codigo}`, x + (colWidth/2), y + imgHeight + 20, { align: "center" });
+
+            if (p.tallas && p.tallas.length > 0) {
+                doc.text(`Tallas: ${p.tallas.join(', ')}`, x + (colWidth/2), y + imgHeight + 25, { align: "center" });
+            }
+
+            // Actualizar coordenadas para el siguiente
+            if (col === 0) {
+                col = 1;
+                x = margin + colWidth + margin;
+            } else {
+                col = 0;
+                x = margin;
+                y += imgHeight + 45;
+            }
+        }
+
+        doc.save(`Catalogo_NTendencia_${new Date().getTime()}.pdf`);
+        mostrarNotificacion("¡Catálogo PDF descargado con éxito!");
+
+    } catch (error) {
+        console.error("Error generando PDF:", error);
+        alert("Hubo un error al generar el PDF. Inténtalo de nuevo.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        btn.style.opacity = '1';
+    }
+}
+
+// Función auxiliar para convertir imagen a Base64 (necesario para jsPDF)
+function getBase64Image(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.setAttribute('crossOrigin', 'anonymous');
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            const dataURL = canvas.toDataURL("image/jpeg", 0.7); // Comprimir un poco
+            resolve(dataURL);
+        };
+        img.onerror = error => reject(error);
+        img.src = url;
+    });
 }
 
 /* --- CATEGORÍAS --- */
