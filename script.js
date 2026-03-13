@@ -530,13 +530,14 @@ async function generarCatalogoPDF() {
     
     // Colores de Marca
     const colorVino = [65, 0, 32];
-    const colorDorado = [184, 134, 11];
-    const colorNegroSuave = [40, 40, 40];
+    const colorDorado = [184, 134, 11]; // Dorado elegante (#B8860B)
+    const colorNegroSuave = [30, 30, 30];
+    const colorGrisFino = [235, 235, 235];
 
     try {
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '<span>⏳ Generando Catálogo...</span>';
+            btn.innerHTML = '<span>⏳ Creando Edición de Lujo...</span>';
             btn.style.opacity = '0.7';
         }
 
@@ -545,25 +546,36 @@ async function generarCatalogoPDF() {
         const pageHeight = doc.internal.pageSize.getHeight();
         const margin = 15;
         
-        // --- PÁGINA 1: PORTADA MINIMALISTA ---
+        // --- PÁGINA 1: PORTADA MINIMALISTA CON LOGO ---
         doc.setFillColor(...colorVino);
         doc.rect(0, 0, pageWidth, pageHeight, 'F');
         
+        // Intentar añadir logo en portada (Blanco si es posible, sino original)
+        try {
+            const logoData = await getBase64Image('logo.png');
+            const logoW = 80;
+            const logoH = 40; // Ajustar según proporciones de tu logo
+            doc.addImage(logoData.data, 'PNG', (pageWidth - logoW) / 2, pageHeight / 2 - 50, logoW, logoH);
+        } catch(e) {}
+
         doc.setTextColor(255, 255, 255);
         doc.setFont("playfair", "bold");
-        doc.setFontSize(42);
-        doc.text("NTENDENCIA", pageWidth / 2, pageHeight / 2 - 15, { align: "center" });
-        doc.text("PANAMÁ", pageWidth / 2, pageHeight / 2 + 5, { align: "center" });
+        doc.setFontSize(36);
+        doc.text("NTENDENCIA PANAMÁ", pageWidth / 2, pageHeight / 2 + 10, { align: "center" });
         
         doc.setDrawColor(255, 255, 255);
-        doc.setLineWidth(0.5);
-        doc.line(pageWidth/2 - 30, pageHeight/2 + 20, pageWidth/2 + 30, pageHeight/2 + 20);
+        doc.setLineWidth(0.3);
+        doc.line(pageWidth/2 - 40, pageHeight/2 + 20, pageWidth/2 + 40, pageHeight/2 + 20);
 
         doc.setFont("poppins", "normal");
         doc.setFontSize(14);
-        doc.text("CATÁLOGO 2026", pageWidth / 2, pageHeight / 2 + 35, { align: "center" });
+        doc.text("COLECCIÓN EXCLUSIVA 2026", pageWidth / 2, pageHeight / 2 + 35, { align: "center" });
+        
+        doc.setFontSize(10);
+        doc.setTextColor(255, 255, 255, 0.6);
+        doc.text("WWW.NTENDENCIAPANAMA.COM", pageWidth / 2, pageHeight - 20, { align: "center" });
 
-        // --- PÁGINAS DE PRODUCTOS (Grid 2x2 Clásico) ---
+        // --- PÁGINAS DE PRODUCTOS (Grid 2x2 Clásico Editorial) ---
         const listaParaPDF = productosFiltrados;
         const itemsPorPagina = 4;
         const colWidth = (pageWidth - (margin * 3)) / 2;
@@ -575,11 +587,16 @@ async function generarCatalogoPDF() {
             
             if (itemIndexEnPagina === 0) {
                 doc.addPage();
-                // Pie de página discreto
-                doc.setFontSize(8);
-                doc.setTextColor(150, 150, 150);
+                // Pie de página elegante con línea
+                doc.setDrawColor(...colorGrisFino);
+                doc.setLineWidth(0.2);
+                doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+                
+                doc.setFontSize(7);
+                doc.setTextColor(180, 180, 180);
                 doc.setFont("poppins", "normal");
-                doc.text(`NTENDENCIA PANAMÁ | ${doc.internal.getNumberOfPages()}`, pageWidth / 2, pageHeight - 8, { align: "center" });
+                doc.text("NTENDENCIA PANAMÁ | BOUTIQUE EXCLUSIVA", margin, pageHeight - 8);
+                doc.text(`${doc.internal.getNumberOfPages()}`, pageWidth - margin, pageHeight - 8, { align: "right" });
             }
 
             const col = itemIndexEnPagina % 2;
@@ -588,8 +605,8 @@ async function generarCatalogoPDF() {
             const x = margin + (col * (colWidth + margin));
             const y = margin + (row * (rowHeight + margin));
 
-            // 1. Imagen (Centrada y Proporcional)
-            const imgMaxH = rowHeight - 45; // Espacio para info abajo
+            // 1. Imagen (Enmarcada con borde ultra-fino)
+            const imgMaxH = rowHeight - 48; // Espacio para info abajo
             try {
                 const imgObj = await getBase64Image(`images/${p.codigo}/1.jpg`);
                 const ratio = imgObj.width / imgObj.height;
@@ -601,57 +618,55 @@ async function generarCatalogoPDF() {
                     finalW = finalH * ratio;
                 }
                 
-                // Centrar imagen en su celda
                 const xImg = x + (colWidth - finalW) / 2;
                 const yImg = y;
                 
+                // Marco sutil de galería
+                doc.setDrawColor(...colorGrisFino);
+                doc.setLineWidth(0.1);
+                doc.rect(xImg - 0.5, yImg - 0.5, finalW + 1, finalH + 1);
+                
                 doc.addImage(imgObj.data, 'JPEG', xImg, yImg, finalW, finalH);
             } catch (e) {
-                // Placeholder si falla imagen
                 doc.setFontSize(8);
                 doc.setTextColor(200, 200, 200);
-                doc.text("Sin imagen", x + colWidth/2, y + imgMaxH/2, { align: "center" });
+                doc.text("Imagen no disponible", x + colWidth/2, y + imgMaxH/2, { align: "center" });
             }
 
-            // 2. Información (Debajo de la imagen)
-            const infoY = y + imgMaxH + 5;
+            // 2. Información Editorial (Debajo de la imagen)
+            const infoY = y + imgMaxH + 7;
             
-            // Nombre
+            // Nombre (Negro Suave)
             doc.setFont("poppins", "bold");
             doc.setFontSize(10);
             doc.setTextColor(...colorNegroSuave);
             const nombreLimpio = p.nombre.length > 35 ? p.nombre.substring(0, 32) + "..." : p.nombre;
             doc.text(nombreLimpio.toUpperCase(), x + colWidth/2, infoY, { align: "center" });
 
-            // Precio (Destacado en Vino)
+            // Precio (Dorado Lujoso)
             doc.setFont("playfair", "bold");
-            doc.setFontSize(14);
-            doc.setTextColor(...colorVino);
-            doc.text(`$${p.precio.toFixed(2)}`, x + colWidth/2, infoY + 7, { align: "center" });
+            doc.setFontSize(15);
+            doc.setTextColor(...colorDorado);
+            doc.text(`$${p.precio.toFixed(2)}`, x + colWidth/2, infoY + 8, { align: "center" });
 
-            // Línea separadora sutil
-            doc.setDrawColor(230, 230, 230);
-            doc.setLineWidth(0.2);
-            doc.line(x + 10, infoY + 10, x + colWidth - 10, infoY + 10);
-
-            // Detalles (Código y Tallas)
+            // Detalles (Limpio y Espaciado)
             doc.setFont("poppins", "normal");
-            doc.setFontSize(8);
-            doc.setTextColor(100, 100, 100);
-            doc.text(`CÓD: ${p.codigo}`, x + colWidth/2, infoY + 15, { align: "center" });
+            doc.setFontSize(7.5);
+            doc.setTextColor(140, 140, 140);
+            doc.text(`CÓDIGO: ${p.codigo}`, x + colWidth/2, infoY + 16, { align: "center" });
             
             if (p.tallas && p.tallas.length > 0) {
-                const tallasTexto = Array.isArray(p.tallas) ? p.tallas.join(', ') : p.tallas;
-                doc.text(`TALLAS: ${tallasTexto}`, x + colWidth/2, infoY + 19, { align: "center" });
+                const tallasTexto = Array.isArray(p.tallas) ? p.tallas.join('  |  ') : p.tallas;
+                doc.text(`TALLAS:  ${tallasTexto}`, x + colWidth/2, infoY + 21, { align: "center" });
             }
         }
 
         doc.save(`NTENDENCIA_CATALOGO_2026.pdf`);
-        if (typeof mostrarNotificacion === 'function') mostrarNotificacion("¡Catálogo Generado!");
+        if (typeof mostrarNotificacion === 'function') mostrarNotificacion("¡Edición Editorial Generada!");
 
     } catch (error) {
         console.error("Error:", error);
-        alert("Hubo un error al generar el PDF.");
+        alert("Hubo un error al generar el PDF de lujo.");
     } finally {
         if (btn) {
             btn.disabled = false;
