@@ -440,23 +440,35 @@ function quitarDelCarrito(i) {
 
 function enviarPedidoWhatsApp() {
     if (carrito.length === 0) return;
+    
+    // Generar un número de orden aleatorio para control
+    const numOrden = Math.floor(1000 + Math.random() * 9000);
+    
     let txt = "✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n";
-    txt += "Me encantaron estos productos de su catálogo y me gustaría consultar disponibilidad: \n";
+    txt += `🆔 *ORDEN:* #NP-${numOrden}\n\n`;
+    txt += "Me gustaría consultar la disponibilidad de estos artículos:\n";
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
+    
     let total = 0;
     carrito.forEach((p, index) => {
-        txt += `*${index + 1}.* ${p.nombre.toUpperCase()}\n`;
-        txt += `    🏷️ _Cód: ${p.codigo}_\n`;
+        txt += `*${index + 1}. ${p.nombre.toUpperCase()}*\n`;
+        txt += `   🏷️ Cód: ${p.codigo}`;
         if (p.tallaElegida) {
-            txt += `    📏 Talla: *${p.tallaElegida}*\n`;
+            txt += ` | 📏 Talla: *${p.tallaElegida}*`;
         }
-        txt += `    💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
+        txt += `\n   💵 Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
+    
     txt += "━━━━━━━━━━━━━━━━━━━━\n";
     txt += `💰 *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
     txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
-    txt += "🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
+    
+    txt += "� *INFORMACIÓN DE ENTREGA:*\n";
+    txt += "Podemos coordinar los detalles de su entrega directamente por esta vía. Contamos con retiro en *Plaza Terronal* y *Plaza Galeria*, o envíos a todo Panamá mediante *Ferguson, Jedidias y Fletes Chavalez*.\n\n";
+    
+    txt += "�🙏 _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_";
+    
     window.open(`https://wa.me/50767710645?text=${encodeURIComponent(txt)}`);
 }
 
