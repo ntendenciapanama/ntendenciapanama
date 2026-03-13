@@ -568,6 +568,12 @@ async function generarCatalogoPDF() {
             if (itemIndexEnPagina === 0) {
                 doc.addPage();
                 doc.setTextColor(65, 0, 32);
+                
+                // Pie de página premium
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.setFont("poppins", "normal");
+                doc.text(`NTENDENCIA PANAMA | www.ntendenciapanama.com | Página ${doc.internal.getNumberOfPages()}`, pageWidth / 2, pageHeight - 10, { align: "center" });
             }
 
             // Calcular X e Y (Layout 2x2)
@@ -655,9 +661,18 @@ function cerrarModalPDF() {
     document.getElementById('modal-pdf').style.display = 'none';
 }
 
-function confirmarDescargaPDF() {
+async function confirmarDescargaPDF() {
+    const btnConfirmar = document.querySelector('.btn-confirmar-pdf');
+    const originalText = btnConfirmar.innerHTML;
+    
+    btnConfirmar.disabled = true;
+    btnConfirmar.innerHTML = "⏳ GENERANDO...";
+    
+    await generarCatalogoPDF();
+    
+    btnConfirmar.disabled = false;
+    btnConfirmar.innerHTML = originalText;
     cerrarModalPDF();
-    generarCatalogoPDF();
 }
 
 /* --- CATEGORÍAS --- */
