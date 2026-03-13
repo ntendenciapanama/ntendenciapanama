@@ -151,9 +151,30 @@ header {
 .icon-whatsapp { color: var(--whatsapp); }
 .icon-tiktok { color: var(--tiktok); }
 
-/* Ocultar bottom nav en desktop */
-.bottom-nav {
-    display: none;
+@media (min-width: 769px) {
+    .bottom-nav {
+        display: none;
+    }
+    
+    #productos {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 320px));
+        justify-content: center;
+        gap: 30px;
+        padding: 40px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .producto {
+        border-radius: 20px;
+        max-width: 320px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .main-img-container {
+        height: 280px;
+    }
 }
 
 /* =================================== */
@@ -467,16 +488,55 @@ h3 {
     font-weight: 600; 
 }
 
-.descripcion { 
+/* Contenedor de descripción unificado */
+.descripcion-container {
     font-size: 0.85rem; 
     color: var(--gris-texto); 
     background: #fdfaf2; 
     padding: 12px; 
     border-radius: 10px; 
-    margin-bottom: 18px; 
+    margin-bottom: 15px; 
     border-left: 4px solid var(--marca-secundario); 
-    text-align: left; 
+    text-align: center; 
     line-height: 1.4;
+    transition: all 0.3s ease;
+}
+
+.talla-visible {
+    font-weight: 700;
+    color: var(--marca-primario);
+}
+
+.descripcion-oculta {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(0,0,0,0.1);
+    font-weight: 400;
+}
+
+.btn-ver-mas {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    color: var(--marca-primario);
+    font-weight: 700;
+    font-size: 0.75rem;
+    cursor: pointer;
+    padding: 6px 15px;
+    border-radius: 20px;
+    margin-top: 10px;
+    display: inline-block;
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+.btn-ver-mas:hover {
+    background: var(--marca-secundario);
+    color: white;
+    border-color: var(--marca-secundario);
+}
+
+.producto.descripcion-expandida {
+    height: auto;
 }
 
 /* =================================== */
