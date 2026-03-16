@@ -760,6 +760,7 @@ function generarCategorias() {
             if (c === "Saldos") {
                 productosFiltrados = catalogoCompleto.filter(x => x.categoria.toLowerCase() === 'saldos');
                 document.body.classList.add('seccion-saldos-activa');
+                mostrarModalSaldos();
             } else {
                 document.body.classList.remove('seccion-saldos-activa');
                 productosFiltrados = (c === "Todas") ? todosLosProductos : todosLosProductos.filter(x => x.categoria === c);
@@ -873,3 +874,20 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+/* --- MODAL SALDOS --- */
+function mostrarModalSaldos() {
+    const modal = document.getElementById('modal-saldos');
+    if (!modal) return;
+    modal.style.display = 'flex';
+}
+
+function cerrarModalSaldos() {
+    const modal = document.getElementById('modal-saldos');
+    if (!modal) return;
+    modal.style.display = 'none';
+}
+
+function aceptarSaldos() {
+    cerrarModalSaldos();
+}
