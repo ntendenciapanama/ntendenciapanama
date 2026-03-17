@@ -509,8 +509,7 @@ function enviarPedidoWhatsApp() {
         if (p.tallaElegida) {
             txt += ` | ${eRegla} Talla: *${p.tallaElegida}*`;
         }
-        txt += `\n   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n`;
-        txt += `   🔗 Ver: ${BASE_URL_SITE}/?buscar=${p.codigo}\n\n`;
+        txt += `\n   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
     
