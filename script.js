@@ -14,6 +14,9 @@ let codActual = "";
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime() + '&v=' + Math.random();
 
+// Base URL del sitio para links de productos
+const BASE_URL_SITE = 'https://ntendenciapanama.vercel.app';
+
 /* --- BANNER POPUP PARA MÓVILES --- */
 function mostrarBannerMovil() {
     // Solo mostrar en móviles (menos de 768px)
@@ -472,7 +475,8 @@ function enviarPedidoWhatsApp() {
         if (p.tallaElegida) {
             txt += ` | ${eRegla} Talla: *${p.tallaElegida}*`;
         }
-        txt += `\n   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n\n`;
+        txt += `\n   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n`;
+        txt += `   🔗 Ver: ${BASE_URL_SITE}/?buscar=${p.codigo}\n\n`;
         total += p.precio;
     });
     
