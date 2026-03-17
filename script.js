@@ -472,8 +472,7 @@ function enviarPedidoWhatsApp() {
         if (p.tallaElegida) {
             txt += ` | ${eRegla} Talla: *${p.tallaElegida}*`;
         }
-        txt += `\n   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n`;
-        txt += `   🔗 Ver: https://ntendenciapanama.vercel.app/?buscar=${p.codigo}\n\n`;
+        txt += `\n   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n\n`;
         total += p.precio;
     });
     
