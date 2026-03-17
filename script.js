@@ -52,6 +52,40 @@ function initBanner() {
 
 initBanner();
 
+/* --- DETECCIÓN DE PARÁMETROS DE URL --- */
+function verificarParametrosURL() {
+    const params = new URLSearchParams(window.location.search);
+    const buscar = params.get('buscar');
+    
+    if (buscar) {
+        // Esperar a que los productos carguen para buscar
+        setTimeout(() => {
+            const buscador = document.getElementById('buscador');
+            if (buscador) {
+                buscador.value = buscar;
+                // Disparar el evento de búsqueda
+                buscador.dispatchEvent(new Event('input'));
+                
+                // Scroll suave al primer resultado encontrado
+                setTimeout(() => {
+                    const primerProducto = document.querySelector('.producto');
+                    if (primerProducto) {
+                        primerProducto.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Efecto visual para destacar el producto
+                        primerProducto.style.animation = 'pulse 2s ease-in-out';
+                        setTimeout(() => {
+                            primerProducto.style.animation = '';
+                        }, 2000);
+                    }
+                }, 1000);
+            }
+        }, 2000);
+    }
+}
+
+// Ejecutar cuando carga la página
+verificarParametrosURL();
+
 /* --- RESPONSIVIDAD --- */
 function ajustarPaginacionDinamica() {
     const ancho = window.innerWidth;

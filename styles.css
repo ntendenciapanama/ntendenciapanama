@@ -2697,4 +2697,21 @@ body.seccion-saldos-activa .pag-btn.activa {
     body.seccion-saldos-activa .pag-btn.activa {
         background: linear-gradient(135deg, var(--oferta-amarillo) 0%, var(--marca-dorado-brillante) 100%) !important;
     }
-}
+
+    /* =================================== */
+    /* 🎯 ANIMACIÓN PARA DESTACAR PRODUCTO */
+    /* =================================== */
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(225, 192, 128, 0.7);
+        }
+        50% {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px 10px rgba(225, 192, 128, 0.3);
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(225, 192, 128, 0);
+        }
+    }
