@@ -864,7 +864,7 @@ function mostrarNotificacion(mensaje, color = null) {
         }, 300);
     }
     
-    // Remover después de 2.5 segundos
+    // Remover después de 1 segundo (más rápido para añadir productos)
     setTimeout(() => {
         notificacion.style.transform = 'translate(-50%, -50%) scale(0.8)';
         notificacion.style.opacity = '0';
@@ -873,7 +873,7 @@ function mostrarNotificacion(mensaje, color = null) {
                 document.body.removeChild(notificacion);
             }
         }, 300);
-    }, 2500);
+    }, 1000);
 }
 
 // Función para reproducir sonido o vibración
