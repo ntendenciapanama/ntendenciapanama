@@ -54,7 +54,7 @@ function ajustarPaginacionDinamica() {
     const ancho = window.innerWidth;
     if (ancho < 600) { productosPorPagina = 10; } 
     else if (ancho >= 600 && ancho < 1024) { productosPorPagina = 12; } 
-    else if (ancho >= 1024 && ancho < 1440) { productosPorPagina = 12; } 
+    else if (ancho >= 1024 && ancho < 1440) { productosPorPagina = 15; } 
     else { productosPorPagina = 18; }
 }
 
