@@ -63,6 +63,27 @@ body.seccion-saldos-activa header {
     box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
 }
 
+/* Clases para eliminar estilos inline */
+.header-main {
+    position: relative; 
+    padding-bottom: 45px;
+}
+
+.footer-main {
+    text-align: center; 
+    margin-top: 50px; 
+    padding: 40px; 
+    border-top: 1px solid #eee; 
+    background: #fff;
+}
+
+.footer-text {
+    font-size: 0.7rem; 
+    color: #bbb; 
+    margin-top: 25px; 
+    font-family: 'Poppins', sans-serif;
+}
+
 /* =================================== */
 /* 4. 🏠 HEADER (CAMBIA HEADER AQUÍ) */
 /* =================================== */
