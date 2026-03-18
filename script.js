@@ -472,7 +472,8 @@ function enviarPedidoWhatsApp() {
         if (p.tallaElegida) {
             txt += ` | ${eRegla} Talla: *${p.tallaElegida}*`;
         }
-        txt += `\n   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n\n`;
+        txt += `\n   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n`;
+        txt += `   🔗 Ver producto: https://ntendenciapanama.vercel.app/?search=${encodeURIComponent(p.codigo)}\n\n`;
         total += p.precio;
     });
     
@@ -891,3 +892,23 @@ function cerrarModalSaldos() {
 function aceptarSaldos() {
     cerrarModalSaldos();
 }
+
+/* --- LEER PARÁMETROS URL --- */
+function leerParametrosURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('search');
+    
+    if (searchQuery) {
+        // Establecer el valor en el buscador
+        const buscador = document.getElementById('buscador');
+        if (buscador) {
+            buscador.value = searchQuery;
+            // Disparar el evento de búsqueda
+            const event = new Event('input', { bubbles: true });
+            buscador.dispatchEvent(event);
+        }
+    }
+}
+
+// Ejecutar cuando se cargue la página
+document.addEventListener('DOMContentLoaded', leerParametrosURL);
