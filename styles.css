@@ -1911,6 +1911,11 @@ body.seccion-saldos-activa .pag-btn.activa {
         display: none !important;
     }
     
+    /* Agregar padding-bottom a #productos para evitar superposición con bottom-nav */
+    #productos {
+        padding-bottom: 100px !important;
+    }
+    
     /* Ocultar botón flotante de carrito original */
     #btn-carrito {
         display: none !important;
