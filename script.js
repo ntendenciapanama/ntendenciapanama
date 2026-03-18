@@ -891,6 +891,12 @@ function reproducirSonidoNotificacion(color = null) {
         
         // Crear sonido con Web Audio API
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Reanudar el AudioContext si está suspendido (por políticas del navegador)
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+        
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
         
@@ -917,9 +923,31 @@ function reproducirSonidoNotificacion(color = null) {
         
     } catch (error) {
         // Si falla el audio, continuar sin sonido
-        console.log('No se pudo reproducir sonido de notificación');
+        console.log('No se pudo reproducir sonido de notificación:', error);
     }
 }
+
+// Inicializar el AudioContext en la primera interacción del usuario
+let audioContextInitialized = false;
+function initAudioContext() {
+    if (!audioContextInitialized) {
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            audioContextInitialized = true;
+            console.log('AudioContext inicializado');
+        } catch (error) {
+            console.log('No se pudo inicializar AudioContext:', error);
+        }
+    }
+}
+
+// Agregar event listeners para inicializar audio en la primera interacción
+document.addEventListener('click', initAudioContext, { once: true });
+document.addEventListener('touchstart', initAudioContext, { once: true });
+document.addEventListener('keydown', initAudioContext, { once: true });
 
 // Agregar las animaciones necesarias
 const style = document.createElement('style');
