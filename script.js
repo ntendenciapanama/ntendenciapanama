@@ -471,11 +471,11 @@ function enviarPedidoWhatsApp() {
     let total = 0;
     carrito.forEach((p, index) => {
         txt += `${eItem} *${index + 1}. ${p.nombre.toUpperCase()}*\n`;
-        txt += `   ${eEtiqueta} Cód: ${p.codigo}`;
+        txt += `   ${eEtiqueta} Código: ${p.codigo}\n`;
         if (p.tallaElegida) {
-            txt += ` | ${eRegla} Talla: *${p.tallaElegida}*`;
+            txt += `   ${eRegla} Talla: *${p.tallaElegida}*\n`;
         }
-        txt += `\n   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n`;
+        txt += `   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n`;
         txt += `   🔗 Ver producto: https://ntendenciapanama.vercel.app/?search=${encodeURIComponent(p.codigo)}\n\n`;
         total += p.precio;
     });
