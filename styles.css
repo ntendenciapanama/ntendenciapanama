@@ -406,6 +406,20 @@ header {
     }
 }
 
+/* Animación escalonada para productos */
+.producto:nth-child(1) { animation-delay: 0.05s; }
+.producto:nth-child(2) { animation-delay: 0.1s; }
+.producto:nth-child(3) { animation-delay: 0.15s; }
+.producto:nth-child(4) { animation-delay: 0.2s; }
+.producto:nth-child(5) { animation-delay: 0.25s; }
+.producto:nth-child(6) { animation-delay: 0.3s; }
+.producto:nth-child(7) { animation-delay: 0.35s; }
+.producto:nth-child(8) { animation-delay: 0.4s; }
+.producto:nth-child(9) { animation-delay: 0.45s; }
+.producto:nth-child(10) { animation-delay: 0.5s; }
+.producto:nth-child(11) { animation-delay: 0.55s; }
+.producto:nth-child(12) { animation-delay: 0.6s; }
+
 /* =================================== */
 /* 6. 🎪 BANNER POPUP MÓVIL */
 /* =================================== */
@@ -510,6 +524,11 @@ header {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
     gap: 25px; 
     padding: 25px;
+    transition: opacity 0.3s ease;
+}
+
+#productos.cambiando {
+    opacity: 0.6;
 }
 
 .producto { 
@@ -545,11 +564,12 @@ header {
     box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
-/* Efectos hover */
+/* Efectos hover mejorados y sutiles */
 .producto:hover { 
-    transform: translateY(-12px) scale(1.02); 
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+    transform: translateY(-8px) scale(1.01); 
+    box-shadow: 0 15px 30px rgba(65, 0, 32, 0.12); 
     border-color: var(--marca-secundario);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Efecto de brillo al hover */
