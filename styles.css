@@ -1194,22 +1194,42 @@ h3 {
 
 @media (max-width: 768px) {
     .modal-saldos-content {
-        width: 92%;
-        border-radius: 16px;
-        padding: 22px 18px 18px;
+        width: 95%;
+        border-radius: 12px;
+        padding: 12px 14px 10px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .modal-saldos-header {
+        margin-bottom: 8px;
+        gap: 8px;
     }
 
     .modal-saldos-header h2 {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
+        line-height: 1.2;
+    }
+
+    .modal-saldos-icono {
+        font-size: 1.5rem;
     }
 
     .modal-saldos-body {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
+        line-height: 1.4;
+        margin-bottom: 12px;
+    }
+
+    .modal-saldos-body p {
+        margin-bottom: 6px;
     }
 
     .btn-aceptar-saldos {
         width: 100%;
         text-align: center;
+        padding: 8px 12px;
+        font-size: 0.75rem;
     }
 }
 
