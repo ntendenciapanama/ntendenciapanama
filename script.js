@@ -898,60 +898,63 @@ function reproducirSonidoNotificacion(color = null) {
         }
         
         if (color) {
-            // Sonido de advertencia (más claro y distintivo)
-            const oscillator1 = audioContext.createOscillator();
-            const oscillator2 = audioContext.createOscillator();
+            // Sonido de advertencia profesional (tipo notificación sutil)
+            const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
             
-            oscillator1.connect(gainNode);
-            oscillator2.connect(gainNode);
+            oscillator.connect(filter);
+            filter.connect(gainNode);
             gainNode.connect(audioContext.destination);
             
-            // Sonido de advertencia con dos tonos descendentes
-            oscillator1.frequency.value = 600;
-            oscillator2.frequency.value = 400;
-            oscillator1.type = 'square';
-            oscillator2.type = 'sawtooth';
+            // Configurar filtro para sonido más suave
+            filter.type = 'lowpass';
+            filter.frequency.value = 2000;
+            filter.Q.value = 2;
             
-            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            // Sonido de advertencia sutil y profesional
+            oscillator.frequency.value = 520;
+            oscillator.type = 'sine';
             
-            // Efecto de glide descendente
-            oscillator1.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.2);
-            oscillator2.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.2);
+            // Envelope muy suave y profesional
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.08, audioContext.currentTime + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
             
-            oscillator1.start(audioContext.currentTime);
-            oscillator2.start(audioContext.currentTime);
-            oscillator1.stop(audioContext.currentTime + 0.4);
-            oscillator2.stop(audioContext.currentTime + 0.4);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.25);
         } else {
-            // Sonido POP satisfactorio (más complejo y agradable)
+            // Sonido de éxito profesional (tipo click satisfactorio)
             const oscillator1 = audioContext.createOscillator();
             const oscillator2 = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
+            const filter = audioContext.createBiquadFilter();
             
-            oscillator1.connect(gainNode);
-            oscillator2.connect(gainNode);
+            oscillator1.connect(filter);
+            oscillator2.connect(filter);
+            filter.connect(gainNode);
             gainNode.connect(audioContext.destination);
             
-            // Crear un sonido pop con múltiples frecuencias
-            oscillator1.frequency.value = 800;
-            oscillator2.frequency.value = 1200;
+            // Filtro para sonido más cálido y profesional
+            filter.type = 'lowpass';
+            filter.frequency.value = 3000;
+            filter.Q.value = 1.5;
+            
+            // Sonido de éxito muy sutil
+            oscillator1.frequency.value = 658; // Nota musical E5
+            oscillator2.frequency.value = 880; // Nota musical A5
             oscillator1.type = 'sine';
-            oscillator2.type = 'triangle';
+            oscillator2.type = 'sine';
             
-            // Envelope rápido para efecto pop
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-            
-            // Efecto de pitch up rápido para el pop
-            oscillator1.frequency.exponentialRampToValueAtTime(1600, audioContext.currentTime + 0.05);
-            oscillator2.frequency.exponentialRampToValueAtTime(2400, audioContext.currentTime + 0.05);
+            // Envelope ultra profesional y corto
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.06, audioContext.currentTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.08);
             
             oscillator1.start(audioContext.currentTime);
             oscillator2.start(audioContext.currentTime);
-            oscillator1.stop(audioContext.currentTime + 0.15);
-            oscillator2.stop(audioContext.currentTime + 0.15);
+            oscillator1.stop(audioContext.currentTime + 0.08);
+            oscillator2.stop(audioContext.currentTime + 0.08);
         }
         
     } catch (error) {
