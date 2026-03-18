@@ -725,11 +725,19 @@ function getBase64Image(url) {
 
 /* --- FUNCIONES MODAL PDF --- */
 function mostrarModalPDF() {
-    document.getElementById('modal-pdf').style.display = 'flex';
+    const modal = document.getElementById('modal-pdf');
+    if (modal) {
+        modal.classList.remove('modal-pdf-hidden');
+        modal.classList.add('modal-pdf');
+    }
 }
 
 function cerrarModalPDF() {
-    document.getElementById('modal-pdf').style.display = 'none';
+    const modal = document.getElementById('modal-pdf');
+    if (modal) {
+        modal.classList.remove('modal-pdf');
+        modal.classList.add('modal-pdf-hidden');
+    }
 }
 
 async function confirmarDescargaPDF() {
