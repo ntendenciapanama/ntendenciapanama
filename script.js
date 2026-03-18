@@ -355,7 +355,7 @@ function añadirAlCarrito(codigo) {
     // Permitir añadir el mismo código pero con diferente talla
     const yaExiste = carrito.find(x => x.codigo === codigo && x.tallaElegida === tallaSeleccionada);
     if (yaExiste) {
-        mostrarNotificacion("⚠️ Este producto ya está en tu lista", ["#ff6b6b", "#ee5a24", "#ff4757"]);
+        mostrarNotificacion("Esta pieza (Talla " + tallaSeleccionada + ") ya está en tu lista");
         return;
     }
 
@@ -372,8 +372,6 @@ function añadirAlCarrito(codigo) {
         badge.style.display = carrito.length > 0 ? 'flex' : 'none';
     }
     
-    // Mostrar notificación con efectos
-    mostrarNotificacion("¡Producto agregado a tu lista!");
     const btn = document.getElementById('btn-carrito');
     if (btn) {
         btn.style.transform = "scale(1.2)";
@@ -817,125 +815,46 @@ window.addEventListener('resize', () => {
 });
 
 /* --- NOTIFICACIONES PERSONALIZADAS --- */
-function mostrarNotificacion(mensaje, color = null) {
-    // Reproducir sonido de notificación (vibración para móvil)
-    reproducirSonidoNotificacion(color);
-    
-    // Crear el elemento de notificación más visible
+function mostrarNotificacion(mensaje) {
+    // Crear el elemento de notificación
     const notificacion = document.createElement('div');
     notificacion.style.cssText = `
         position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0.8);
+        top: 20px;
+        right: 20px;
         background: linear-gradient(135deg, #410020 0%, #6a1b3a 100%);
         color: white;
-        padding: 20px 25px;
-        border-radius: 15px;
-        border: 3px solid #E0C080;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 5px 15px rgba(0,0,0,0.2);
-        z-index: 1000000;
+        padding: 15px 20px;
+        border-radius: 10px;
+        border: 2px solid #E0C080;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        z-index: 100000;
         font-family: 'Poppins', sans-serif;
-        font-size: 16px;
-        font-weight: 700;
-        max-width: 320px;
-        text-align: center;
-        animation: notificacionPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        font-size: 14px;
+        font-weight: 600;
+        max-width: 300px;
+        animation: slideInRight 0.3s ease-out;
         transition: all 0.3s ease;
     `;
-    if (color) {
-        notificacion.style.background = `linear-gradient(135deg, ${color[0]}, ${color[1]}, ${color[2]})`;
-    }
-    notificacion.innerHTML = `
-        <div style="font-size: 24px; margin-bottom: 8px;">✨</div>
-        <div>${mensaje}</div>
-    `;
+    notificacion.textContent = mensaje;
     
     // Agregar al body
     document.body.appendChild(notificacion);
     
-    // Efecto de vibración en el botón del carrito
-    const btnCarrito = document.getElementById('btn-carrito');
-    if (btnCarrito) {
-        btnCarrito.style.animation = 'vibrar 0.3s ease-in-out';
-        setTimeout(() => {
-            btnCarrito.style.animation = '';
-        }, 300);
-    }
-    
-    // Remover después de 2.5 segundos
+    // Remover después de 3 segundos
     setTimeout(() => {
-        notificacion.style.transform = 'translate(-50%, -50%) scale(0.8)';
-        notificacion.style.opacity = '0';
+        notificacion.style.animation = 'slideOutRight 0.3s ease-out';
         setTimeout(() => {
             if (notificacion.parentNode) {
                 document.body.removeChild(notificacion);
-
-// Función para reproducir sonido o vibración
-function reproducirSonidoNotificacion(color = null) {
-    try {
-        // Intentar vibración para móviles
-        if (navigator.vibrate) {
-            if (color) {
-                // Vibración más intensa para advertencia
-                navigator.vibrate([200, 100, 200, 100, 200]);
-            } else {
-                navigator.vibrate([100, 50, 100]); // Patrón normal
             }
-        }
-        
-        // Crear sonido con Web Audio API
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        if (color) {
-            // Sonido de advertencia (frecuencia más grave)
-            oscillator.frequency.value = 400; // Más grave para advertencia
-            oscillator.type = 'triangle'; // Forma de onda diferente
-            gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-            oscillator.stop(audioContext.currentTime + 0.3);
-        } else {
-            // Sonido normal (frecuencia aguda)
-            oscillator.frequency.value = 800; // Frecuencia aguda
-            oscillator.type = 'sine';
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-            oscillator.stop(audioContext.currentTime + 0.1);
-        }
-        
-        oscillator.start(audioContext.currentTime);
-        
-    } catch (error) {
-        // Si falla el audio, continuar sin sonido
-        console.log('No se pudo reproducir sonido de notificación');
-    }
+        }, 300);
+    }, 3000);
 }
 
-// ... (resto del código sin cambios)
-        0% {
-            transform: translate(-50%, -50%) scale(0.3);
-            opacity: 0;
-        }
-        50% {
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-        100% {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes vibrar {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-    
+// Agregar las animaciones necesarias
+const style = document.createElement('style');
+style.textContent = `
     @keyframes slideInRight {
         from {
             transform: translateX(100%);
