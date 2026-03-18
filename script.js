@@ -897,29 +897,62 @@ function reproducirSonidoNotificacion(color = null) {
             audioContext.resume();
         }
         
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
         if (color) {
-            // Sonido de advertencia (frecuencia más grave)
-            oscillator.frequency.value = 400; // Más grave para advertencia
-            oscillator.type = 'triangle'; // Forma de onda diferente
-            gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-            oscillator.stop(audioContext.currentTime + 0.3);
+            // Sonido de advertencia (más claro y distintivo)
+            const oscillator1 = audioContext.createOscillator();
+            const oscillator2 = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator1.connect(gainNode);
+            oscillator2.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Sonido de advertencia con dos tonos descendentes
+            oscillator1.frequency.value = 600;
+            oscillator2.frequency.value = 400;
+            oscillator1.type = 'square';
+            oscillator2.type = 'sawtooth';
+            
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            
+            // Efecto de glide descendente
+            oscillator1.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.2);
+            oscillator2.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.2);
+            
+            oscillator1.start(audioContext.currentTime);
+            oscillator2.start(audioContext.currentTime);
+            oscillator1.stop(audioContext.currentTime + 0.4);
+            oscillator2.stop(audioContext.currentTime + 0.4);
         } else {
-            // Sonido normal (frecuencia aguda)
-            oscillator.frequency.value = 800; // Frecuencia aguda
-            oscillator.type = 'sine';
+            // Sonido POP satisfactorio (más complejo y agradable)
+            const oscillator1 = audioContext.createOscillator();
+            const oscillator2 = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator1.connect(gainNode);
+            oscillator2.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Crear un sonido pop con múltiples frecuencias
+            oscillator1.frequency.value = 800;
+            oscillator2.frequency.value = 1200;
+            oscillator1.type = 'sine';
+            oscillator2.type = 'triangle';
+            
+            // Envelope rápido para efecto pop
             gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-            oscillator.stop(audioContext.currentTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+            
+            // Efecto de pitch up rápido para el pop
+            oscillator1.frequency.exponentialRampToValueAtTime(1600, audioContext.currentTime + 0.05);
+            oscillator2.frequency.exponentialRampToValueAtTime(2400, audioContext.currentTime + 0.05);
+            
+            oscillator1.start(audioContext.currentTime);
+            oscillator2.start(audioContext.currentTime);
+            oscillator1.stop(audioContext.currentTime + 0.15);
+            oscillator2.stop(audioContext.currentTime + 0.15);
         }
-        
-        oscillator.start(audioContext.currentTime);
         
     } catch (error) {
         // Si falla el audio, continuar sin sonido
