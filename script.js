@@ -131,6 +131,9 @@ fetch(URL_SHEET)
         
         generarCategorias();
         mostrarProductos();
+        
+        // Leer parámetros URL después de cargar los productos
+        leerParametrosURL();
     })
     .catch(err => console.error("Error cargando Google Sheets:", err));
 
