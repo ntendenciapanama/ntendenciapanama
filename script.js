@@ -816,45 +816,114 @@ window.addEventListener('resize', () => {
 
 /* --- NOTIFICACIONES PERSONALIZADAS --- */
 function mostrarNotificacion(mensaje) {
-    // Crear el elemento de notificación
+    // Reproducir sonido de notificación (vibración para móvil)
+    reproducirSonidoNotificacion();
+    
+    // Crear el elemento de notificación más visible
     const notificacion = document.createElement('div');
     notificacion.style.cssText = `
         position: fixed;
-        top: 20px;
-        right: 20px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
         background: linear-gradient(135deg, #410020 0%, #6a1b3a 100%);
         color: white;
-        padding: 15px 20px;
-        border-radius: 10px;
-        border: 2px solid #E0C080;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        z-index: 100000;
+        padding: 20px 25px;
+        border-radius: 15px;
+        border: 3px solid #E0C080;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 5px 15px rgba(0,0,0,0.2);
+        z-index: 1000000;
         font-family: 'Poppins', sans-serif;
-        font-size: 14px;
-        font-weight: 600;
-        max-width: 300px;
-        animation: slideInRight 0.3s ease-out;
+        font-size: 16px;
+        font-weight: 700;
+        max-width: 320px;
+        text-align: center;
+        animation: notificacionPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         transition: all 0.3s ease;
     `;
-    notificacion.textContent = mensaje;
+    notificacion.innerHTML = `
+        <div style="font-size: 24px; margin-bottom: 8px;">✨</div>
+        <div>${mensaje}</div>
+    `;
     
     // Agregar al body
     document.body.appendChild(notificacion);
     
-    // Remover después de 3 segundos
+    // Efecto de vibración en el botón del carrito
+    const btnCarrito = document.getElementById('btn-carrito');
+    if (btnCarrito) {
+        btnCarrito.style.animation = 'vibrar 0.3s ease-in-out';
+        setTimeout(() => {
+            btnCarrito.style.animation = '';
+        }, 300);
+    }
+    
+    // Remover después de 2.5 segundos
     setTimeout(() => {
-        notificacion.style.animation = 'slideOutRight 0.3s ease-out';
+        notificacion.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        notificacion.style.opacity = '0';
         setTimeout(() => {
             if (notificacion.parentNode) {
                 document.body.removeChild(notificacion);
             }
         }, 300);
-    }, 3000);
+    }, 2500);
+}
+
+// Función para reproducir sonido o vibración
+function reproducirSonidoNotificacion() {
+    try {
+        // Intentar vibración para móviles
+        if (navigator.vibrate) {
+            navigator.vibrate([100, 50, 100]); // Patrón de vibración: 100ms, pausa 50ms, 100ms
+        }
+        
+        // Crear sonido con Web Audio API (simple beep)
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 800; // Frecuencia aguda
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+        
+    } catch (error) {
+        // Si falla el audio, continuar sin sonido
+        console.log('No se pudo reproducir sonido de notificación');
+    }
 }
 
 // Agregar las animaciones necesarias
 const style = document.createElement('style');
 style.textContent = `
+    @keyframes notificacionPop {
+        0% {
+            transform: translate(-50%, -50%) scale(0.3);
+            opacity: 0;
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes vibrar {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
     @keyframes slideInRight {
         from {
             transform: translateX(100%);
