@@ -113,6 +113,13 @@ body.seccion-saldos-activa header {
     align-items: center;
 }
 
+@media (max-width: 768px) {
+    .modal-saldos-hidden {
+        padding: 20px;
+        box-sizing: border-box;
+    }
+}
+
 /* =================================== */
 /* 4. 🏠 HEADER (CAMBIA HEADER AQUÍ) */
 /* =================================== */
