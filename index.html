@@ -184,16 +184,16 @@
     </nav>
 
     <!-- Modal para descargar PDF -->
-    <div id="modal-pdf" class="modal-pdf" style="display: none;">
+    <div id="modal-pdf" class="modal-pdf-hidden">
         <div class="modal-pdf-content">
             <span class="cerrar-modal-pdf" onclick="cerrarModalPDF()">×</span>
             <div class="modal-pdf-header">
-                <span style="font-size: 3rem;">📄</span>
+                <span class="modal-icon">📄</span>
                 <h2>Catálogo Digital</h2>
             </div>
             <div class="modal-pdf-body">
                 <p>¿Deseas descargar el catálogo completo de <strong>NTENDENCIA PANAMA 2026</strong> en formato PDF?</p>
-                <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">(Incluye fotos, precios, códigos y tallas de todos los productos disponibles)</p>
+                <p class="modal-text">(Incluye fotos, precios, códigos y tallas de todos los productos disponibles)</p>
             </div>
             <div class="modal-pdf-footer">
                 <button class="btn-cancelar-pdf" onclick="cerrarModalPDF()">CANCELAR</button>
@@ -203,7 +203,7 @@
     </div>
 
     <!-- Modal SALDOS -->
-    <div id="modal-saldos" class="modal-saldos" style="display: none;">
+    <div id="modal-saldos" class="modal-saldos-hidden">
         <div class="modal-saldos-content">
             <span class="cerrar-modal-saldos" onclick="cerrarModalSaldos()">×</span>
             <div class="modal-saldos-header">

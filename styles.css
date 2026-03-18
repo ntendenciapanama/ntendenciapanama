@@ -84,6 +84,25 @@ body.seccion-saldos-activa header {
     font-family: 'Poppins', sans-serif;
 }
 
+/* Clases para eliminar estilos inline de modales */
+.modal-pdf-hidden {
+    display: none;
+}
+
+.modal-icon {
+    font-size: 3rem;
+}
+
+.modal-text {
+    font-size: 0.8rem; 
+    color: #888; 
+    margin-top: 10px;
+}
+
+.modal-saldos-hidden {
+    display: none;
+}
+
 /* =================================== */
 /* 4. 🏠 HEADER (CAMBIA HEADER AQUÍ) */
 /* =================================== */
