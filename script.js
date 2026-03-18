@@ -355,7 +355,7 @@ function añadirAlCarrito(codigo) {
     // Permitir añadir el mismo código pero con diferente talla
     const yaExiste = carrito.find(x => x.codigo === codigo && x.tallaElegida === tallaSeleccionada);
     if (yaExiste) {
-        mostrarNotificacion("Esta pieza (Talla " + tallaSeleccionada + ") ya está en tu lista");
+        mostrarNotificacion("⚠️ Este producto ya está en tu lista", ["#ff6b6b", "#ee5a24", "#ff4757"]);
         return;
     }
 
@@ -817,9 +817,9 @@ window.addEventListener('resize', () => {
 });
 
 /* --- NOTIFICACIONES PERSONALIZADAS --- */
-function mostrarNotificacion(mensaje) {
+function mostrarNotificacion(mensaje, color = null) {
     // Reproducir sonido de notificación (vibración para móvil)
-    reproducirSonidoNotificacion();
+    reproducirSonidoNotificacion(color);
     
     // Crear el elemento de notificación más visible
     const notificacion = document.createElement('div');
@@ -843,6 +843,9 @@ function mostrarNotificacion(mensaje) {
         animation: notificacionPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         transition: all 0.3s ease;
     `;
+    if (color) {
+        notificacion.style.background = `linear-gradient(135deg, ${color[0]}, ${color[1]}, ${color[2]})`;
+    }
     notificacion.innerHTML = `
         <div style="font-size: 24px; margin-bottom: 8px;">✨</div>
         <div>${mensaje}</div>
@@ -867,20 +870,21 @@ function mostrarNotificacion(mensaje) {
         setTimeout(() => {
             if (notificacion.parentNode) {
                 document.body.removeChild(notificacion);
-            }
-        }, 300);
-    }, 2500);
-}
 
 // Función para reproducir sonido o vibración
-function reproducirSonidoNotificacion() {
+function reproducirSonidoNotificacion(color = null) {
     try {
         // Intentar vibración para móviles
         if (navigator.vibrate) {
-            navigator.vibrate([100, 50, 100]); // Patrón de vibración: 100ms, pausa 50ms, 100ms
+            if (color) {
+                // Vibración más intensa para advertencia
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            } else {
+                navigator.vibrate([100, 50, 100]); // Patrón normal
+            }
         }
         
-        // Crear sonido con Web Audio API (simple beep)
+        // Crear sonido con Web Audio API
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
@@ -888,14 +892,23 @@ function reproducirSonidoNotificacion() {
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
         
-        oscillator.frequency.value = 800; // Frecuencia aguda
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        if (color) {
+            // Sonido de advertencia (frecuencia más grave)
+            oscillator.frequency.value = 400; // Más grave para advertencia
+            oscillator.type = 'triangle'; // Forma de onda diferente
+            gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        } else {
+            // Sonido normal (frecuencia aguda)
+            oscillator.frequency.value = 800; // Frecuencia aguda
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
         
         oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.1);
         
     } catch (error) {
         // Si falla el audio, continuar sin sonido
@@ -903,10 +916,7 @@ function reproducirSonidoNotificacion() {
     }
 }
 
-// Agregar las animaciones necesarias
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes notificacionPop {
+// ... (resto del código sin cambios)
         0% {
             transform: translate(-50%, -50%) scale(0.3);
             opacity: 0;
