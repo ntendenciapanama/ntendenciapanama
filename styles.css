@@ -1104,16 +1104,20 @@ h3 {
 }
 
 .modal-saldos-content {
-    background: #ffffff;
+    background: linear-gradient(145deg, #ffffff 0%, #fdfaf2 100%);
     width: 90%;
     max-width: 430px;
-    border-radius: 20px;
-    padding: 25px 24px 22px;
+    border-radius: 24px;
+    padding: 32px 28px 26px;
     text-align: left;
     position: relative;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    box-shadow: 
+        0 25px 60px rgba(65, 0, 32, 0.15),
+        0 10px 30px rgba(65, 0, 32, 0.1),
+        inset 0 1px 0 rgba(255,255,255,0.9);
     animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border: 2px solid var(--marca-secundario);
+    backdrop-filter: blur(10px);
 }
 
 .cerrar-modal-saldos {
@@ -1139,22 +1143,35 @@ h3 {
 }
 
 .modal-saldos-icono {
-    font-size: 2rem;
+    font-size: 1.8rem;
+    color: var(--marca-secundario);
+    background: linear-gradient(135deg, var(--marca-secundario) 0%, var(--marca-dorado-brillante) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 4px rgba(224, 192, 128, 0.3));
 }
 
 .modal-saldos-header h2 {
     color: var(--marca-primario);
     font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
+    font-weight: 700;
+    line-height: 1.3;
+    background: linear-gradient(135deg, var(--marca-primario) 0%, #6a1b3a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .modal-saldos-body {
-    color: #444;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    margin-bottom: 18px;
+    color: #555;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    margin-bottom: 22px;
+    font-weight: 400;
 }
 
 .modal-saldos-body p {
@@ -1163,6 +1180,11 @@ h3 {
 
 .modal-saldos-body strong {
     color: var(--marca-primario);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--marca-primario) 0%, #6a1b3a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .modal-saldos-footer {
@@ -1171,25 +1193,33 @@ h3 {
 }
 
 .btn-aceptar-saldos {
-    background: var(--marca-primario);
+    background: linear-gradient(135deg, var(--marca-primario) 0%, #6a1b3a 100%);
     color: #fff;
     border: none;
-    padding: 10px 18px;
-    border-radius: 999px;
-    font-size: 0.85rem;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 0.88rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
     cursor: pointer;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
+    box-shadow: 
+        0 8px 25px rgba(65, 0, 32, 0.3),
+        0 4px 12px rgba(65, 0, 32, 0.2),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-aceptar-saldos:hover {
-    background: var(--marca-dorado-brillante);
+    background: linear-gradient(135deg, var(--marca-dorado-brillante) 0%, var(--marca-secundario) 100%);
     color: var(--marca-primario);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+        0 15px 35px rgba(224, 192, 128, 0.4),
+        0 8px 20px rgba(224, 192, 128, 0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 @media (max-width: 768px) {
