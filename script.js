@@ -898,7 +898,7 @@ function reproducirSonidoNotificacion(color = null) {
         }
         
         if (color) {
-            // Sonido de advertencia profesional (tipo notificación sutil)
+            // Sonido de advertencia ultra sutil (click neutral)
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
             const filter = audioContext.createBiquadFilter();
@@ -907,54 +907,48 @@ function reproducirSonidoNotificacion(color = null) {
             filter.connect(gainNode);
             gainNode.connect(audioContext.destination);
             
-            // Configurar filtro para sonido más suave
+            // Filtro para sonido extremadamente suave
             filter.type = 'lowpass';
-            filter.frequency.value = 2000;
-            filter.Q.value = 2;
+            filter.frequency.value = 1500;
+            filter.Q.value = 0.5;
             
-            // Sonido de advertencia sutil y profesional
-            oscillator.frequency.value = 520;
+            // Click muy sutil y breve
+            oscillator.frequency.value = 600;
             oscillator.type = 'sine';
             
-            // Envelope muy suave y profesional
+            // Envelope ultra rápido y casi inaudible
             gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.08, audioContext.currentTime + 0.02);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
+            gainNode.gain.linearRampToValueAtTime(0.03, audioContext.currentTime + 0.005);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
             
             oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.25);
+            oscillator.stop(audioContext.currentTime + 0.05);
         } else {
-            // Sonido de éxito profesional (tipo click satisfactorio)
-            const oscillator1 = audioContext.createOscillator();
-            const oscillator2 = audioContext.createOscillator();
+            // Sonido de éxito ultra sutil (click positivo)
+            const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
             const filter = audioContext.createBiquadFilter();
             
-            oscillator1.connect(filter);
-            oscillator2.connect(filter);
+            oscillator.connect(filter);
             filter.connect(gainNode);
             gainNode.connect(audioContext.destination);
             
-            // Filtro para sonido más cálido y profesional
+            // Filtro para sonido extremadamente limpio
             filter.type = 'lowpass';
-            filter.frequency.value = 3000;
-            filter.Q.value = 1.5;
+            filter.frequency.value = 2000;
+            filter.Q.value = 0.3;
             
-            // Sonido de éxito muy sutil
-            oscillator1.frequency.value = 658; // Nota musical E5
-            oscillator2.frequency.value = 880; // Nota musical A5
-            oscillator1.type = 'sine';
-            oscillator2.type = 'sine';
+            // Click casi imperceptible pero satisfactorio
+            oscillator.frequency.value = 1000;
+            oscillator.type = 'sine';
             
-            // Envelope ultra profesional y corto
+            // Envelope ultra minimalista
             gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.06, audioContext.currentTime + 0.01);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.08);
+            gainNode.gain.linearRampToValueAtTime(0.02, audioContext.currentTime + 0.003);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.03);
             
-            oscillator1.start(audioContext.currentTime);
-            oscillator2.start(audioContext.currentTime);
-            oscillator1.stop(audioContext.currentTime + 0.08);
-            oscillator2.stop(audioContext.currentTime + 0.08);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.03);
         }
         
     } catch (error) {
