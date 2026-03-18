@@ -1199,6 +1199,51 @@ h3 {
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
 
+/* Estilos móviles para modal saldos */
+@media (max-width: 768px) {
+    .modal-saldos-content {
+        width: 95% !important;
+        max-width: none !important; /* Sin límite de ancho en móvil */
+        border-radius: 16px !important;
+        padding: 20px 18px 18px !important; /* Menos padding vertical */
+        max-height: 70vh !important; /* Más bajo */
+        overflow-y: auto !important;
+        margin: 10px !important; /* Márgenes a los lados */
+    }
+
+    .modal-saldos-header {
+        margin-bottom: 12px !important;
+        gap: 8px !important;
+    }
+
+    .modal-saldos-header h2 {
+        font-size: 1rem !important;
+        line-height: 1.2 !important;
+        letter-spacing: 0.8px !important;
+    }
+
+    .modal-saldos-icono {
+        font-size: 1.4rem !important;
+    }
+
+    .modal-saldos-body {
+        font-size: 0.8rem !important;
+        line-height: 1.5 !important;
+        margin-bottom: 15px !important;
+    }
+
+    .modal-saldos-body p {
+        margin-bottom: 8px !important;
+    }
+
+    .btn-aceptar-saldos {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 10px 16px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
 /* =================================== */
 /* 9. 🛒 CARRITO DE COMPRAS */
 /* =================================== */
