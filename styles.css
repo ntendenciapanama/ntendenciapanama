@@ -889,7 +889,7 @@ h3 {
     }
     
     body {
-        padding-bottom: 70px; /* Espacio para que el nav no tape contenido */
+        padding-bottom: 90px; /* Espacio aumentado para que el nav no tape contenido */
     }
 }
 
