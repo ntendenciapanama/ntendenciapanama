@@ -1030,12 +1030,16 @@ document.head.appendChild(style);
 function mostrarModalSaldos() {
     const modal = document.getElementById('modal-saldos');
     if (!modal) return;
+    modal.classList.remove('modal-saldos-hidden');
+    modal.classList.add('modal-saldos');
     modal.style.display = 'flex';
 }
 
 function cerrarModalSaldos() {
     const modal = document.getElementById('modal-saldos');
     if (!modal) return;
+    modal.classList.remove('modal-saldos');
+    modal.classList.add('modal-saldos-hidden');
     modal.style.display = 'none';
 }
 
