@@ -372,6 +372,8 @@ function añadirAlCarrito(codigo) {
         badge.style.display = carrito.length > 0 ? 'flex' : 'none';
     }
     
+    // Mostrar notificación con efectos
+    mostrarNotificacion("¡Producto agregado a tu lista!");
     const btn = document.getElementById('btn-carrito');
     if (btn) {
         btn.style.transform = "scale(1.2)";
