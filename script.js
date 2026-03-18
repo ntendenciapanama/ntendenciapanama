@@ -119,9 +119,9 @@ fetch(URL_SHEET)
             return tieneCodigoValido && !estaVendido;
         });
 
-        console.log("Productos cargados:", productosMapeados.length);
+        // Productos cargados exitosamente
         if (productosMapeados.length > 0) {
-            console.log("Ejemplo de tallas del primer producto:", productosMapeados[0].tallas);
+            // Ejemplo de tallas del primer producto disponible
         }
 
         const listaInvertida = productosMapeados.reverse();
@@ -953,7 +953,7 @@ function reproducirSonidoNotificacion(color = null) {
         
     } catch (error) {
         // Si falla el audio, continuar sin sonido
-        console.log('No se pudo reproducir sonido de notificación:', error);
+        // Si falla el audio, continuar sin sonido
     }
 }
 
@@ -967,9 +967,9 @@ function initAudioContext() {
                 audioContext.resume();
             }
             audioContextInitialized = true;
-            console.log('AudioContext inicializado');
+            // AudioContext inicializado exitosamente
         } catch (error) {
-            console.log('No se pudo inicializar AudioContext:', error);
+            // No se pudo inicializar AudioContext
         }
     }
 }
