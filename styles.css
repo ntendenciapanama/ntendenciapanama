@@ -46,7 +46,7 @@ body {
     background-image: radial-gradient(#e1e1db 0.8px, transparent 0.8px);
     background-size: 24px 24px;
     color: var(--marca-primario); 
-    padding-bottom: 0px; 
+    padding-bottom: 0; 
     transition: all 0.5s ease;
 }
 
@@ -272,6 +272,21 @@ header {
 /* =================================== */
 /* 5. 🏷️ CATEGORÍAS (FILTROS) */
 /* =================================== */
+#categorias.categorias-inline {
+    position: sticky; 
+    top: 0; 
+    z-index: 1000; 
+    background: #000; 
+    width: 100%; 
+    padding: 12px 5px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+    display: flex; 
+    flex-wrap: wrap;       /* Clave: permite bajar a la siguiente línea */
+    justify-content: center; /* Centra los botones estéticamente */
+    gap: 8px;              /* Espacio entre botones */
+    box-sizing: border-box;
+}
+
 #categorias { 
     display: flex; 
     flex-wrap: wrap; 
