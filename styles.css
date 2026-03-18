@@ -2111,7 +2111,7 @@ body.seccion-saldos-activa .pag-btn.activa {
         width: 100% !important;
         margin: 0 !important;
         padding: 8px 10px 18px 10px !important;  /* Reducido para menos espacio */
-        background: #410020 !important;
+        background: #ffffff !important;  /* Cambiado a blanco para línea divisoria */
         z-index: 10000 !important;
         box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         transform: translateZ(0); /* Forzar GPU layer */
