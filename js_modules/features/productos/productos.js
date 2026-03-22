@@ -4,6 +4,15 @@ export function createProductosLogic({ service, eventBus }) {
         selectedCategory: null
     };
 
+    function shuffleItems(items) {
+        const list = Array.isArray(items) ? [...items] : [];
+        for (let i = list.length - 1; i > 0; i--) {
+            const randomIndex = Math.floor(Math.random() * (i + 1));
+            [list[i], list[randomIndex]] = [list[randomIndex], list[i]];
+        }
+        return list;
+    }
+
     function byCategory(item) {
         if (state.selectedCategory === null) return true;
         if (state.selectedCategory === "Todas") return true;
@@ -20,8 +29,9 @@ export function createProductosLogic({ service, eventBus }) {
     function refresh() {
         const catalog = service.getCatalogoCompleto();
         let filtered;
-        if (state.selectedCategory === null && !state.searchTerm) {
-            filtered = service.getTodosLosProductos();
+        const isAllCategory = state.selectedCategory === null || state.selectedCategory === "Todas";
+        if (isAllCategory && !state.searchTerm) {
+            filtered = shuffleItems(service.getTodosLosProductos());
         } else {
             filtered = catalog.filter(item => byCategory(item) && bySearch(item));
         }

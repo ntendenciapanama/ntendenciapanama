@@ -107,6 +107,15 @@ function parsearStockPorTalla(texto) {
     return inventario;
 }
 
+function mezclarArray(items) {
+    const copia = Array.isArray(items) ? [...items] : [];
+    for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
+    }
+    return copia;
+}
+
 fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
@@ -160,7 +169,7 @@ fetch(URL_SHEET)
         const listaInvertida = productosMapeados.reverse();
         catalogoCompleto = listaInvertida;
         todosLosProductos = listaInvertida.filter(p => p.categoria.toLowerCase() !== 'saldos');
-        productosFiltrados = todosLosProductos;
+        productosFiltrados = mezclarArray(todosLosProductos);
         datosInicializados = true;
         sincronizarArranqueApp();
     })
