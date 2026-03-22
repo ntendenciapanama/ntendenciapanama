@@ -33,6 +33,23 @@ export function createCarritoLogic({ service, eventBus }) {
         return { size, color };
     }
 
+    function getVariantStock(product, size) {
+        const normalizedSize = (size || "").trim();
+        const bySize = product?.stockPorTalla;
+        if (bySize && typeof bySize === "object" && normalizedSize) {
+            const raw = Number(bySize[normalizedSize]);
+            if (Number.isFinite(raw)) {
+                return Math.max(Math.floor(raw), 0);
+            }
+            return 0;
+        }
+        const rawStock = Number(product?.stock);
+        if (Number.isFinite(rawStock)) {
+            return Math.max(Math.floor(rawStock), 0);
+        }
+        return null;
+    }
+
     function addByCode(codigo, options = {}) {
         const product = service.getProductByCode(codigo);
         if (!product) {
@@ -49,7 +66,18 @@ export function createCarritoLogic({ service, eventBus }) {
 
         const { size, color } = resolveVariant(product, codigo, options.tallaElegida, options.colorElegido);
         const existing = findVariant(codigo, size, color);
+        const stockDisponible = getVariantStock(product, size);
+        if (stockDisponible === 0) {
+            return { ok: false, reason: "out_of_stock" };
+        }
         if (existing) {
+            const cantidadActual = Number(existing.cantidad || 1);
+            if (stockDisponible !== null && cantidadActual >= stockDisponible) {
+                if (stockDisponible === 1) {
+                    return { ok: false, reason: "already_in_cart" };
+                }
+                return { ok: false, reason: "stock_limit" };
+            }
             existing.cantidad = Number(existing.cantidad || 1) + 1;
             notifyChange();
             return { ok: true, merged: true };

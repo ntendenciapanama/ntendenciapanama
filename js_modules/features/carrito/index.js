@@ -15,6 +15,18 @@ export function initializeCarritoModule({ eventBus }) {
             uiBridge.openProductModal(codigo);
             return;
         }
+        if (result.reason === "already_in_cart") {
+            uiBridge.notify("⚠️ Este producto ya está en tu lista", ["#ff6b6b", "#ee5a24", "#ff4757"]);
+            return;
+        }
+        if (result.reason === "stock_limit") {
+            uiBridge.notify("⚠️ Alcanzaste el stock disponible", ["#ff6b6b", "#ee5a24", "#ff4757"]);
+            return;
+        }
+        if (result.reason === "out_of_stock") {
+            uiBridge.notify("⚠️ Este producto no tiene stock disponible", ["#ff6b6b", "#ee5a24", "#ff4757"]);
+            return;
+        }
         if (result.ok) {
             uiBridge.notify("¡Producto agregado a tu lista!");
         }
@@ -22,6 +34,18 @@ export function initializeCarritoModule({ eventBus }) {
 
     function addToCartFromModal(codigo) {
         const result = logic.addByCode(codigo, { requireSelection: false });
+        if (result.reason === "already_in_cart") {
+            uiBridge.notify("⚠️ Este producto ya está en tu lista", ["#ff6b6b", "#ee5a24", "#ff4757"]);
+            return;
+        }
+        if (result.reason === "stock_limit") {
+            uiBridge.notify("⚠️ Alcanzaste el stock disponible", ["#ff6b6b", "#ee5a24", "#ff4757"]);
+            return;
+        }
+        if (result.reason === "out_of_stock") {
+            uiBridge.notify("⚠️ Este producto no tiene stock disponible", ["#ff6b6b", "#ee5a24", "#ff4757"]);
+            return;
+        }
         if (result.ok) {
             uiBridge.notify("¡Producto agregado a tu lista!");
         }
