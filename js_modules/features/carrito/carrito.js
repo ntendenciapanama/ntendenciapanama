@@ -49,15 +49,39 @@ export function createCarritoLogic({ service, eventBus }) {
         return { size, color };
     }
 
-    function getVariantStock(product, size) {
+    function getStockByVariantKey(stockMap, key) {
+        const normalizedKey = (key || "").trim();
+        if (!normalizedKey) return null;
+        const direct = Number(stockMap[normalizedKey]);
+        if (Number.isFinite(direct)) {
+            return Math.max(Math.floor(direct), 0);
+        }
+        const lowered = normalizedKey.toLowerCase();
+        const entry = Object.entries(stockMap).find(([mapKey]) => (mapKey || "").trim().toLowerCase() === lowered);
+        if (!entry) return null;
+        const mapped = Number(entry[1]);
+        if (Number.isFinite(mapped)) {
+            return Math.max(Math.floor(mapped), 0);
+        }
+        return 0;
+    }
+
+    function getVariantStock(product, size, color) {
         const normalizedSize = (size || "").trim();
+        const normalizedColor = (color || "").trim();
         const bySize = product?.stockPorTalla;
-        if (bySize && typeof bySize === "object" && normalizedSize) {
-            const raw = Number(bySize[normalizedSize]);
-            if (Number.isFinite(raw)) {
-                return Math.max(Math.floor(raw), 0);
+        if (bySize && typeof bySize === "object") {
+            const hasSizes = Array.isArray(product?.tallas) && product.tallas.length > 0;
+            const keysToTry = [];
+            if (hasSizes && normalizedSize) keysToTry.push(normalizedSize, `${normalizedSize}-${normalizedColor}`, `${normalizedSize}/${normalizedColor}`);
+            if (!hasSizes && normalizedColor) keysToTry.push(normalizedColor);
+            for (const key of keysToTry) {
+                const stock = getStockByVariantKey(bySize, key);
+                if (stock !== null) {
+                    return stock;
+                }
             }
-            return 0;
+            if (keysToTry.length > 0) return 0;
         }
         const rawStock = Number(product?.stock);
         if (Number.isFinite(rawStock)) {
@@ -82,7 +106,7 @@ export function createCarritoLogic({ service, eventBus }) {
 
         const { size, color } = resolveVariant(product, codigo, options.tallaElegida, options.colorElegido);
         const existing = findVariant(codigo, size, color);
-        const stockDisponible = getVariantStock(product, size);
+        const stockDisponible = getVariantStock(product, size, color);
         if (stockDisponible === 0) {
             return { ok: false, reason: "out_of_stock" };
         }
@@ -119,7 +143,7 @@ export function createCarritoLogic({ service, eventBus }) {
         const product = service.getProductByCode(currentItem.codigo) || currentItem;
         const size = payload.tallaElegida || currentItem.tallaElegida || (product.tallas?.[0] || "");
         const color = payload.colorElegido || currentItem.colorElegido || (product.colores?.[0] || "");
-        const stockDisponible = getVariantStock(product, size);
+        const stockDisponible = getVariantStock(product, size, color);
         if (stockDisponible === 0) {
             return { ok: false, reason: "out_of_stock" };
         }

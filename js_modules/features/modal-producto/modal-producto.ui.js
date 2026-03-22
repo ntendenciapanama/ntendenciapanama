@@ -42,15 +42,39 @@ export function createModalProductoUI({ logic }) {
         return (product?.colores?.[0] || "").trim();
     }
 
-    function getStockDisponible(product, tallaSeleccionada = "") {
+    function getStockByVariantKey(stockMap, key) {
+        const normalizedKey = (key || "").trim();
+        if (!normalizedKey) return null;
+        const direct = Number(stockMap[normalizedKey]);
+        if (Number.isFinite(direct)) {
+            return Math.max(Math.floor(direct), 0);
+        }
+        const lowered = normalizedKey.toLowerCase();
+        const entry = Object.entries(stockMap).find(([mapKey]) => (mapKey || "").trim().toLowerCase() === lowered);
+        if (!entry) return null;
+        const mapped = Number(entry[1]);
+        if (Number.isFinite(mapped)) {
+            return Math.max(Math.floor(mapped), 0);
+        }
+        return 0;
+    }
+
+    function getStockDisponible(product, tallaSeleccionada = "", colorSeleccionado = "") {
         const talla = (tallaSeleccionada || "").trim();
+        const color = (colorSeleccionado || "").trim();
         const stockPorTalla = product?.stockPorTalla;
-        if (stockPorTalla && typeof stockPorTalla === "object" && talla) {
-            const stockVariante = Number(stockPorTalla[talla]);
-            if (Number.isFinite(stockVariante)) {
-                return Math.max(Math.floor(stockVariante), 0);
+        if (stockPorTalla && typeof stockPorTalla === "object") {
+            const hasSizes = Array.isArray(product?.tallas) && product.tallas.length > 0;
+            const keysToTry = [];
+            if (hasSizes && talla) keysToTry.push(talla, `${talla}-${color}`, `${talla}/${color}`);
+            if (!hasSizes && color) keysToTry.push(color);
+            for (const key of keysToTry) {
+                const stock = getStockByVariantKey(stockPorTalla, key);
+                if (stock !== null) {
+                    return stock;
+                }
             }
-            return 0;
+            if (keysToTry.length > 0) return 0;
         }
         const stock = Number(product?.stock);
         if (!Number.isFinite(stock)) return null;
@@ -92,7 +116,7 @@ export function createModalProductoUI({ logic }) {
         }
     }
 
-    function renderColors(product, preferredColor = "") {
+    function renderColors(product, preferredColor = "", onColorChange) {
         const colorSection = document.getElementById("modal-colores-seccion");
         const colorContainer = document.getElementById("modal-colores-btns");
         colorContainer.innerHTML = "";
@@ -111,24 +135,27 @@ export function createModalProductoUI({ logic }) {
                     bubble.classList.add("activa");
                     const label = colorSection.querySelector(".modal-label");
                     if (label) label.innerText = `Color: ${colorName}`;
+                    if (typeof onColorChange === "function") onColorChange(colorName);
                 };
                 colorContainer.appendChild(bubble);
             });
             logic.setSelectedColor(product.codigo, selectedColor);
             const label = colorSection.querySelector(".modal-label");
             if (label) label.innerText = `Color: ${selectedColor}`;
+            if (typeof onColorChange === "function") onColorChange(selectedColor);
         } else {
             colorSection.style.display = "none";
             logic.setSelectedColor(product.codigo, "");
+            if (typeof onColorChange === "function") onColorChange("");
         }
     }
 
-    function renderQuantity(product, tallaSeleccionada = "", preferredQuantity = 1) {
+    function renderQuantity(product, tallaSeleccionada = "", colorSeleccionado = "", preferredQuantity = 1) {
         const quantitySelect = document.getElementById("modal-cantidad");
         const addButton = document.getElementById("modal-btn-carrito");
         quantitySelect.innerHTML = "";
         quantitySelect.disabled = false;
-        const stockDisponible = getStockDisponible(product, tallaSeleccionada);
+        const stockDisponible = getStockDisponible(product, tallaSeleccionada, colorSeleccionado);
         if (addButton) addButton.disabled = stockDisponible === 0;
         const stockMax = stockDisponible || 5;
         for (let i = 1; i <= stockMax; i++) {
@@ -199,7 +226,7 @@ export function createModalProductoUI({ logic }) {
         addButton.onclick = () => {
             const tallaActiva = getTallaActiva(product);
             const colorActivo = getColorActivo(product);
-            const stockDisponible = getStockDisponible(product, tallaActiva);
+            const stockDisponible = getStockDisponible(product, tallaActiva, colorActivo);
             if (stockDisponible === 0) return;
             const quantity = parseInt(document.getElementById("modal-cantidad").value);
             if (typeof options.onConfirm === "function") {
@@ -245,10 +272,12 @@ export function createModalProductoUI({ logic }) {
 
         renderBase(product);
         renderSizes(product, (size) => {
-            renderQuantity(product, size, getCantidadSeleccionada() || preferredQuantity);
+            renderQuantity(product, size, getColorActivo(product), getCantidadSeleccionada() || preferredQuantity);
         }, options.initialSize || "");
-        renderColors(product, options.initialColor || "");
-        renderQuantity(product, getTallaActiva(product), preferredQuantity);
+        renderColors(product, options.initialColor || "", () => {
+            renderQuantity(product, getTallaActiva(product), getColorActivo(product), getCantidadSeleccionada() || preferredQuantity);
+        });
+        renderQuantity(product, getTallaActiva(product), getColorActivo(product), preferredQuantity);
         renderGallery(product);
         renderCartButton(product, options);
 

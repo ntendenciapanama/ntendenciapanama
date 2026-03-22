@@ -11,6 +11,7 @@ export function createModalProductoService() {
     return {
         getProductByCode,
         getSelectedSize: (codigo) => dataBridge.getSelectedSize(codigo),
+        getSelectedColor: (codigo) => dataBridge.getSelectedColor(codigo),
         setSelectedSize: (codigo, talla) => dataBridge.setSelectedSize(codigo, talla),
         setSelectedColor: (codigo, color) => dataBridge.setSelectedColor(codigo, color),
         addToCartFromModal: (codigo) => uiBridge.addToCartFromModal(codigo)

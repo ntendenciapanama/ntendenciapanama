@@ -34,14 +34,39 @@ export function createModalProductoLogic({ service }) {
         service.setSelectedColor(codigo, color);
     }
 
-    function getStockDisponibleByTalla(product, talla) {
-        const key = (talla || "").trim();
+    function getStockByVariantKey(stockMap, key) {
+        const normalizedKey = (key || "").trim();
+        if (!normalizedKey) return null;
+        const direct = Number(stockMap[normalizedKey]);
+        if (Number.isFinite(direct)) {
+            return Math.max(Math.floor(direct), 0);
+        }
+        const lowered = normalizedKey.toLowerCase();
+        const entry = Object.entries(stockMap).find(([mapKey]) => (mapKey || "").trim().toLowerCase() === lowered);
+        if (!entry) return null;
+        const mapped = Number(entry[1]);
+        if (Number.isFinite(mapped)) {
+            return Math.max(Math.floor(mapped), 0);
+        }
+        return 0;
+    }
+
+    function getStockDisponibleByTalla(product, talla, color) {
+        const sizeKey = (talla || "").trim();
+        const colorKey = (color || "").trim();
         const stockPorTalla = product?.stockPorTalla;
-        if (stockPorTalla && typeof stockPorTalla === "object" && key) {
-            const stockVariante = Number(stockPorTalla[key]);
-            if (Number.isFinite(stockVariante)) {
-                return Math.max(Math.floor(stockVariante), 0);
+        if (stockPorTalla && typeof stockPorTalla === "object") {
+            const hasSizes = Array.isArray(product?.tallas) && product.tallas.length > 0;
+            const keysToTry = [];
+            if (hasSizes && sizeKey) keysToTry.push(sizeKey, `${sizeKey}-${colorKey}`, `${sizeKey}/${colorKey}`);
+            if (!hasSizes && colorKey) keysToTry.push(colorKey);
+            for (const key of keysToTry) {
+                const stockVariante = getStockByVariantKey(stockPorTalla, key);
+                if (stockVariante !== null) {
+                    return stockVariante;
+                }
             }
+            if (keysToTry.length > 0) return 0;
         }
         const stockTotal = Number(product?.stock);
         if (Number.isFinite(stockTotal)) {
@@ -53,7 +78,8 @@ export function createModalProductoLogic({ service }) {
     function addByModalQuantity(codigo, quantity) {
         const product = getProduct(codigo);
         const tallaSeleccionada = service.getSelectedSize(codigo) || (product?.tallas?.[0] || "");
-        const stockDisponible = getStockDisponibleByTalla(product, tallaSeleccionada);
+        const colorSeleccionado = service.getSelectedColor(codigo) || (product?.colores?.[0] || "");
+        const stockDisponible = getStockDisponibleByTalla(product, tallaSeleccionada, colorSeleccionado);
         const cantidadSolicitada = Math.max(Number(quantity) || 1, 1);
         const cantidadFinal = stockDisponible === null ? cantidadSolicitada : Math.min(cantidadSolicitada, stockDisponible);
         for (let i = 0; i < cantidadFinal; i++) {
