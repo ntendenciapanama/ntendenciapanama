@@ -202,6 +202,19 @@ export function createModalProductoUI({ logic }) {
         renderPrice(product, 1);
     }
 
+    function resetModalScrollPosition() {
+        const modal = document.getElementById("modal-producto");
+        const content = document.querySelector(".contenido-producto-modal");
+        const info = document.querySelector(".modal-producto-info");
+        const gallery = document.querySelector(".modal-producto-galeria");
+        const thumbs = document.getElementById("modal-thumbnails");
+        if (modal) modal.scrollTop = 0;
+        if (content) content.scrollTop = 0;
+        if (info) info.scrollTop = 0;
+        if (gallery) gallery.scrollTop = 0;
+        if (thumbs) thumbs.scrollTop = 0;
+    }
+
     function open(codigo) {
         const product = logic.getProduct(codigo);
         if (!product) return;
@@ -219,6 +232,10 @@ export function createModalProductoUI({ logic }) {
         modal.style.display = "flex";
         document.body.style.overflow = "hidden";
         document.body.classList.add("producto-modal-abierto");
+        resetModalScrollPosition();
+        requestAnimationFrame(() => {
+            resetModalScrollPosition();
+        });
     }
 
     function init() {
