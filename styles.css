@@ -3882,24 +3882,18 @@ h3 {
 }
 
 .slide-2::after {
-    content: "🏬";
-    font-size: 34px;
-    left: 18px;
-    bottom: 8px;
+    content: "";
 }
 
 .slide-3::before {
-    content: "🛒";
+    content: "📲";
     font-size: 44px;
     top: 8px;
     left: 16px;
 }
 
 .slide-3::after {
-    content: "💬";
-    font-size: 36px;
-    right: 14px;
-    bottom: 8px;
+    content: "";
 }
 
 .slide-content {
