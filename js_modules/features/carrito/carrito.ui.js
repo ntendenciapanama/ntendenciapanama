@@ -1,4 +1,4 @@
-export function createCarritoUI({ logic, eventBus }) {
+export function createCarritoUI({ logic, eventBus, onRequestEditItem }) {
     function updateCounters(snapshot) {
         const counter = document.getElementById("contador-carrito");
         if (counter) counter.innerText = String(snapshot.count);
@@ -22,7 +22,11 @@ export function createCarritoUI({ logic, eventBus }) {
     function renderItems(snapshot) {
         const list = document.getElementById("lista-carrito");
         const total = document.getElementById("precio-total");
+        const order = document.getElementById("carrito-order-number");
         if (!list || !total) return;
+        if (order) {
+            order.innerText = snapshot.orderNumber ? `#NP-${snapshot.orderNumber}` : "-";
+        }
 
         list.innerHTML = "";
         if (snapshot.items.length === 0) {
@@ -37,7 +41,7 @@ export function createCarritoUI({ logic, eventBus }) {
             const quantity = `<span class="color-carrito">Cantidad: ${Number(item.cantidad || 1)}</span>`;
             const subtotal = Number(item.precio || 0) * Number(item.cantidad || 1);
             list.innerHTML += `
-                <div class="item-carrito">
+                <div class="item-carrito" data-cart-index="${index}" tabindex="0" role="button" aria-label="Editar ${item.nombre}">
                     <img src="images/${item.codigo}/1.jpg" alt="${item.nombre}" class="miniatura-carrito">
                     <div class="info-item-carrito">
                         <strong class="nombre-producto-carrito">${item.nombre}</strong>
@@ -46,15 +50,29 @@ export function createCarritoUI({ logic, eventBus }) {
                             ${quantity}
                             ${size}
                             ${color}
+                            <small class="editar-item-carrito">Clic para editar</small>
                         </div>
                     </div>
                     <div class="acciones-item-carrito">
                         <span class="precio-item-carrito">$${subtotal.toFixed(2)}</span>
-                        <button class="btn-quitar" onclick="quitarDelCarrito(${index})">✕</button>
+                        <button class="btn-quitar" onclick="event.stopPropagation();quitarDelCarrito(${index})">✕</button>
                     </div>
                 </div>
             `;
         });
+
+        if (typeof onRequestEditItem === "function") {
+            list.querySelectorAll(".item-carrito").forEach((node) => {
+                const index = Number(node.getAttribute("data-cart-index"));
+                node.onclick = () => onRequestEditItem(index);
+                node.onkeydown = (event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        onRequestEditItem(index);
+                    }
+                };
+            });
+        }
 
         total.innerText = Number(snapshot.total || 0).toFixed(2);
     }

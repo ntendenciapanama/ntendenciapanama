@@ -4,6 +4,21 @@ function formatCurrency(value) {
 
 export function createCarritoLogic({ service, eventBus }) {
     const items = [];
+    let currentOrderNumber = "";
+
+    function generateOrderNumber() {
+        const now = new Date();
+        const dayMonth = now.getDate().toString().padStart(2, "0") + (now.getMonth() + 1).toString().padStart(2, "0");
+        const random = Math.floor(1000 + Math.random() * 9000);
+        return `${dayMonth}-${random}`;
+    }
+
+    function ensureOrderNumber() {
+        if (!currentOrderNumber) {
+            currentOrderNumber = generateOrderNumber();
+        }
+        return currentOrderNumber;
+    }
 
     function buildSnapshot() {
         const total = items.reduce((acc, item) => acc + (Number(item.precio || 0) * Number(item.cantidad || 1)), 0);
@@ -11,7 +26,8 @@ export function createCarritoLogic({ service, eventBus }) {
         return {
             items: [...items],
             count,
-            total
+            total,
+            orderNumber: items.length > 0 ? ensureOrderNumber() : ""
         };
     }
 
@@ -91,11 +107,55 @@ export function createCarritoLogic({ service, eventBus }) {
     function removeAt(index) {
         if (index < 0 || index >= items.length) return;
         items.splice(index, 1);
+        if (items.length === 0) currentOrderNumber = "";
         notifyChange();
+    }
+
+    function updateAt(index, payload = {}) {
+        if (index < 0 || index >= items.length) {
+            return { ok: false, reason: "not_found" };
+        }
+        const currentItem = items[index];
+        const product = service.getProductByCode(currentItem.codigo) || currentItem;
+        const size = payload.tallaElegida || currentItem.tallaElegida || (product.tallas?.[0] || "");
+        const color = payload.colorElegido || currentItem.colorElegido || (product.colores?.[0] || "");
+        const stockDisponible = getVariantStock(product, size);
+        if (stockDisponible === 0) {
+            return { ok: false, reason: "out_of_stock" };
+        }
+
+        const requestedQty = Math.max(Number(payload.cantidad) || Number(currentItem.cantidad || 1), 1);
+        const limitedQty = stockDisponible === null ? requestedQty : Math.min(requestedQty, stockDisponible);
+        const isStockLimited = stockDisponible !== null && limitedQty < requestedQty;
+
+        const duplicatedIndex = items.findIndex((item, itemIndex) =>
+            itemIndex !== index &&
+            item.codigo === currentItem.codigo &&
+            item.tallaElegida === size &&
+            item.colorElegido === color
+        );
+
+        if (duplicatedIndex >= 0) {
+            const duplicatedItem = items[duplicatedIndex];
+            const mergedRequestedQty = Number(duplicatedItem.cantidad || 1) + limitedQty;
+            const mergedQty = stockDisponible === null ? mergedRequestedQty : Math.min(mergedRequestedQty, stockDisponible);
+            duplicatedItem.cantidad = mergedQty;
+            items.splice(index, 1);
+            if (items.length === 0) currentOrderNumber = "";
+            notifyChange();
+            return { ok: true, merged: true, stockLimited: isStockLimited || mergedQty < mergedRequestedQty };
+        }
+
+        currentItem.tallaElegida = size;
+        currentItem.colorElegido = color;
+        currentItem.cantidad = limitedQty;
+        notifyChange();
+        return { ok: true, stockLimited: isStockLimited };
     }
 
     function clear() {
         items.length = 0;
+        currentOrderNumber = "";
         notifyChange();
     }
 
@@ -105,10 +165,7 @@ export function createCarritoLogic({ service, eventBus }) {
 
     function buildWhatsAppMessage() {
         if (items.length === 0) return null;
-        const now = new Date();
-        const dayMonth = now.getDate().toString().padStart(2, "0") + (now.getMonth() + 1).toString().padStart(2, "0");
-        const random = Math.floor(1000 + Math.random() * 9000);
-        const orderNumber = `${dayMonth}-${random}`;
+        const orderNumber = ensureOrderNumber();
 
         let text = `✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n`;
         text += `🆔 *ORDEN:* #NP-${orderNumber}\n\n`;
@@ -140,5 +197,5 @@ export function createCarritoLogic({ service, eventBus }) {
         };
     }
 
-    return { addByCode, removeAt, clear, getSnapshot, buildWhatsAppMessage };
+    return { addByCode, updateAt, removeAt, clear, getSnapshot, buildWhatsAppMessage };
 }

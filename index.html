@@ -196,16 +196,25 @@
                 </div>
                 <span class="cerrar-carrito" onclick="toggleCarrito()">&times;</span>
             </div>
-            <div id="lista-carrito" class="cuerpo-carrito"></div>
-            <div class="footer-carrito">
-                <div class="total-contenedor">
-                    <span class="etiqueta-total">Total estimado:</span>
-                    <span class="monto-total">$<span id="precio-total">0.00</span></span>
+            <div class="carrito-layout">
+                <div id="lista-carrito" class="cuerpo-carrito"></div>
+                <div class="panel-resumen-carrito">
+                    <div class="footer-carrito">
+                        <div class="orden-carrito">ORDEN: <span id="carrito-order-number">-</span></div>
+                        <div class="total-contenedor">
+                            <span class="etiqueta-total">Total estimado:</span>
+                            <span class="monto-total">$<span id="precio-total">0.00</span></span>
+                        </div>
+                        <button class="btn-enviar-pedido" onclick="enviarPedidoWhatsApp()">
+                            Confirmar Pedido vía WhatsApp
+                        </button>
+                        <p class="nota-seguridad">Tu pedido se enviará de forma segura a nuestro chat oficial.</p>
+                        <div class="info-entrega-carrito">
+                            <strong>INFORMACIÓN DE ENTREGA:</strong>
+                            <p>Podemos coordinar los detalles de su entrega directamente por esta vía. Contamos con retiro en Plaza Terronal y Plaza Galería, o envíos 🚚 a todo Panamá mediante Ferguson, Jedidias y Fletes Chavales.</p>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn-enviar-pedido" onclick="enviarPedidoWhatsApp()">
-                    Confirmar Pedido vía WhatsApp
-                </button>
-                <p class="nota-seguridad">Tu pedido se enviará de forma segura a nuestro chat oficial.</p>
             </div>
         </div>
     </div>

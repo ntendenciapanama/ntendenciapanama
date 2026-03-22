@@ -36,6 +36,12 @@ export function createModalProductoUI({ logic }) {
         return (product?.tallas?.[0] || "").trim();
     }
 
+    function getColorActivo(product) {
+        const activa = document.querySelector("#modal-colores-btns .color-bubble.activa");
+        if (activa) return (activa.title || "").trim();
+        return (product?.colores?.[0] || "").trim();
+    }
+
     function getStockDisponible(product, tallaSeleccionada = "") {
         const talla = (tallaSeleccionada || "").trim();
         const stockPorTalla = product?.stockPorTalla;
@@ -60,13 +66,14 @@ export function createModalProductoUI({ logic }) {
         document.body.classList.remove("producto-modal-abierto");
     }
 
-    function renderSizes(product, onSizeChange) {
+    function renderSizes(product, onSizeChange, preferredSize = "") {
         const sizesContainer = document.getElementById("modal-tallas-btns");
         sizesContainer.innerHTML = "";
         if (product.tallas && product.tallas.length > 0) {
+            const selectedSize = product.tallas.includes(preferredSize) ? preferredSize : product.tallas[0];
             product.tallas.forEach((size, idx) => {
                 const button = document.createElement("button");
-                button.className = `modal-talla-btn ${idx === 0 ? "activa" : ""}`;
+                button.className = `modal-talla-btn ${size === selectedSize ? "activa" : ""}`;
                 button.innerText = size;
                 button.onclick = () => {
                     logic.setSelectedSize(product.codigo, size);
@@ -76,7 +83,8 @@ export function createModalProductoUI({ logic }) {
                 };
                 sizesContainer.appendChild(button);
             });
-            logic.setSelectedSize(product.codigo, product.tallas[0]);
+            logic.setSelectedSize(product.codigo, selectedSize);
+            if (typeof onSizeChange === "function") onSizeChange(selectedSize);
         } else {
             sizesContainer.innerHTML = '<span class="talla-unica-texto">Talla Única</span>';
             logic.setSelectedSize(product.codigo, "");
@@ -84,16 +92,17 @@ export function createModalProductoUI({ logic }) {
         }
     }
 
-    function renderColors(product) {
+    function renderColors(product, preferredColor = "") {
         const colorSection = document.getElementById("modal-colores-seccion");
         const colorContainer = document.getElementById("modal-colores-btns");
         colorContainer.innerHTML = "";
 
         if (product.colores && product.colores.length > 0) {
             colorSection.style.display = "block";
+            const selectedColor = product.colores.includes(preferredColor) ? preferredColor : product.colores[0];
             product.colores.forEach((colorName, idx) => {
                 const bubble = document.createElement("div");
-                bubble.className = `color-bubble ${idx === 0 ? "activa" : ""}`;
+                bubble.className = `color-bubble ${colorName === selectedColor ? "activa" : ""}`;
                 bubble.style.backgroundColor = logic.getColorValue(colorName);
                 bubble.title = colorName;
                 bubble.onclick = () => {
@@ -105,16 +114,16 @@ export function createModalProductoUI({ logic }) {
                 };
                 colorContainer.appendChild(bubble);
             });
-            logic.setSelectedColor(product.codigo, product.colores[0]);
+            logic.setSelectedColor(product.codigo, selectedColor);
             const label = colorSection.querySelector(".modal-label");
-            if (label) label.innerText = `Color: ${product.colores[0]}`;
+            if (label) label.innerText = `Color: ${selectedColor}`;
         } else {
             colorSection.style.display = "none";
             logic.setSelectedColor(product.codigo, "");
         }
     }
 
-    function renderQuantity(product, tallaSeleccionada = "") {
+    function renderQuantity(product, tallaSeleccionada = "", preferredQuantity = 1) {
         const quantitySelect = document.getElementById("modal-cantidad");
         const addButton = document.getElementById("modal-btn-carrito");
         quantitySelect.innerHTML = "";
@@ -128,6 +137,8 @@ export function createModalProductoUI({ logic }) {
             option.innerText = i;
             quantitySelect.appendChild(option);
         }
+        const initialQty = Math.max(Math.min(Number(preferredQuantity) || 1, stockMax), 1);
+        quantitySelect.value = String(initialQty);
         if (stockDisponible === 0) {
             quantitySelect.innerHTML = "";
             const option = document.createElement("option");
@@ -176,19 +187,31 @@ export function createModalProductoUI({ logic }) {
         }
     }
 
-    function renderCartButton(product) {
+    function renderCartButton(product, options = {}) {
         const addButton = document.getElementById("modal-btn-carrito");
+        const buttonText = options.buttonText || "Añadir al carrito";
         addButton.innerHTML = `
           <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor; margin-right: 8px;">
               <path d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18M7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.59 17.3,11.97L21.16,4.96L19.42,4H5.21L4.27,2H1V4H3L6.6,11.59L5.25,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42C7.29,15 7.17,14.89 7.17,14.63Z"/>
           </svg>
-          Añadir al carrito
+          ${buttonText}
       `;
         addButton.onclick = () => {
             const tallaActiva = getTallaActiva(product);
+            const colorActivo = getColorActivo(product);
             const stockDisponible = getStockDisponible(product, tallaActiva);
             if (stockDisponible === 0) return;
             const quantity = parseInt(document.getElementById("modal-cantidad").value);
+            if (typeof options.onConfirm === "function") {
+                options.onConfirm({
+                    codigo: product.codigo,
+                    tallaElegida: tallaActiva,
+                    colorElegido: colorActivo,
+                    cantidad: quantity
+                });
+                close();
+                return;
+            }
             logic.addByModalQuantity(product.codigo, quantity);
             close();
         };
@@ -215,18 +238,19 @@ export function createModalProductoUI({ logic }) {
         if (thumbs) thumbs.scrollTop = 0;
     }
 
-    function open(codigo) {
+    function open(codigo, options = {}) {
         const product = logic.getProduct(codigo);
         if (!product) return;
+        const preferredQuantity = Math.max(Number(options.initialQuantity) || 1, 1);
 
         renderBase(product);
         renderSizes(product, (size) => {
-            renderQuantity(product, size);
-        });
-        renderColors(product);
-        renderQuantity(product, getTallaActiva(product));
+            renderQuantity(product, size, getCantidadSeleccionada() || preferredQuantity);
+        }, options.initialSize || "");
+        renderColors(product, options.initialColor || "");
+        renderQuantity(product, getTallaActiva(product), preferredQuantity);
         renderGallery(product);
-        renderCartButton(product);
+        renderCartButton(product, options);
 
         const modal = document.getElementById("modal-producto");
         modal.style.display = "flex";
