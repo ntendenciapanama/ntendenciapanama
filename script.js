@@ -13,6 +13,17 @@ let codActual = "";
 
 const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
 const URL_SHEET = URL_BASE + '&t=' + new Date().getTime() + '&v=' + Math.random();
+let datosInicializados = false;
+let modulosInicializados = false;
+let interfazSincronizada = false;
+
+function sincronizarArranqueApp() {
+    if (interfazSincronizada || !datosInicializados || !modulosInicializados) return;
+    interfazSincronizada = true;
+    generarCategorias();
+    mostrarProductos();
+    leerParametrosURL();
+}
 
 /* --- BANNER POPUP PARA MÓVILES --- */
 function mostrarBannerMovil() {
@@ -42,12 +53,15 @@ function cerrarBanner() {
 // Mostrar banner solo si no se ha cerrado en esta sesión
 function initBanner() {
     if (localStorage.getItem('banner-cerrado') !== 'true') {
-        // Mostrar después de 1 segundo de cargar la página
         setTimeout(mostrarBannerMovil, 1000);
     }
 }
 
-initBanner();
+function iniciarBannerApp() {
+    initBanner();
+}
+
+iniciarBannerApp();
 
 /* --- RESPONSIVIDAD --- */
 function ajustarPaginacionDinamica() {
@@ -80,6 +94,19 @@ function parsearCSVLine(linea) {
     return columnas;
 }
 
+function parsearStockPorTalla(texto) {
+    const inventario = {};
+    if (!texto) return inventario;
+    texto.split('|').forEach(par => {
+        const [tallaRaw, stockRaw] = par.split(':');
+        const talla = (tallaRaw || "").trim();
+        const stock = parseInt((stockRaw || "").replace(/[^\d]/g, ''), 10);
+        if (!talla) return;
+        inventario[talla] = Number.isFinite(stock) && stock >= 0 ? stock : 0;
+    });
+    return inventario;
+}
+
 fetch(URL_SHEET)
     .then(res => res.text())
     .then(csvText => {
@@ -97,6 +124,10 @@ fetch(URL_SHEET)
             const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
             const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
             const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
+            const stockRaw = limpiar(columnas[3]);
+            const stockNumerico = parseInt((stockRaw || "").replace(/[^\d]/g, ''), 10);
+            const stockPorTallaRaw = limpiar(columnas[11]);
+            const stockPorTalla = parsearStockPorTalla(stockPorTallaRaw);
 
             return {
                 codigo: limpiar(columnas[0]),
@@ -104,12 +135,14 @@ fetch(URL_SHEET)
                 precio: precioVentaHoy,
                 precioOriginal: precioBase,
                 esOferta: precioOferta > 0 && precioOferta < precioBase,
-                stock: limpiar(columnas[3]),
+                stock: Number.isFinite(stockNumerico) && stockNumerico >= 0 ? stockNumerico : null,
                 descripcion: limpiar(columnas[4]) || "",
                 status: limpiar(columnas[5])?.toLowerCase(),
                 categoria: limpiar(columnas[6]) || "General",
                 totalImagenes: parseInt(limpiar(columnas[7])) || 1,
-                tallas: limpiar(columnas[9]) ? limpiar(columnas[9]).split(',').map(s => s.trim()) : [] 
+                tallas: limpiar(columnas[9]) ? limpiar(columnas[9]).split(',').map(s => s.trim()) : [],
+                colores: limpiar(columnas[10]) ? limpiar(columnas[10]).split(',').map(s => s.trim()) : [],
+                stockPorTalla
             };
         }).filter(p => {
             if (!p) return false;
@@ -128,128 +161,76 @@ fetch(URL_SHEET)
         catalogoCompleto = listaInvertida;
         todosLosProductos = listaInvertida.filter(p => p.categoria.toLowerCase() !== 'saldos');
         productosFiltrados = todosLosProductos;
-        
-        generarCategorias();
-        mostrarProductos();
-        
-        // Leer parámetros URL después de cargar los productos
-        leerParametrosURL();
+        datosInicializados = true;
+        sincronizarArranqueApp();
     })
-    .catch(err => console.error("Error cargando Google Sheets:", err));
+    .catch(err => {
+        console.error("Error cargando Google Sheets:", err);
+    });
+
+/* --- LÓGICA DE SELECCIÓN DE TALLA Y COLOR --- */
+let tallasSeleccionadasPorCodigo = {}; // Objeto para guardar la talla elegida por producto
+let coloresSeleccionadosPorCodigo = {}; // Objeto para guardar el color elegido por producto
+
+function ejecutarEnModulo(nombre, accion) {
+    const modulo = window.NtModules?.[nombre];
+    if (modulo) {
+        accion(modulo);
+        return;
+    }
+    setTimeout(() => {
+        const moduloDiferido = window.NtModules?.[nombre];
+        if (moduloDiferido) {
+            accion(moduloDiferido);
+        }
+    }, 0);
+}
+
+
+function cambiarFotoPrincipal(src, thumb) {
+    document.getElementById('modal-img-grande').src = src;
+    thumb.parentElement.querySelectorAll('.color-thumb').forEach(t => t.classList.remove('activa'));
+    thumb.classList.add('activa');
+}
+
+
+function abrirModalProducto(codigo) {
+    ejecutarEnModulo('modalProducto', (modal) => {
+        modal.open(codigo);
+    });
+}
+
+function cerrarModalProducto() {
+    ejecutarEnModulo('modalProducto', (modal) => {
+        modal.close();
+    });
+}
 
 /* --- MOSTRAR PRODUCTOS EN GRILLA --- */
+
 function mostrarProductos() {
-    const contenedor = document.getElementById('productos');
-    if (!contenedor) return;
-    contenedor.innerHTML = "";
-    
-    // En móvil, mostrar TODOS los productos sin paginación
-    const esMovil = window.innerWidth <= 768;
-    let lista;
-    if (esMovil) {
-        lista = productosFiltrados; // Todos los productos
-    } else {
-        const inicio = (paginaActual - 1) * productosPorPagina;
-        const fin = inicio + productosPorPagina;
-        lista = productosFiltrados.slice(inicio, fin);
-    }
-
-    lista.forEach(p => {
-        const div = document.createElement('div');
-        const claseSaldos = p.categoria.toLowerCase() === 'saldos' ? 'producto-saldo' : '';
-        const claseOferta = p.esOferta ? 'tiene-oferta' : '';
-        div.className = `producto ${claseSaldos} ${claseOferta}`;
-        div.setAttribute('data-codigo', p.codigo);
-        
-        const badgeHTML = p.esOferta ? `<span class="badge-oferta">OFERTA 🔥</span>` : "";
-        const precioHTML = p.esOferta 
-            ? `<div class="precio">
-                <span class="precio-tachado">$${p.precioOriginal.toFixed(2)}</span> 
-                <span class="precio-actual oferta">$${p.precio.toFixed(2)}</span>
-               </div>`
-            : `<div class="precio"><span class="precio-actual">$${p.precio.toFixed(2)}</span></div>`;
-
-        // Generar Selector de Tallas
-        let tallasHTML = "";
-        if (p.tallas && p.tallas.length > 0) {
-            if (p.tallas.length === 1) {
-                // Caso 1: Solo una talla (Estático)
-                tallasHTML = `
-                    <div class="selector-tallas unica">
-                        <p class="talla-unica-texto">Talla: <span>${p.tallas[0]}</span></p>
-                    </div>
-                `;
-            } else {
-                // Caso 2: Múltiples tallas (Menú interactivo)
-                tallasHTML = `
-                    <div class="selector-tallas">
-                        <p class="etiqueta-talla">Selecciona tu talla:</p>
-                        <div class="opciones-tallas">
-                            ${p.tallas.map((t, idx) => `
-                                <button class="talla-btn ${idx === 0 ? 'activa' : ''}" 
-                                        onclick="seleccionarTalla('${p.codigo}', '${t}', this)">
-                                    ${t}
-                                </button>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        const descripcionHTML = p.descripcion ? generarDescripcion(p.descripcion) : '<div class="descripcion-container"></div>';
-
-        div.innerHTML = `
-            <div class="main-img-container" onclick="abrirGaleria('${p.codigo}', ${p.totalImagenes})">
-                ${badgeHTML}
-                <img src="images/${p.codigo}/1.jpg" 
-                     alt="${p.nombre}" 
-                     loading="lazy" 
-                     onerror="handleImageError(this, '${p.codigo}')">
-            </div>
-            <div class="producto-info">
-                ${precioHTML}
-                <h3>${p.nombre}</h3>
-                ${tallasHTML}
-                ${descripcionHTML}
-                <div class="contenedor-botones">
-                    <a href="javascript:void(0)" onclick="comprarWhatsAppDirecto('${p.codigo}')" class="whatsapp-btn">WhatsApp</a>
-                    <button class="btn-añadir-lista" onclick="añadirAlCarrito('${p.codigo}')">+ Lista</button>
-                </div>
-            </div>
-        `;
-        contenedor.appendChild(div);
+    ejecutarEnModulo('productos', (productos) => {
+        productos.render();
     });
-    actualizarPaginacion();
+}
+
+/* --- MOSTRAR DESCRIPCIÓN INLINE PARA SALDOS --- */
+
+function mostrarDescripcionSaldos(codigo, boton) {
+    ejecutarEnModulo('productos', (productos) => {
+        productos.toggleSaldosDescription(codigo, boton);
+    });
 }
 
 /* --- MANEJO DE ERRORES DE IMAGEN --- */
+
 function handleImageError(img, codigo) {
-    const fallbackPng = `images/${codigo}/1.png`;
-    
-    // Si ya estamos intentando cargar el PNG y también falla...
-    if (img.src.includes(fallbackPng)) {
-        console.error(`IMAGEN NO ENCONTRADA (JPG y PNG) para el producto:`, codigo);
-        img.src = 'logo.png'; // Cargar el logo como último recurso
-        
-        // Buscar la tarjeta del producto y reemplazar el nombre por el código de error
-        const productoCard = img.closest('.producto');
-        if (productoCard) {
-            const titleElement = productoCard.querySelector('h3');
-            if (titleElement) {
-                titleElement.innerHTML = `<span style="color:red; font-size:0.8em;">CÓDIGO CON ERROR:</span><br>${codigo}`;
-            }
-        }
-        img.onerror = null; // Evitar bucles infinitos si el logo también falla
-    } else {
-        // Si el JPG falló, intentar cargar el PNG
-        img.src = fallbackPng;
-    }
+    ejecutarEnModulo('productos', (productos) => {
+        productos.resolveProductImageError(img, codigo);
+    });
 }
 
 /* --- LÓGICA DE SELECCIÓN DE TALLA --- */
-let tallasSeleccionadasPorCodigo = {}; // Objeto para guardar la talla elegida por producto
-
 function seleccionarTalla(codigo, talla, boton) {
     tallasSeleccionadasPorCodigo[codigo] = talla;
     
@@ -273,10 +254,11 @@ function comprarWhatsAppDirecto(codigo) {
 }
 
 /* --- LÓGICA DE GALERÍA (LIGHTBOX) --- */
-function abrirGaleria(codigo, total) {
+function abrirGaleria(codigo, total, indiceInicial = 1) {
     codActual = codigo; 
     totalImg = total; 
-    imgIndex = 1;
+    const indice = Number(indiceInicial) || 1;
+    imgIndex = Math.min(Math.max(indice, 1), totalImg);
     actualizarVistaGaleria();
     document.getElementById('lightbox').style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -345,26 +327,77 @@ function cerrarImagen() {
 }
 
 /* --- LÓGICA DEL CARRITO --- */
-function añadirAlCarrito(codigo) {
+function añadirAlCarritoDesdeModal(codigo) {
     const p = catalogoCompleto.find(x => x.codigo === codigo);
     if (!p) return;
 
-    // Obtener la talla seleccionada (o la primera por defecto si tiene tallas)
+    // Obtener la talla y color seleccionados
     const tallaSeleccionada = tallasSeleccionadasPorCodigo[codigo] || (p.tallas && p.tallas.length > 0 ? p.tallas[0] : "");
+    const colorSeleccionado = coloresSeleccionadosPorCodigo[codigo] || (p.colores && p.colores.length > 0 ? p.colores[0] : "");
 
-    // Permitir añadir el mismo código pero con diferente talla
-    const yaExiste = carrito.find(x => x.codigo === codigo && x.tallaElegida === tallaSeleccionada);
+    // Permitir añadir el mismo código pero con diferente talla/color
+    const yaExiste = carrito.find(x => x.codigo === codigo && x.tallaElegida === tallaSeleccionada && x.colorElegido === colorSeleccionado);
     if (yaExiste) {
         mostrarNotificacion("⚠️ Este producto ya está en tu lista", ["#ff6b6b", "#ee5a24", "#ff4757"]);
         return;
     }
 
-    // Guardar una copia del producto con la talla elegida
-    const itemCarrito = { ...p, tallaElegida: tallaSeleccionada };
+    // Guardar una copia del producto con la talla y color elegidos
+    const itemCarrito = { ...p, tallaElegida: tallaSeleccionada, colorElegido: colorSeleccionado };
     carrito.push(itemCarrito); 
 
+    actualizarInterfazCarrito();
+    mostrarNotificacion("¡Producto agregado a tu lista!");
+}
+
+function actualizarInterfazCarrito() {
     const contador = document.getElementById('contador-carrito');
     if (contador) contador.innerText = carrito.length;
+    
+    // Actualizar badge en móvil
+    const badge = document.getElementById('bottom-nav-badge');
+    if (badge) {
+        badge.innerText = carrito.length;
+        badge.style.display = carrito.length > 0 ? 'flex' : 'none';
+    }
+    
+    const btn = document.getElementById('btn-carrito');
+    if (btn) {
+        btn.style.transform = "scale(1.2)";
+        setTimeout(() => btn.style.transform = "scale(1)", 200);
+    }
+}
+
+function añadirAlCarrito(codigo) {
+    const p = catalogoCompleto.find(x => x.codigo === codigo);
+    if (!p) return;
+
+    // --- REGLA: Si tiene múltiples opciones, abrir modal en lugar de añadir directo ---
+    const tieneMultiplesTallas = p.tallas && p.tallas.length > 1;
+    const tieneMultiplesColores = p.colores && p.colores.length > 1;
+    
+    // Si tiene más de una opción, forzamos a que el usuario elija en el modal
+    if (tieneMultiplesTallas || tieneMultiplesColores) {
+        abrirModalProducto(codigo);
+        return;
+    }
+
+    // Obtener valores por defecto
+    const tallaSeleccionada = tallasSeleccionadasPorCodigo[codigo] || (p.tallas && p.tallas.length > 0 ? p.tallas[0] : "");
+    const colorSeleccionado = coloresSeleccionadosPorCodigo[codigo] || (p.colores && p.colores.length > 0 ? p.colores[0] : "");
+
+    // Permitir añadir el mismo código pero con diferente talla/color
+    const yaExiste = carrito.find(x => x.codigo === codigo && x.tallaElegida === tallaSeleccionada && x.colorElegido === colorSeleccionado);
+    if (yaExiste) {
+        mostrarNotificacion("⚠️ Este producto ya está en tu lista", ["#ff6b6b", "#ee5a24", "#ff4757"]);
+        return;
+    }
+
+    // Guardar una copia del producto con la talla y color elegidos
+    const itemCarrito = { ...p, tallaElegida: tallaSeleccionada, colorElegido: colorSeleccionado };
+    carrito.push(itemCarrito); 
+
+    actualizarInterfazCarrito();
     
     const badge = document.getElementById('bottom-nav-badge');
     if (badge) {
@@ -374,12 +407,12 @@ function añadirAlCarrito(codigo) {
     
     // Mostrar notificación para producto agregado
     mostrarNotificacion("¡Producto agregado a tu lista!");
-    
-    const btn = document.getElementById('btn-carrito');
-    if (btn) {
-        btn.style.transform = "scale(1.2)";
-        setTimeout(() => btn.style.transform = "scale(1)", 200);
-    }
+}
+
+function quitarDelCarrito(i) {
+    carrito.splice(i, 1);
+    actualizarInterfazCarrito();
+    dibujarCarrito();
 }
 
 function toggleCarrito() {
@@ -411,6 +444,7 @@ function dibujarCarrito() {
     carrito.forEach((p, i) => {
         total += p.precio;
         const tallaHTML = p.tallaElegida ? `<span class="talla-carrito">Talla: ${p.tallaElegida}</span>` : "";
+        const colorHTML = p.colorElegido ? `<span class="color-carrito">Color: ${p.colorElegido}</span>` : "";
         
         lista.innerHTML += `
             <div class="item-carrito">
@@ -420,6 +454,7 @@ function dibujarCarrito() {
                     <div class="detalles-producto-carrito">
                         <small class="codigo-producto">Cód: ${p.codigo}</small>
                         ${tallaHTML}
+                        ${colorHTML}
                     </div>
                 </div>
                 <div class="acciones-item-carrito">
@@ -429,19 +464,6 @@ function dibujarCarrito() {
             </div>`;
     });
     totalSpan.innerText = total.toFixed(2);
-}
-
-function quitarDelCarrito(i) {
-    carrito.splice(i, 1);
-    const contador = document.getElementById('contador-carrito');
-    if (contador) contador.innerText = carrito.length;
-    // Actualizar badge en bottom nav
-    const badge = document.getElementById('bottom-nav-badge');
-    if (badge) {
-        badge.innerText = carrito.length;
-        badge.style.display = carrito.length > 0 ? 'flex' : 'none';
-    }
-    dibujarCarrito();
 }
 
 function enviarPedidoWhatsApp() {
@@ -478,6 +500,9 @@ function enviarPedidoWhatsApp() {
         if (p.tallaElegida) {
             txt += `   ${eRegla} Talla: *${p.tallaElegida}*\n`;
         }
+        if (p.colorElegido) {
+            txt += `   🎨 Color: *${p.colorElegido}*\n`;
+        }
         txt += `   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n`;
         txt += `   🔗 Ver producto: https://ntendenciapanama.vercel.app/?search=${encodeURIComponent(p.codigo)}\n\n`;
         total += p.precio;
@@ -511,17 +536,27 @@ function focusSearch() {
         }
     }
 }
-document.getElementById('buscador')?.addEventListener('input', (e) => {
-    const term = e.target.value.toLowerCase();
+
+function aplicarBusqueda(term) {
+    const productos = window.NtModules?.productos;
+    if (productos) {
+        productos.applySearch(term);
+        return;
+    }
     if (term === "") {
         productosFiltrados = todosLosProductos;
     } else {
-        productosFiltrados = catalogoCompleto.filter(p => 
+        productosFiltrados = catalogoCompleto.filter(p =>
             p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
         );
     }
     paginaActual = 1;
     mostrarProductos();
+}
+
+document.getElementById('buscador')?.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    aplicarBusqueda(term);
 });
 
 /* --- FUNCIÓN PARA GENERAR DESCRIPCIÓN --- */
@@ -754,76 +789,75 @@ async function confirmarDescargaPDF() {
     cerrarModalPDF();
 }
 
+function toggleCategorias(event) {
+    if (event) event.stopPropagation();
+    const dropdown = document.getElementById('categorias');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+}
+
+// Cerrar dropdown al hacer clic fuera
+function manejarClickGlobalCategorias(e) {
+    const dropdown = document.getElementById('categorias');
+    const trigger = document.querySelector('.categorias-trigger');
+    if (!dropdown || !dropdown.classList.contains('show')) return;
+    if (trigger && trigger.contains(e.target)) return;
+    if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('show');
+    }
+}
+
+document.addEventListener('click', manejarClickGlobalCategorias);
+
 /* --- CATEGORÍAS --- */
+
 function generarCategorias() {
-    const cont = document.getElementById('categorias');
-    if (!cont) return;
-
-    const cats = ["Todas", ...new Set(todosLosProductos.map(p => p.categoria))];
-    const haySaldos = catalogoCompleto.some(p => p.categoria.toLowerCase() === 'saldos');
-    if (haySaldos) cats.push("Saldos");
-
-    cont.innerHTML = "";
-    cats.forEach(c => {
-        const b = document.createElement('button');
-        b.className = `categoria-btn ${c === "Todas" ? "activa" : ""}`;
-        b.innerText = c;
-        b.onclick = () => {
-            document.querySelectorAll('.categoria-btn').forEach(x => x.classList.remove('activa'));
-            b.classList.add('activa');
-            
-            if (c === "Saldos") {
-                productosFiltrados = catalogoCompleto.filter(x => x.categoria.toLowerCase() === 'saldos');
-                document.body.classList.add('seccion-saldos-activa');
-                mostrarModalSaldos();
-            } else {
-                document.body.classList.remove('seccion-saldos-activa');
-                productosFiltrados = (c === "Todas") ? todosLosProductos : todosLosProductos.filter(x => x.categoria === c);
-            }
-            
-            paginaActual = 1;
-            mostrarProductos();
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        };
-        cont.appendChild(b);
+    ejecutarEnModulo('categorias', (categorias) => {
+        categorias.render();
     });
 }
 
-/* --- PAGINACIÓN (DESHABILITADA EN MÓVIL) --- */
-function actualizarPaginacion() {
-    const cont = document.getElementById('paginacion');
-    if (!cont) return;
-    // En móvil no mostrar paginación
-    if (window.innerWidth <= 768) {
-        cont.innerHTML = "";
-        cont.style.display = "none";
-        return;
-    }
-    cont.style.display = "flex";
-    cont.innerHTML = "";
-    const total = Math.ceil(productosFiltrados.length / productosPorPagina);
-    if(total <= 1) return;
-    for(let i=1; i<=total; i++) {
-        const b = document.createElement('button');
-        b.className = `pag-btn ${i === paginaActual ? 'activa' : ''}`;
-        b.innerText = i;
-        b.onclick = () => {
-            paginaActual = i;
-            mostrarProductos();
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        };
-        cont.appendChild(b);
+function filtrarPorCategoria(c, btnElement, event) {
+    if (event) event.stopPropagation();
+    ejecutarEnModulo('categorias', (categorias) => {
+        categorias.select(c);
+    });
+}
+
+function toggleCategoriasMobile() {
+    const modal = document.getElementById('modal-categorias-mobile');
+    if (modal) {
+        if (modal.classList.contains('modal-cats-hidden')) {
+            modal.classList.remove('modal-cats-hidden');
+            modal.classList.add('modal-cats');
+            document.body.style.overflow = 'hidden'; // Bloquear scroll al abrir
+        } else {
+            modal.classList.remove('modal-cats');
+            modal.classList.add('modal-cats-hidden');
+            document.body.style.overflow = ''; // Restaurar scroll al cerrar
+        }
     }
 }
 
-window.addEventListener('resize', () => {
+/* --- PAGINACIÓN (DESHABILITADA EN MÓVIL) --- */
+
+function actualizarPaginacion() {
+    ejecutarEnModulo('productos', (productos) => {
+        productos.renderPagination();
+    });
+}
+
+function manejarResizeVentana() {
     const previo = productosPorPagina;
     ajustarPaginacionDinamica();
     if (previo !== productosPorPagina) {
         paginaActual = 1; 
         mostrarProductos();
     }
-});
+}
+
+window.addEventListener('resize', manejarResizeVentana);
 
 /* --- NOTIFICACIONES PERSONALIZADAS --- */
 function mostrarNotificacion(mensaje, color = null) {
@@ -982,10 +1016,13 @@ function initAudioContext() {
     }
 }
 
-// Agregar event listeners para inicializar audio en la primera interacción
-document.addEventListener('click', initAudioContext, { once: true });
-document.addEventListener('touchstart', initAudioContext, { once: true });
-document.addEventListener('keydown', initAudioContext, { once: true });
+function registrarInicializacionAudio() {
+    document.addEventListener('click', initAudioContext, { once: true });
+    document.addEventListener('touchstart', initAudioContext, { once: true });
+    document.addEventListener('keydown', initAudioContext, { once: true });
+}
+
+registrarInicializacionAudio();
 
 // Agregar las animaciones necesarias
 const style = document.createElement('style');
@@ -1073,4 +1110,122 @@ function leerParametrosURL() {
 }
 
 // Ejecutar cuando se cargue la página
-document.addEventListener('DOMContentLoaded', leerParametrosURL);
+function manejarDOMContentLoaded() {
+    initPromoSlider();
+}
+
+document.addEventListener('DOMContentLoaded', manejarDOMContentLoaded);
+
+function mostrarModalTú() {
+    mostrarNotificacion("Sección 'Tú' próximamente disponible", ["#ff8a00", "#ff5757", "#ff0050"]);
+}
+
+/* --- SLIDER PROMOCIONAL MÓVIL --- */
+function initPromoSlider() {
+    const slides = document.querySelectorAll('.promo-slide');
+    const dots = document.querySelectorAll('.dot');
+    if (slides.length === 0) return;
+
+    let currentSlide = 0;
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+        slides.forEach(s => s.classList.remove('active'));
+        dots.forEach(d => d.classList.remove('active'));
+        
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        showSlide(currentSlide);
+    }
+
+    // Cambio automático cada 4 segundos
+    setInterval(nextSlide, 4000);
+
+    // Permitir clic en los puntos
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            currentSlide = index;
+            showSlide(currentSlide);
+        });
+    });
+}
+
+window.NtDataBridge = {
+    getCatalogoCompleto: () => catalogoCompleto,
+    getTodosLosProductos: () => todosLosProductos,
+    getProductosFiltrados: () => productosFiltrados,
+    setProductosFiltrados: (items) => { productosFiltrados = Array.isArray(items) ? items : []; },
+    getPaginaActual: () => paginaActual,
+    setPaginaActual: (value) => { paginaActual = Number(value) || 1; },
+    getProductosPorPagina: () => productosPorPagina,
+    getSelectedSize: (codigo) => tallasSeleccionadasPorCodigo[codigo] || "",
+    setSelectedSize: (codigo, talla) => { tallasSeleccionadasPorCodigo[codigo] = talla || ""; },
+    getSelectedColor: (codigo) => coloresSeleccionadosPorCodigo[codigo] || "",
+    setSelectedColor: (codigo, color) => { coloresSeleccionadosPorCodigo[codigo] = color || ""; },
+    getWhatsappPhone: () => "50767710645"
+};
+
+window.NtUIBridge = {
+    notify: (mensaje, color) => mostrarNotificacion(mensaje, color),
+    openProductModal: (codigo) => abrirModalProducto(codigo),
+    addToCartFromModal: (codigo) => {
+        if (typeof window.añadirAlCarritoDesdeModal === 'function') {
+            window.añadirAlCarritoDesdeModal(codigo);
+        }
+    },
+    renderProducts: () => mostrarProductos(),
+    closeCategoriesDropdown: () => {
+        const dropdown = document.getElementById('categorias');
+        if (dropdown) dropdown.classList.remove('show');
+    },
+    closeCategoriesMobileModal: () => {
+        const modal = document.getElementById('modal-categorias-mobile');
+        if (!modal) return;
+        modal.classList.remove('modal-cats');
+        modal.classList.add('modal-cats-hidden');
+        document.body.style.overflow = '';
+    },
+    updateActiveCategoryStyles: (category) => {
+        document.querySelectorAll('.categoria-btn, .mobile-cat-item, .cat-item-modal').forEach(node => {
+            node.classList.remove('activa', 'active');
+            if (node.innerText === category) {
+                node.classList.add(node.classList.contains('categoria-btn') ? 'activa' : 'active');
+            }
+        });
+    },
+    updateCategoryLabel: (category) => {
+        const label = document.getElementById('categoria-actual-texto');
+        if (label) label.innerText = category === 'Todas' ? 'Categorías' : category;
+    },
+    setSaldosMode: (enabled) => {
+        const warningBanner = document.getElementById('saldos-warning-banner');
+        document.body.classList.toggle('seccion-saldos-activa', enabled);
+        if (warningBanner) warningBanner.style.display = enabled ? 'flex' : 'none';
+    },
+    maybeShowSaldosModal: () => {
+        if (window.innerWidth > 768) {
+            mostrarModalSaldos();
+        }
+    },
+    scrollTop: () => window.scrollTo({ top: 0, behavior: 'smooth' })
+};
+
+import('./js_modules/app/init.js')
+    .then(({ initializeApp }) => {
+        const app = initializeApp();
+        window.NtModules = app;
+        window.añadirAlCarrito = app.carrito.addToCart;
+        window.añadirAlCarritoDesdeModal = app.carrito.addToCartFromModal;
+        window.quitarDelCarrito = app.carrito.removeFromCart;
+        window.toggleCarrito = app.carrito.toggleCart;
+        window.enviarPedidoWhatsApp = app.carrito.sendOrderWhatsApp;
+        modulosInicializados = true;
+        sincronizarArranqueApp();
+    })
+    .catch((error) => {
+        console.error("Error inicializando módulos JS:", error);
+    });

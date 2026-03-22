@@ -18,13 +18,16 @@
     <meta property="og:image:width" content="600">
     <meta property="og:image:height" content="600">
     <meta property="og:image:type" content="image/jpeg">
-
+    
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     
     <!-- Librerías para PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+     <!-- Librerías para ICONOS FONTAWESOME -->
+    <script src="https://kit.fontawesome.com/e7b3bc0720.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -39,50 +42,59 @@
         </div>
     </div>
 
-    <header class="header-main"> 
-        <div class="logo-wrapper">
+    <div class="fixed-top-container">
+        <!-- Banner de Advertencia para Saldos -->
+        <div id="saldos-warning-banner" class="saldos-warning-banner">
+            <span class="warning-icon">⚠️</span>
+            <span class="warning-text">Saldos No aplican cambios ni devoluciones.</span>
+        </div>
+
+        <!-- Título de la App para móvil -->
+        <div class="mobile-app-title" data-ui-scope="mobile">
+            <img src="logo.png" alt="NTENDENCIA PANAMÁ" class="mobile-logo-img">
+        </div>
+
+        <header class="header-main"> 
+        <div class="logo-wrapper" data-ui-scope="desktop">
             <img src="logo.png" alt="NTENDENCIA PANAMÁ" class="logo-imagen">
         </div>
         
-        <div class="search-container">
-            <input type="text" id="buscador" placeholder="¿Qué buscas hoy?">
-            <p class="slogan-marca">ESTILO QUE INSPIRA CADA PASO</p> 
+        <div class="search-wrapper">
+            <div class="categorias-container" data-ui-scope="desktop">
+                <div class="categorias-trigger" onclick="toggleCategorias(event)">
+                    <span id="categoria-actual-texto">Categorías</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                </div>
+                <nav id="categorias" class="categorias-dropdown">
+                    <!-- Las categorías se cargarán aquí dinámicamente -->
+                </nav>
+            </div>
+            <div class="search-box">
+                <input type="text" id="buscador" placeholder="¿Qué buscas hoy?">
+                <button class="search-btn" onclick="document.getElementById('buscador').focus()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
 
-        <div class="contact-icons">
+        <div class="contact-icons" data-ui-scope="desktop">
             <a href="https://instagram.com/NTENDENCIAPANAMA" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                <svg class="icon icon-instagram" viewBox="0 0 24 24" aria-hidden="true">
-                    <defs>
-                        <linearGradient id="instaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#f09433"/>
-                            <stop offset="25%" stop-color="#e6683c"/>
-                            <stop offset="50%" stop-color="#dc2743"/>
-                            <stop offset="75%" stop-color="#cc2366"/>
-                            <stop offset="100%" stop-color="#bc1888"/>
-                        </linearGradient>
-                    </defs>
-                    <path fill="url(#instaGrad)" d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.056 1.97.246 2.427.415a4.92 4.92 0 0 1 1.675 1.093 4.92 4.92 0 0 1 1.093 1.675c.169.457.359 1.257.415 2.427.058 1.266.07 1.646.07 4.85s-.012 3.584-.070 4.85c-.056 1.17-.246 1.97-.415 2.427a4.92 4.92 0 0 1-1.093 1.675 4.92 4.92 0 0 1-1.675 1.093c-.457.169-1.257.359-2.427.415-1.266.058-1.646.07-4.85.070s-3.584-.012-4.85-.07c-1.17-.056-1.97-.246-2.427-.415a4.918 4.918 0 0 1-2.768-2.768c-.169-.457-.359-1.257-.415-2.427C2.175 15.747 2.163 15.367 2.163 12s.012-3.584.070-4.85c.056-1.17.246-1.97.415-2.427a4.92 4.92 0 0 1 1.093-1.675 4.92 4.92 0 0 1 1.675-1.093c.457-.169 1.257-.359 2.427-.415C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.332.013 7.052.072 5.775.132 4.78.34 4.012.659a6.919 6.919 0 0 0-2.5 1.637A6.919 6.919 0 0 0 .659 4.012c-.319.768-.527 1.763-.587 3.040C.013 8.332 0 8.741 0 12c0 3.259.013 3.668.072 4.948.06 1.277.268 2.272.587 3.040a6.919 6.919 0 0 0 1.637 2.5 6.919 6.919 0 0 0 2.5 1.637c.768.319 1.763.527 3.040.587 1.28.059 1.689.072 4.948.072s3.668-.013 4.948-.072c1.277-.060 2.272-.268 3.040-.587a6.918 6.918 0 0 0 2.5-1.637 6.918 6.918 0 0 0 1.637-2.5c.319-.768.527-1.763.587-3.040.059-1.28.072-1.689.072-4.948s-.013-3.668-.072-4.948c-.060-1.277-.268-2.272-.587-3.040a6.919 6.919 0 0 0-1.637-2.5A6.919 6.919 0 0 0 19.988.659c-.768-.319-1.763-.527-3.040-.587C15.668.013 15.259 0 12 0z"/>
-                    <path fill="url(#instaGrad)" d="M12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zm0 10.162a3.999 3.999 0 1 1 0-7.998 3.999 3.999 0 1 1 0 7.998z"/>
-                    <circle fill="url(#instaGrad)" cx="18.406" cy="5.594" r="1.44"/>
-                </svg>
+                <i class="fa-brands fa-instagram fa-xl" style="color: rgb(255, 255, 255);"></i>
             </a>
 
             <a href="https://tiktok.com/@NTENDENCIAPANAMA" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                <svg class="icon icon-tiktok" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.9-.32-1.98-.23-2.81.31-.75.42-1.24 1.16-1.35 1.99-.28 1.35.23 2.76 1.22 3.69.75.71 1.74 1.1 2.76 1.07 1.01-.03 1.98-.47 2.63-1.21.58-.66.9-1.53.92-2.42V.02z"/>
-                </svg>
+                <i class="fa-brands fa-tiktok fa-xl" style="color: rgb(255, 255, 255);"></i>
             </a>
 
             <a href="https://facebook.com/NTENDENCIAPANAMA" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                <svg class="icon icon-facebook" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="currentColor" d="M22.675 0h-21.35C.595 0 0 .593 0 1.326v21.348C0 23.406.593 24 1.326 24H12.82v-9.294H9.692V11.41h3.128V8.709c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.466.099 2.798.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.763v2.313h3.59l-.467 3.296h-3.123V24h6.116C23.406 24 24 23.406 24 22.674V1.326C24 .593 23.406 0 22.675 0z"/>
-                </svg>
+                <i class="fa-brands fa-facebook-f fa-xl" style="color: rgb(255, 255, 255);"></i>
             </a>
 
             <a href="https://wa.me/50767710645" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-                <svg class="icon icon-whatsapp" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="currentColor" d="M12.041 0C5.397 0 0 5.397 0 12.041c0 2.117.557 4.159 1.611 5.951L0 24l6.162-1.617a11.985 11.985 0 0 0 5.879 1.553c6.644 0 12.041-5.397 12.041-12.041S18.685 0 12.041 0zm0 21.493a9.452 9.452 0 0 1-5-1.444l-.356-.215-3.098 1.429.657-3.124-.261-.397a9.452 9.452 0 0 1-1.481-5.045c0-5.224 4.243-9.467 9.467-9.467s9.467 4.243 9.467 9.467-4.242 9.467-9.467 9.467zm5.188-6.739c-.302-.159-1.819-.94-2.108-1.045-.289-.105-.506-.157-.71.161-.202.317-.78 1.053-.955 1.268-.176.216-.353.242-.61.081-.256-.161-1.056-.501-2.009-1.6-.742-.66-1.244-1.48-1.388-1.72-.145-.239-.015-.373.111-.49.125-.117.277-.303.414-.466.138-.164.182-.281.273-.466.091-.186.046-.349-.023-.49-.068-.14-.613-1.503-.842-2.062-.221-.548-.442-.473-.61-.483l-.515-.009c-.182 0-.478.068-.728.337s-.954.92-.954 2.244c0 1.323.961 2.603 1.094 2.784.133.181 1.877 3.17 4.539 4.449.634.274 1.129.438 1.518.561.636.203 1.215.175 1.675.106.51-.076 1.572-.643 1.793-1.264.25-.622.25-1.156.174-1.267-.077-.111-.28-.178-.585-.312z"/>
-                </svg>
+                <i class="fa-brands fa-whatsapp fa-xl" style="color: rgb(255, 255, 255);"></i> 
             </a>
             
             <button class="btn-catalogo-desktop" onclick="mostrarModalPDF()">
@@ -90,37 +102,88 @@
             </button>
         </div>
 
-        <div class="marquee-wrapper">
-            <div id="marquee-promociones" class="marquee-track">
-                <span>
-                    ✨ BIENVENIDOS (AS) A NTENDENCIA PANAMÁ: SÍGUENOS EN NUESTRAS REDES SOCIALES Y CONOCE LA EXCLUSIVIDAD AL MEJOR PRECIO ✨ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    💎 MARCAS PREMIUM SELECCIONADAS SOLO PARA TI 💎 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    🔥 ¡LO QUE VES HOY, SE VA MAÑANA! – UNIDADES LIMITADAS POR MODELO – PIDE LA TUYA ANTES QUE SE AGOTE 🔥 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    ✅ CALIDAD GARANTIZADA – ENVÍOS SEGUROS A TODO PANAMÁ – LA MODA QUE BUSCAS A UN CLIC DE DISTANCIA ✅ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </span>
-                <span>
-                    ✨ BIENVENIDOS (AS) A NTENDENCIA PANAMÁ: SÍGUENOS EN NUESTRAS REDES SOCIALES Y CONOCE LA EXCLUSIVIDAD AL MEJOR PRECIO ✨ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    💎 MARCAS PREMIUM SELECCIONADAS SOLO PARA TI 💎 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    🔥 ¡LO QUE VES HOY, SE VA MAÑANA! – UNIDADES LIMITADAS POR MODELO – PIDE LA TUYA ANTES QUE SE AGOTE 🔥 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    ✅ CALIDAD GARANTIZADA – ENVÍOS SEGUROS A TODO PANAMÁ – LA MODA QUE BUSCAS A UN CLIC DE DISTANCIA ✅ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </span>
+        </header>
+
+        <!-- Barra de categorías móvil (Estilo Temu) -->
+        <div class="mobile-categories-nav" data-ui-scope="mobile">
+            <div id="mobile-categories-list" class="mobile-categories-scroll">
+                <!-- Se llenará dinámicamente con JS -->
             </div>
         </div>
-    </header>
+    </div>
 
-    <nav id="categorias" class="categorias-inline">
-    </nav>
+    <!-- BANNER PROMOCIONAL (TIPO APP - SLIDER RECTANGULAR VIBRANTE) -->
+    <div class="promo-banner-container" data-ui-scope="mobile">
+        <div class="promo-slider">
+            <div class="promo-slides">
+                <!-- Slide 1: Ahorrar Dinero -->
+                <div class="promo-slide active slide-1">
+                    <div class="slide-decor"></div>
+                    <div class="slide-content">
+                        <h2>AHORRAR DINERO</h2>
+                        <button class="slide-cta">COMPRA YA <span>▶</span></button>
+                    </div>
+                </div>
+                <!-- Slide 2: Exclusividad -->
+                <div class="promo-slide slide-2">
+                    <div class="slide-decor"></div>
+                    <div class="slide-content">
+                        <h2>EXCLUSIVIDAD AL MEJOR PRECIO</h2>
+                        <button class="slide-cta">COMPRA YA <span>▶</span></button>
+                    </div>
+                </div>
+                <!-- Slide 3: Todo lo que buscas -->
+                <div class="promo-slide slide-3">
+                    <div class="slide-decor"></div>
+                    <div class="slide-content">
+                        <h2>TODO LO QUE BUSCAS EN UN SOLO LUGAR</h2>
+                        <button class="slide-cta">COMPRA YA <span>▶</span></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Indicadores -->
+            <div class="slider-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+    </div>
 
     <!-- Botón de descarga de catálogo PDF (Oculto, se activa desde el modal) -->
     <div id="contenedor-pdf-dinamico" style="display: none;">
         <button id="btn-pdf" onclick="generarCatalogoPDF()"></button>
     </div>
     
+    <!-- Bloque de Aviso para Saldos (Solo Móvil) -->
+    <div id="saldos-mobile-notice" class="saldos-mobile-notice">
+        <div class="notice-header">
+            <span class="notice-icon">⚠️</span>
+            <h2>SECCIÓN SALDOS – LEE ESTO ANTES</h2>
+        </div>
+        <div class="notice-body">
+            <div class="notice-item">
+                <span class="notice-number">1</span>
+                <p>Prendas pueden tener detalles estéticos (marcas, roces o golpes por manejo).</p>
+            </div>
+            <div class="notice-item">
+                <span class="notice-number">2</span>
+                <p>Otras están en estado excelente, pero a precio especial por ser de esta sección.</p>
+            </div>
+            <div class="notice-item">
+                <span class="notice-number">3</span>
+                <p>No aplican cambios ni devoluciones.</p>
+            </div>
+        </div>
+    </div>
+
     <main id="productos"></main>
     <div id="paginacion"></div>
 
-    <div id="btn-carrito" onclick="toggleCarrito()">
-        <span class="icono-carrito">🛒</span>
+    <div id="btn-carrito" data-ui-scope="desktop" onclick="toggleCarrito()">
+        <svg class="icono-carrito" viewBox="0 0 24 24">
+            <path d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18M7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.59 17.3,11.97L21.16,4.96L19.42,4H5.21L4.27,2H1V4H3L6.6,11.59L5.25,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42C7.29,15 7.17,14.89 7.17,14.63Z"/>
+        </svg>
         <div id="contador-carrito">0</div>
     </div>
 
@@ -161,25 +224,51 @@
         </div>
     </div>
 
-    <footer class="footer-main">
+    <footer class="footer-main" style="display: none;" id="main-footer">
         <p class="footer-text">&copy; 2026 NTENDENCIA PANAMÁ - Todos los derechos reservados</p>
     </footer>
 
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="location.reload()">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">INICIO</span>
+    <nav class="bottom-nav" data-ui-scope="mobile">
+        <div class="nav-item active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M12 3L4 9v12h5v-7h6v7h5V9z"/>
+                </svg>
+            </span>
+            <span class="nav-label">Inicio</span>
+        </div>
+        <div class="nav-item" onclick="toggleCategoriasMobile()">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M3 7h18M3 12h12M3 17h8"/>
+                    <circle cx="17" cy="15" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path fill="none" stroke="currentColor" stroke-width="2" d="M20 18l3 3"/>
+                </svg>
+            </span>
+            <span class="nav-label">Categorías</span>
         </div>
         <div class="nav-item" onclick="mostrarModalPDF()">
-            <span class="nav-icon">📄</span>
-            <span class="nav-label">CATALOGO</span>
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="16" y1="13" x2="8" y2="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="16" y1="17" x2="8" y2="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="10 9 9 9 8 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span class="nav-label">Catálogo</span>
         </div>
         <div class="nav-item" onclick="toggleCarrito()">
             <div style="position: relative; display: inline-block;">
-                <span class="nav-icon">🛒</span>
-                <div id="bottom-nav-badge" class="nav-badge" style="display: none;">0</div>
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 20a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm7 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-7-4h10l3-9H5.2M1 1h4l2.6 12"/>
+                    </svg>
+                </span>
+                <div id="bottom-nav-badge" class="nav-badge-orange" style="display: none;">0</div>
             </div>
-            <span class="nav-label">CARRITO</span>
+            <span class="nav-label">Carrito</span>
         </div>
     </nav>
 
@@ -225,6 +314,86 @@
             </div>
             <div class="modal-saldos-footer">
                 <button class="btn-aceptar-saldos" onclick="aceptarSaldos()">He leído y acepto ver los saldos</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-producto" class="modal-producto" onclick="cerrarModalProducto()">
+        <div class="contenido-producto-modal" onclick="event.stopPropagation()">
+            <span class="cerrar-modal-producto" onclick="cerrarModalProducto()"><i class="fa-solid fa-xmark icon-close-desktop"></i><i class="fa-solid fa-angle-left icon-close-mobile"></i></span>
+            <div class="modal-producto-grid">
+                <!-- Lado Izquierdo: Galería -->
+                <div class="modal-producto-galeria">
+                    <div id="modal-thumbnails" class="modal-thumbnails"></div>
+                    <div class="modal-foto-principal">
+                        <img id="modal-img-grande" src="" alt="">
+                    </div>
+                </div>
+                <!-- Lado Derecho: Info -->
+                <div class="modal-producto-info">
+                    <h2 id="modal-titulo"></h2>
+                    
+                    <div id="modal-descripcion-principal" class="modal-descripcion-principal"></div>
+                    
+                    <div class="modal-precio-bloque">
+                        <div id="modal-precio-container"></div>
+                    </div>
+
+                    <div class="modal-opciones">
+                        <div id="modal-colores-seccion" class="modal-colores-seccion" style="display: none;">
+                            <span class="modal-label">Color</span>
+                            <div id="modal-colores-btns" class="modal-colores-btns"></div>
+                        </div>
+
+                        <div class="modal-tallas-seccion">
+                            <div class="modal-talla-header">
+                                <span>Tamaño</span>
+                                <span class="guia-tallas">Guía de tallas</span>
+                            </div>
+                            <div id="modal-tallas-btns" class="modal-tallas-btns"></div>
+                        </div>
+
+                        <div id="modal-cantidad-seccion" class="modal-cantidad-seccion">
+                            <span>Cant.</span>
+                            <select id="modal-cantidad" class="modal-select-cantidad">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+
+                        <button id="modal-btn-carrito" class="modal-btn-add">
+                              <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor; margin-right: 8px;">
+                                  <path d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18M7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.59 17.3,11.97L21.16,4.96L19.42,4H5.21L4.27,2H1V4H3L6.6,11.59L5.25,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42C7.29,15 7.17,14.89 7.17,14.63Z"/>
+                              </svg>
+                              Añadir al carrito
+                          </button>
+                    </div>
+
+                    <div class="modal-detalles-adicionales">
+                        <div class="detalle-entrega-card">
+                            <div class="entrega-info">
+                                <strong>INFORMACIÓN DE ENTREGA:</strong>
+                                <p>Podemos coordinar los detalles de su entrega directamente por WHATSAPP. Contamos con retiro en Plaza Terronal y Plaza Galería, o envíos 🚚 a todo Panamá mediante Ferguson, Jedidias y Fletes Chavales.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CATEGORÍAS MÓVIL (ESTILO APP) -->
+    <div id="modal-categorias-mobile" class="modal-cats-hidden" data-ui-scope="mobile">
+        <div class="modal-cats-content">
+            <div class="modal-cats-header">
+                <h3>Seleccionar Categoría</h3>
+                <span class="cerrar-modal-cats" onclick="toggleCategoriasMobile()">×</span>
+            </div>
+            <div id="lista-categorias-modal" class="modal-cats-body">
+                <!-- Se llena con JS -->
             </div>
         </div>
     </div>
