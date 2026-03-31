@@ -1,0 +1,285 @@
+/* Estilos para Catálogo */
+
+/* FIX: Evitar estiramiento de tarjetas en móvil */
+@media (max-width: 768px) {
+    #productos {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        padding: 10px !important;
+    }
+
+    .producto {
+        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-self: start !important; /* Evita que se estiren para igualar altura */
+        background: #fff !important;
+        border: 1px solid #eee !important;
+        padding: 8px !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+    }
+
+    .main-img-container {
+        height: 180px !important; /* Altura fija para consistencia */
+        margin-bottom: 8px !important;
+    }
+
+    .producto-info h3 {
+        font-size: 0.85rem !important;
+        height: 2.6em !important;
+        line-height: 1.3 !important;
+        margin-bottom: 5px !important;
+    }
+}
+
+/* STICKY HEADER MÓVIL (Logo se oculta, buscador y categorías se quedan) */
+@media (max-width: 768px) {
+    .fixed-top-container {
+        position: sticky !important; /* Volvemos a sticky pero aseguramos que funcione */
+        top: 0 !important;
+        z-index: 3000 !important;
+        width: 100% !important;
+        background: var(--marca-primario) !important;
+        display: block !important;
+        /* Quitamos transiciones globales de contenedor que pueden causar parpadeo */
+    }
+
+    /* Padding-top en 0 porque sticky maneja el flujo nativa */
+    body {
+        padding-top: 0 !important;
+        overflow-anchor: auto !important; 
+    }
+
+    /* OCULTACIÓN INSTANTÁNEA: El parpadeo ocurre por las transiciones de altura */
+    /* Usar display: none es lo único que garantiza que el navegador no parpadee al recalcular el sticky */
+    body.mobile-logo-hidden .mobile-app-title,
+    body.mobile-logo-hidden .saldos-warning-banner {
+        display: none !important;
+    }
+
+    .mobile-app-title, .saldos-warning-banner {
+        transition: none !important; /* Eliminamos transiciones que causan el parpadeo */
+        overflow: visible !important;
+    }
+
+    .mobile-app-title {
+        background: var(--marca-primario) !important;
+        padding: 15px 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .saldos-warning-banner {
+        display: none !important; /* Oculto por defecto en móvil */
+        background: #000;
+        color: var(--marca-secundario);
+        font-size: 0.75rem;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 0 !important;
+    }
+
+    /* Solo mostrar si el body tiene la clase activa de saldos */
+    body.seccion-saldos-activa .saldos-warning-banner {
+        display: flex !important;
+    }
+
+    .header-main {
+        background: var(--marca-primario) !important;
+        padding: 10px 15px !important;
+        border-bottom: 2px solid var(--marca-secundario) !important;
+    }
+
+    .mobile-categories-nav {
+        display: flex !important;
+        background: #fff !important;
+        border-bottom: 1px solid #eee !important;
+        padding: 8px 0 !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+    }
+
+    .search-wrapper {
+        width: 100% !important;
+        margin: 0 !important;
+        gap: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .search-box {
+        flex: 1 !important;
+    }
+
+    #buscador {
+        background: #fff !important;
+        color: #000 !important;
+        border: 1px solid rgba(0,0,0,0.1) !important;
+    }
+}
+
+/* ESTILOS DE ESCRITORIO PARA LAS TARJETAS (IGUAL QUE HOMEPAGE) */
+@media (min-width: 993px) {
+    #productos {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr) !important; /* Forzar 5 columnas para simetría con homepage */
+        gap: 20px !important;
+        padding: 40px 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 1200px) {
+        #productos {
+            grid-template-columns: repeat(4, 1fr) !important; /* 4 columnas en pantallas algo más pequeñas */
+        }
+    }
+
+    .producto {
+        background: #fff !important;
+        border: 1px solid #eee !important;
+        padding: 10px !important; /* Reducido de 15px a 10px para mayor simetría */
+        border-radius: 0 !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.03) !important;
+        transition: 0.3s !important;
+        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .producto:hover {
+        transform: none !important; /* Elimina el alzamiento de la tarjeta */
+        box-shadow: 0 30px 60px rgba(0,0,0,0.12) !important; /* Mantiene solo la sombra */
+    }
+
+    .main-img-container {
+        height: 300px !important; /* Ajustado para ser más proporcional al padding de 10px */
+        margin-bottom: 12px !important; /* Margen inferior de la imagen reducido */
+        background: #f9f9f9 !important;
+        border-radius: 0 !important;
+    }
+
+    .main-img-container img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important; /* Estilo homepage */
+        padding: 5px !important; /* Pequeño respiro interno para la foto */
+    }
+
+    .producto-info {
+        padding: 5px !important; /* Espaciado interno de la info ajustado */
+    }
+
+    .producto-info h3 {
+        font-family: 'Poppins', sans-serif !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 10px !important;
+        color: #333 !important;
+        height: 2.6em !important;
+        line-height: 1.3 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+
+    .codigo-producto-card {
+        font-size: 0.65rem !important;
+        color: #888 !important;
+        margin-bottom: 5px !important;
+    }
+
+    .precio-acciones {
+        border-top: none !important;
+        padding-top: 0 !important;
+        margin-top: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+
+    .precio {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+
+    .precio-actual {
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
+        color: #e44d26 !important;
+    }
+
+    .talla-descriptiva-grid {
+        font-size: 0.7rem !important;
+        background: #f0f0f0 !important;
+        padding: 2px 8px !important;
+        border-radius: 2px !important;
+        color: #333 !important;
+        margin: 0 !important;
+        min-height: auto !important;
+        display: inline-block !important;
+        width: auto !important;
+    }
+
+    .icon-buttons {
+        display: flex !important;
+        gap: 10px !important;
+        width: 100% !important;
+    }
+
+    .icon-btn-v2 {
+        flex: 1 !important;
+        height: 40px !important;
+        border-radius: 4px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: 0.3s !important;
+        text-transform: uppercase !important;
+        font-weight: 700 !important;
+        font-size: 0.75rem !important;
+    }
+
+    .icon-btn-v2.whatsapp {
+        background: #25D366 !important;
+        color: #fff !important;
+        border: none !important;
+    }
+
+    .icon-btn-v2.add-cart {
+        background: #000 !important;
+        color: #fff !important;
+        border: none !important;
+    }
+
+    .icon-btn-v2 i {
+        font-size: 1.1rem !important;
+    }
+
+    .icon-btn-v2:hover {
+        opacity: 0.9 !important;
+        transform: translateY(-2px) !important;
+    }
+
+    .icon-btn-v2:active {
+        transform: scale(0.92) !important; /* Efecto de "apretar" al hacer clic */
+        transition: transform 0.1s !important;
+    }
+
+    /* UNIFICACIÓN DE TAMAÑO DE BARRA SUPERIOR */
+    .header-main {
+        padding: 10px 10px !important; /* Reducido a 10px para mover el logo a la izquierda */
+        min-height: auto !important;
+        border-bottom: 4px solid #E0C080 !important; /* Aumentado a 4px para coincidir con homepage */
+    }
+
+    .logo-imagen {
+        height: 45px !important; /* Misma altura que el logo de homepage */
+        width: auto !important;
+    }
+}

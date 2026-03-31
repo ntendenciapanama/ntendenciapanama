@@ -2,233 +2,270 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <title>NTENDENCIA PANAMÁ | CATALOGO</title>
-    <meta name="description" content="Viste el momento. Descubre nuestra colección exclusiva de moda.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTENDENCIA PANAMÁ | HOME</title>
+    <meta name="description" content="Viste el momento. Descubre nuestra colección exclusiva de moda en NTENDENCIA PANAMÁ.">
 
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="apple-touch-icon" href="favicon.png">
-
+    <!-- OpenGraph para redes sociales -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ntendenciapanama.vercel.app/">
-    <meta property="og:title" content="NTENDENCIA PANAMÁ">
-    <meta property="og:description" content="Explora nuestro catálogo.">
-    <meta property="og:image" content="preview.jpg"> 
+    <meta property="og:title" content="NTENDENCIA PANAMÁ | HOME">
+    <meta property="og:description" content="Explora nuestro catálogo exclusivo.">
+    <meta property="og:image" content="preview.jpg">
     <meta property="og:image:width" content="600">
     <meta property="og:image:height" content="600">
-    <meta property="og:image:type" content="image/jpeg">
 
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- Librerías para PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="js_modules/core/core.css">
+    <link rel="stylesheet" href="homepage-styles.css?v=1.5">
 </head>
 <body>
-
-    <!-- BANNER POPUP PARA MÓVILES -->
-    <div id="banner-popup" class="banner-popup">
-        <div class="banner-content">
-            <span class="cerrar-banner" onclick="cerrarBanner()">&times;</span>
-            <img src="logo.png" alt="NTENDENCIA PANAMÁ" class="banner-logo">
-            <h2 class="banner-title">Bienvenidos a NTENDENCIA PANAMÁ</h2>
-            <p class="banner-subtitle">EXCLUSIVIDAD AL MEJOR PRECIO</p>
-            <button class="banner-cta" onclick="cerrarBanner()">Explorar Colección</button>
-        </div>
-    </div>
-
-    <header class="header-main"> 
-        <div class="logo-wrapper">
-            <img src="logo.png" alt="NTENDENCIA PANAMÁ" class="logo-imagen">
-        </div>
-        
-        <div class="search-container">
-            <input type="text" id="buscador" placeholder="¿Qué buscas hoy?">
-            <p class="slogan-marca">ESTILO QUE INSPIRA CADA PASO</p> 
-        </div>
-
-        <div class="contact-icons">
-            <a href="https://instagram.com/NTENDENCIAPANAMA" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                <svg class="icon icon-instagram" viewBox="0 0 24 24" aria-hidden="true">
-                    <defs>
-                        <linearGradient id="instaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#f09433"/>
-                            <stop offset="25%" stop-color="#e6683c"/>
-                            <stop offset="50%" stop-color="#dc2743"/>
-                            <stop offset="75%" stop-color="#cc2366"/>
-                            <stop offset="100%" stop-color="#bc1888"/>
-                        </linearGradient>
-                    </defs>
-                    <path fill="url(#instaGrad)" d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.056 1.97.246 2.427.415a4.92 4.92 0 0 1 1.675 1.093 4.92 4.92 0 0 1 1.093 1.675c.169.457.359 1.257.415 2.427.058 1.266.07 1.646.07 4.85s-.012 3.584-.070 4.85c-.056 1.17-.246 1.97-.415 2.427a4.92 4.92 0 0 1-1.093 1.675 4.92 4.92 0 0 1-1.675 1.093c-.457.169-1.257.359-2.427.415-1.266.058-1.646.07-4.85.070s-3.584-.012-4.85-.07c-1.17-.056-1.97-.246-2.427-.415a4.918 4.918 0 0 1-2.768-2.768c-.169-.457-.359-1.257-.415-2.427C2.175 15.747 2.163 15.367 2.163 12s.012-3.584.070-4.85c.056-1.17.246-1.97.415-2.427a4.92 4.92 0 0 1 1.093-1.675 4.92 4.92 0 0 1 1.675-1.093c.457-.169 1.257-.359 2.427-.415C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.332.013 7.052.072 5.775.132 4.78.34 4.012.659a6.919 6.919 0 0 0-2.5 1.637A6.919 6.919 0 0 0 .659 4.012c-.319.768-.527 1.763-.587 3.040C.013 8.332 0 8.741 0 12c0 3.259.013 3.668.072 4.948.06 1.277.268 2.272.587 3.040a6.919 6.919 0 0 0 1.637 2.5 6.919 6.919 0 0 0 2.5 1.637c.768.319 1.763.527 3.040.587 1.28.059 1.689.072 4.948.072s3.668-.013 4.948-.072c1.277-.060 2.272-.268 3.040-.587a6.918 6.918 0 0 0 2.5-1.637 6.918 6.918 0 0 0 1.637-2.5c.319-.768.527-1.763.587-3.040.059-1.28.072-1.689.072-4.948s-.013-3.668-.072-4.948c-.060-1.277-.268-2.272-.587-3.040a6.919 6.919 0 0 0-1.637-2.5A6.919 6.919 0 0 0 19.988.659c-.768-.319-1.763-.527-3.040-.587C15.668.013 15.259 0 12 0z"/>
-                    <path fill="url(#instaGrad)" d="M12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 1 0 0-12.324zm0 10.162a3.999 3.999 0 1 1 0-7.998 3.999 3.999 0 1 1 0 7.998z"/>
-                    <circle fill="url(#instaGrad)" cx="18.406" cy="5.594" r="1.44"/>
-                </svg>
-            </a>
-
-            <a href="https://tiktok.com/@NTENDENCIAPANAMA" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                <svg class="icon icon-tiktok" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.9-.32-1.98-.23-2.81.31-.75.42-1.24 1.16-1.35 1.99-.28 1.35.23 2.76 1.22 3.69.75.71 1.74 1.1 2.76 1.07 1.01-.03 1.98-.47 2.63-1.21.58-.66.9-1.53.92-2.42V.02z"/>
-                </svg>
-            </a>
-
-            <a href="https://facebook.com/NTENDENCIAPANAMA" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                <svg class="icon icon-facebook" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="currentColor" d="M22.675 0h-21.35C.595 0 0 .593 0 1.326v21.348C0 23.406.593 24 1.326 24H12.82v-9.294H9.692V11.41h3.128V8.709c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.466.099 2.798.143v3.24l-1.918.001c-1.504 0-1.796.715-1.796 1.763v2.313h3.59l-.467 3.296h-3.123V24h6.116C23.406 24 24 23.406 24 22.674V1.326C24 .593 23.406 0 22.675 0z"/>
-                </svg>
-            </a>
-
-            <a href="https://wa.me/50767710645" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-                <svg class="icon icon-whatsapp" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="currentColor" d="M12.041 0C5.397 0 0 5.397 0 12.041c0 2.117.557 4.159 1.611 5.951L0 24l6.162-1.617a11.985 11.985 0 0 0 5.879 1.553c6.644 0 12.041-5.397 12.041-12.041S18.685 0 12.041 0zm0 21.493a9.452 9.452 0 0 1-5-1.444l-.356-.215-3.098 1.429.657-3.124-.261-.397a9.452 9.452 0 0 1-1.481-5.045c0-5.224 4.243-9.467 9.467-9.467s9.467 4.243 9.467 9.467-4.242 9.467-9.467 9.467zm5.188-6.739c-.302-.159-1.819-.94-2.108-1.045-.289-.105-.506-.157-.71.161-.202.317-.78 1.053-.955 1.268-.176.216-.353.242-.61.081-.256-.161-1.056-.501-2.009-1.6-.742-.66-1.244-1.48-1.388-1.72-.145-.239-.015-.373.111-.49.125-.117.277-.303.414-.466.138-.164.182-.281.273-.466.091-.186.046-.349-.023-.49-.068-.14-.613-1.503-.842-2.062-.221-.548-.442-.473-.61-.483l-.515-.009c-.182 0-.478.068-.728.337s-.954.92-.954 2.244c0 1.323.961 2.603 1.094 2.784.133.181 1.877 3.17 4.539 4.449.634.274 1.129.438 1.518.561.636.203 1.215.175 1.675.106.51-.076 1.572-.643 1.793-1.264.25-.622.25-1.156.174-1.267-.077-.111-.28-.178-.585-.312z"/>
-                </svg>
-            </a>
-            
-            <button class="btn-catalogo-desktop" onclick="mostrarModalPDF()">
-                <span>📄</span> Catálogo
-            </button>
-        </div>
-
-        <div class="marquee-wrapper">
-            <div id="marquee-promociones" class="marquee-track">
-                <span>
-                    ✨ BIENVENIDOS (AS) A NTENDENCIA PANAMÁ: SÍGUENOS EN NUESTRAS REDES SOCIALES Y CONOCE LA EXCLUSIVIDAD AL MEJOR PRECIO ✨ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    💎 MARCAS PREMIUM SELECCIONADAS SOLO PARA TI 💎 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    🔥 ¡LO QUE VES HOY, SE VA MAÑANA! – UNIDADES LIMITADAS POR MODELO – PIDE LA TUYA ANTES QUE SE AGOTE 🔥 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    ✅ CALIDAD GARANTIZADA – ENVÍOS SEGUROS A TODO PANAMÁ – LA MODA QUE BUSCAS A UN CLIC DE DISTANCIA ✅ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </span>
-                <span>
-                    ✨ BIENVENIDOS (AS) A NTENDENCIA PANAMÁ: SÍGUENOS EN NUESTRAS REDES SOCIALES Y CONOCE LA EXCLUSIVIDAD AL MEJOR PRECIO ✨ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    💎 MARCAS PREMIUM SELECCIONADAS SOLO PARA TI 💎 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    🔥 ¡LO QUE VES HOY, SE VA MAÑANA! – UNIDADES LIMITADAS POR MODELO – PIDE LA TUYA ANTES QUE SE AGOTE 🔥 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    ✅ CALIDAD GARANTIZADA – ENVÍOS SEGUROS A TODO PANAMÁ – LA MODA QUE BUSCAS A UN CLIC DE DISTANCIA ✅ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </span>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html"><img src="logo.png" alt="NTENDENCIA PANAMÁ" width="180" height="50"></a>
+            </div>
+            <nav class="desktop-nav">
+                <ul id="main-nav-list">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="catalogo.html?category=Ropa">Ropa</a></li>
+                    <li><a href="catalogo.html?category=Vestido de Baño">Vestido de Baño</a></li>
+                    <li><a href="catalogo.html?category=Accesorios">Accesorios</a></li>
+                    <li><a href="catalogo.html?category=Saldos">Saldos</a></li>
+                    <li><a href="catalogo.html" class="btn-catalog">VER CATÁLOGO</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
             </div>
         </div>
     </header>
 
-    <nav id="categorias" class="categorias-inline">
-    </nav>
-
-    <!-- Botón de descarga de catálogo PDF (Oculto, se activa desde el modal) -->
-    <div id="contenedor-pdf-dinamico" style="display: none;">
-        <button id="btn-pdf" onclick="generarCatalogoPDF()"></button>
-    </div>
-    
-    <main id="productos"></main>
-    <div id="paginacion"></div>
-
-    <div id="btn-carrito" onclick="toggleCarrito()">
-        <span class="icono-carrito">🛒</span>
-        <div id="contador-carrito">0</div>
-    </div>
-
-    <div id="modal-carrito" class="modal-carrito" onclick="toggleCarrito()">
-        <div class="contenido-carrito" onclick="event.stopPropagation()">
-            <div class="header-carrito">
-                <div class="titulo-carrito">
-                    <h2>Mi Lista de Pedido</h2>
-                    <p>Revisa tus piezas antes de confirmar</p>
+    <!-- Hero Slider (Estilo que marca tendencia) -->
+    <section class="hero-premium">
+        <div class="hero-video-bg">
+            <div class="hero-overlay"></div>
+            <!-- Imagen de boutique real que muestra ropa y accesorios claramente -->
+            <img src="homepage_assets/hero-bg.webp" class="hero-bg-media" id="hero-img">
+        </div>
+        <div class="container hero-premium-container">
+            <div class="hero-premium-content">
+                <h1 class="hero-title">
+                    <span class="hero-line">MIRA TODOS NUESTROS</span>
+                    <span class="hero-line">PRODUCTOS</span>
+                </h1>
+                <div class="hero-actions">
+                    <a href="catalogo.html" class="btn-cool-primary">VER PRODUCTOS</a>
                 </div>
-                <span class="cerrar-carrito" onclick="toggleCarrito()">&times;</span>
-            </div>
-            <div id="lista-carrito" class="cuerpo-carrito"></div>
-            <div class="footer-carrito">
-                <div class="total-contenedor">
-                    <span class="etiqueta-total">Total estimado:</span>
-                    <span class="monto-total">$<span id="precio-total">0.00</span></span>
-                </div>
-                <button class="btn-enviar-pedido" onclick="enviarPedidoWhatsApp()">
-                    Confirmar Pedido vía WhatsApp
-                </button>
-                <p class="nota-seguridad">Tu pedido se enviará de forma segura a nuestro chat oficial.</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div id="lightbox" class="lightbox" onclick="cerrarImagen()">
-        <span class="cerrar-lightbox">&times;</span>
-        <div class="galeria-wrapper" onclick="event.stopPropagation()">
-            <div class="galeria-container">
-                <button class="flecha-incrustada prev" onclick="cambiarImagenNav(-1, event)" aria-label="Anterior">&#10094;</button>
-                <div class="img-wrapper">
-                    <img id="img-grande" class="lightbox-img" alt="Vista ampliada del producto">
-                </div>
-                <button class="flecha-incrustada next" onclick="cambiarImagenNav(1, event)" aria-label="Siguiente">&#10095;</button>
+    <!-- Main Content Container -->
+    <main id="homepage-sections" class="main-content">
+        <!-- Contenedores para inyección de UI -->
+        <div id="modal-carrito-container"></div>
+        <div id="btn-carrito-container">
+            <!-- Botón Carrito Desktop -->
+            <div id="btn-carrito" data-ui-scope="desktop" onclick="toggleCarrito()">
+                <svg class="icono-carrito" viewBox="0 0 24 24">
+                    <path d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18M7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.59 17.3,11.97L21.16,4.96L19.42,4H5.21L4.27,2H1V4H3L6.6,11.59L5.25,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42C7.29,15 7.17,14.89 7.17,14.63Z"/>
+                </svg>
+                <div id="contador-carrito">0</div>
             </div>
-            <div id="lightbox-nav" class="lightbox-nav"></div>
         </div>
-    </div>
 
-    <footer class="footer-main">
-        <p class="footer-text">&copy; 2026 NTENDENCIA PANAMÁ - Todos los derechos reservados</p>
-    </footer>
+        <!-- SECCIÓN 1: CARRUSEL PRODUCTOS (Cargado por JS) -->
+        <section class="product-carousel-section" id="section-1">
+            <div class="container">
+                <h2 class="section-title" id="title-1">RECIÉN LLEGADOS</h2>
+                <div class="carousel-container">
+                    <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
+                    <div class="product-carousel" id="carousel-1" data-codes="auto" style="min-height: 400px;">
+                        <!-- Productos automáticos (Muestra los 10 últimos del CSV) -->
+                    </div>
+                    <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
 
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="location.reload()">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">INICIO</span>
+        <!-- SECCIÓN 2: GRID DAMAS -->
+        <section class="categories-section" id="grid-damas">
+            <div class="container">
+                <div class="categories-grid">
+                    <div class="category-item main-category" id="cat-main-damas">
+                        <div class="category-overlay">
+                            <span class="dept-text">Departamento de</span>
+                            <h2>DAMAS</h2>
+                        </div>
+                    </div>
+                    <div class="sub-categories-grid">
+                        <div class="category-item sub-category" id="cat-blusas"><div class="category-overlay"><h3>BLUSAS</h3></div></div>
+                        <div class="category-item sub-category" id="cat-accesorios"><div class="category-overlay"><h3>ACCESORIOS</h3></div></div>
+                        <div class="category-item sub-category" id="cat-shorts"><div class="category-overlay"><h3>SHORTS</h3></div></div>
+                        <div class="category-item sub-category" id="cat-zapatillas"><div class="category-overlay"><h3>ZAPATILLAS</h3></div></div>
+                        <div class="category-item sub-category" id="cat-jeans"><div class="category-overlay"><h3>JEANS</h3></div></div>
+                        <div class="category-item sub-category" id="cat-sandalias"><div class="category-overlay"><h3>SANDALIAS</h3></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: CARRUSEL PRODUCTOS (Cargado por JS) -->
+        <section class="product-carousel-section" id="section-2">
+            <div class="container">
+                <h2 class="section-title" id="title-2">VESTIDOS DE BAÑOS</h2>
+                <div class="carousel-container">
+                    <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
+                    <div class="product-carousel" id="carousel-2" data-codes='["VB-PKAMI", "VB-UY06O", "VB-9DQ52", "VB-8DOUY", "VB-789MA", "VB-3SK53", "VB-Q6C8R", "VB-S83EC", "VB-O2DSE", "VB-FJOLU", "VB-R4EKT", "VB-USIZ9", "VB-JPAZU", "VB-03M6O", "VB-1U4PR", "VB-2547S", "VB-2KMWO", "VB-30IWL", "VB-3U62T", "VB-4MT6D", "VB-5OIWU", "VB-5Y397", "VB-8YDMF", "VB-C4PBR", "VB-DHLO6", "VB-ER56H", "VB-FO0WL", "VB-FXX27", "VB-G1KAQ", "VB-G5745", "VB-H38EG", "VB-N2M9J", "VB-O885E", "VB-OQ3P2", "VB-UI7TP", "VB-W1QFD"]' style="min-height: 400px;">
+                        <!-- Productos automáticos -->
+                    </div>
+                    <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: GRID EXPLORA MÁS (Vestidos de Baño) -->
+        <section class="explore-grid-section">
+            <div class="container">
+                <div class="explore-grid">
+                    <div class="explore-item large" id="exp-1">
+                        <div class="explore-overlay">
+                            <span>Exclusividad</span>
+                            <h3>ESTILO PLAYERO ÚNICO</h3>
+                            <a href="catalogo.html?search=VB-" class="btn-explore">Ver Colección <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="explore-item medium" id="exp-2">
+                        <div class="explore-overlay">
+                            <span>Tendencia</span>
+                            <h3>COLOR Y DISEÑO</h3>
+                            <a href="catalogo.html?search=VB-" class="btn-explore">Ver más</a>
+                        </div>
+                    </div>
+                    <div class="explore-item medium" id="exp-3">
+                        <div class="explore-overlay">
+                            <span>Oportunidad</span>
+                            <h3>PIEZAS IRREPETIBLES</h3>
+                            <a href="catalogo.html?search=VB-" class="btn-explore">Descubrir</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: BANNER PROMOCIONAL (Ancho Completo) -->
+        <section class="promo-banner-section">
+            <div class="promo-banner-box">
+                <!-- Imagen de fondo real con URL local -->
+                <img src="homepage_assets/promo-bg.webp" class="promo-bg-img" id="promo-img">
+                <!-- Capa oscura para que el texto se vea -->
+                <div class="promo-overlay"></div>
+                <!-- Contenido del texto -->
+                <div class="promo-content">
+                    <span class="promo-tag">NUESTRA SELECCIÓN</span>
+                    <h2>DAMAS • CABALLERO • VESTIDOS DE BAÑO • ACCESORIOS</h2>
+                    <p>Las mejores tendencias y piezas únicas de primera y segunda mano seleccionadas cuidadosamente para ti.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 6: GRID CABALLERO -->
+        <section class="categories-section" id="grid-caballero">
+            <div class="container">
+                <div class="categories-grid">
+                    <div class="category-item main-category" id="cat-main-caballero">
+                        <div class="category-overlay">
+                            <span class="dept-text">Departamento de</span>
+                            <h2>CABALLERO</h2>
+                        </div>
+                    </div>
+                    <div class="sub-categories-grid">
+                        <div class="category-item sub-category" id="cat-polos"><div class="category-overlay"><h3>POLOS</h3></div></div>
+                        <div class="category-item sub-category" id="cat-jeans-c"><div class="category-overlay"><h3>JEANS</h3></div></div>
+                        <div class="category-item sub-category" id="cat-trajes"><div class="category-overlay"><h3>TRAJES</h3></div></div>
+                        <div class="category-item sub-category" id="cat-shorts-c"><div class="category-overlay"><h3>SHORTS</h3></div></div>
+                        <div class="category-item sub-category" id="cat-tshirts"><div class="category-overlay"><h3>T-SHIRTS</h3></div></div>
+                        <div class="category-item sub-category" id="cat-camisas"><div class="category-overlay"><h3>CAMISAS</h3></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE VALOR (¿Cómo comprar?) -->
+        <section class="ventajas-section">
+            <div class="container">
+                <h2 class="ventajas-title">¿CÓMO COMPRAR EN NTENDENCIA?</h2>
+                <div class="ventajas-grid">
+                    <!-- Tarjeta 1 -->
+                    <div class="ventaja-card">
+                        <div class="ventaja-icon"><i class="fas fa-shopping-cart"></i></div>
+                        <div class="ventaja-content">
+                            <h3>1. Explora y Añade</h3>
+                            <p>Navega por nuestro catálogo, elige tus piezas favoritas y añádelas a tu carrito de compras.</p>
+                        </div>
+                    </div>
+                    <!-- Tarjeta 2 -->
+                    <div class="ventaja-card">
+                        <div class="ventaja-icon"><i class="fas fa-paper-plane"></i></div>
+                        <div class="ventaja-content">
+                            <h3>2. Envía tu Pedido</h3>
+                            <p>Una vez listo, ve a tu carrito y completa el formulario para enviarnos tu selección de productos.</p>
+                        </div>
+                    </div>
+                    <!-- Tarjeta 3 -->
+                    <div class="ventaja-card">
+                        <div class="ventaja-icon"><i class="fab fa-whatsapp"></i></div>
+                        <div class="ventaja-content">
+                            <h3>3. Coordina y Recibe</h3>
+                            <p>Te contactaremos por WhatsApp para confirmar el pago y coordinar la entrega.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-container"></div>
+
+    <!-- Navegación inferior móvil (Estilo Temu) -->
+    <nav class="bottom-nav" data-ui-scope="mobile">
+        <div class="nav-item active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M12 3L4 9v12h5v-7h6v7h5V9z"/>
+                </svg>
+            </span>
+            <span class="nav-label">Inicio</span>
         </div>
-        <div class="nav-item" onclick="mostrarModalPDF()">
-            <span class="nav-icon">📄</span>
-            <span class="nav-label">CATALOGO</span>
+        <div class="nav-item" onclick="window.location.href='catalogo.html'">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <rect x="3" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="14" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="14" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="3" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span class="nav-label">Catálogo</span>
         </div>
         <div class="nav-item" onclick="toggleCarrito()">
             <div style="position: relative; display: inline-block;">
-                <span class="nav-icon">🛒</span>
-                <div id="bottom-nav-badge" class="nav-badge" style="display: none;">0</div>
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 20a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm7 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-7-4h10l3-9H5.2M1 1h4l2.6 12"/>
+                    </svg>
+                </span>
+                <div id="bottom-nav-badge" class="nav-badge-orange" style="display: none;">0</div>
             </div>
-            <span class="nav-label">CARRITO</span>
+            <span class="nav-label">Carrito</span>
         </div>
     </nav>
 
-    <!-- Modal para descargar PDF -->
-    <div id="modal-pdf" class="modal-pdf-hidden">
-        <div class="modal-pdf-content">
-            <span class="cerrar-modal-pdf" onclick="cerrarModalPDF()">×</span>
-            <div class="modal-pdf-header">
-                <span class="modal-icon">📄</span>
-                <h2>Catálogo Digital</h2>
-            </div>
-            <div class="modal-pdf-body">
-                <p>¿Deseas descargar el catálogo completo de <strong>NTENDENCIA PANAMA 2026</strong> en formato PDF?</p>
-                <p class="modal-text">(Incluye fotos, precios, códigos y tallas de todos los productos disponibles)</p>
-            </div>
-            <div class="modal-pdf-footer">
-                <button class="btn-cancelar-pdf" onclick="cerrarModalPDF()">CANCELAR</button>
-                <button class="btn-confirmar-pdf" onclick="confirmarDescargaPDF()">DESCARGAR</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal SALDOS -->
-    <div id="modal-saldos" class="modal-saldos-hidden">
-        <div class="modal-saldos-content">
-            <span class="cerrar-modal-saldos" onclick="cerrarModalSaldos()">×</span>
-            <div class="modal-saldos-header">
-                <span class="modal-saldos-icono">⚠️</span>
-                <h2>SECCIÓN SALDOS – LEE ESTO ANTES</h2>
-            </div>
-            <div class="modal-saldos-body">
-                <p><strong>1. Stock limitado:</strong><br>
-                    Cada pieza es casi <strong>única</strong>; rara vez hay varias unidades por talla o modelo.</p>
-
-                <p><strong>2. Detalles técnicos:</strong><br>
-                    Algunas prendas de saldos pueden tener <strong>pequeños detalles estéticos de almacén</strong>
-                    (marcas leves, roces, pequeños golpes por almacenamiento o manejo).<br>
-                    Otras están en <strong>estado excelente</strong>, pero igual se ofrecen a
-                    <strong>precio especial</strong> por formar parte de esta sección.</p>
-
-                <p><strong>3. Condiciones de la sección:</strong><br>
-                    <strong>No aplican cambios ni devoluciones.</strong></p>
-            </div>
-            <div class="modal-saldos-footer">
-                <button class="btn-aceptar-saldos" onclick="aceptarSaldos()">He leído y acepto ver los saldos</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+    <!-- Scripts -->
+    <script src="script.js?v=1.5" defer></script>
 </body>
 </html>
