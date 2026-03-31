@@ -82,20 +82,37 @@ export function createModalProductoUI({ logic }) {
         return Math.floor(stock);
     }
 
+<<<<<<< HEAD
     let currentOnClose = null;
 
+=======
+<<<<<<< HEAD
+    let currentOnClose = null;
+
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     function close() {
         const modal = document.getElementById("modal-producto");
         if (!modal) return;
         modal.style.display = "none";
         document.body.style.overflow = "auto";
         document.body.classList.remove("producto-modal-abierto");
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         
         if (typeof currentOnClose === "function") {
             const callback = currentOnClose;
             currentOnClose = null; // Limpiar antes de llamar para evitar bucles
             callback();
         }
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     }
 
     function renderSizes(product, onSizeChange, preferredSize = "") {
@@ -190,6 +207,10 @@ export function createModalProductoUI({ logic }) {
 
     function renderGallery(product) {
         const mainImage = document.getElementById("modal-img-grande");
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         let selectedIndex = 0;
         
         const imagenes = (product.imagenes && product.imagenes.length > 0) 
@@ -209,10 +230,30 @@ export function createModalProductoUI({ logic }) {
         mainImage.onclick = () => {
             if (typeof window.abrirGaleria !== "function") return;
             window.abrirGaleria(product.codigo, imagenes.length, selectedIndex + 1);
+<<<<<<< HEAD
+=======
+=======
+        let selectedIndex = 1;
+        mainImage.src = `images/${product.codigo}/1.jpg`;
+        mainImage.onerror = () => {
+            mainImage.src = `images/${product.codigo}/1.png`;
+        };
+        mainImage.style.cursor = window.innerWidth <= 768 ? "zoom-in" : "default";
+        mainImage.onclick = () => {
+            if (window.innerWidth > 768) return;
+            if (typeof window.abrirGaleria !== "function") return;
+            close();
+            window.abrirGaleria(product.codigo, product.totalImagenes, selectedIndex);
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         };
 
         const thumbsContainer = document.getElementById("modal-thumbnails");
         thumbsContainer.innerHTML = "";
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         
         imagenes.forEach((imgSrc, idx) => {
             const thumb = document.createElement("img");
@@ -227,12 +268,34 @@ export function createModalProductoUI({ logic }) {
             };
             thumb.onclick = () => {
                 selectedIndex = idx;
+<<<<<<< HEAD
+=======
+=======
+        for (let i = 1; i <= product.totalImagenes; i++) {
+            const thumb = document.createElement("img");
+            thumb.src = `images/${product.codigo}/${i}.jpg`;
+            thumb.className = `modal-thumb ${i === 1 ? "activa" : ""}`;
+            thumb.onerror = () => {
+                thumb.src = `images/${product.codigo}/${i}.png`;
+            };
+            thumb.onclick = () => {
+                selectedIndex = i;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
                 mainImage.src = thumb.src;
                 thumbsContainer.querySelectorAll(".modal-thumb").forEach(item => item.classList.remove("activa"));
                 thumb.classList.add("activa");
             };
             thumbsContainer.appendChild(thumb);
+<<<<<<< HEAD
         });
+=======
+<<<<<<< HEAD
+        });
+=======
+        }
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     }
 
     function renderCartButton(product, options = {}) {
@@ -291,8 +354,16 @@ export function createModalProductoUI({ logic }) {
         if (!product) return;
         const preferredQuantity = Math.max(Number(options.initialQuantity) || 1, 1);
 
+<<<<<<< HEAD
         currentOnClose = options.onClose || null;
 
+=======
+<<<<<<< HEAD
+        currentOnClose = options.onClose || null;
+
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         renderBase(product);
         renderSizes(product, (size) => {
             renderQuantity(product, size, getColorActivo(product), getCantidadSeleccionada() || preferredQuantity);

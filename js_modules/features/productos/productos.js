@@ -17,11 +17,21 @@ export function createProductosLogic({ service, eventBus }) {
         if (state.selectedCategory === null) return true;
         if (state.selectedCategory === "Todas") return true;
         if (state.selectedCategory === "Saldos") return item.categoria?.toLowerCase() === "saldos";
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         
         // Comparación insensible a mayúsculas y espacios para máxima compatibilidad
         const itemCat = (item.categoria || "").toLowerCase().trim();
         const selectedCat = (state.selectedCategory || "").toLowerCase().trim();
         return itemCat === selectedCat;
+<<<<<<< HEAD
+=======
+=======
+        return item.categoria === state.selectedCategory;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     }
 
     function bySearch(item) {
@@ -30,6 +40,10 @@ export function createProductosLogic({ service, eventBus }) {
         return item.nombre.toLowerCase().includes(term) || item.codigo.toLowerCase().includes(term);
     }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     function updateURL() {
         try {
             const url = new URL(window.location.href);
@@ -70,11 +84,29 @@ export function createProductosLogic({ service, eventBus }) {
             }
         }
         
+<<<<<<< HEAD
+=======
+=======
+    function refresh() {
+        const catalog = service.getCatalogoCompleto();
+        let filtered;
+        const isAllCategory = state.selectedCategory === null || state.selectedCategory === "Todas";
+        if (isAllCategory && !state.searchTerm) {
+            filtered = shuffleItems(service.getTodosLosProductos());
+        } else {
+            filtered = catalog.filter(item => byCategory(item) && bySearch(item));
+        }
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         service.setProductosFiltrados(filtered);
         service.renderProducts();
     }
 
     function applySearch(term) {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         const normalized = (term || "").toLowerCase().trim();
         if (state.searchTerm === normalized) return;
         
@@ -87,11 +119,21 @@ export function createProductosLogic({ service, eventBus }) {
         }
         
         updateURL();
+<<<<<<< HEAD
+=======
+=======
+        state.searchTerm = (term || "").toLowerCase().trim();
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         service.setPaginaActual(1);
         refresh();
     }
 
     function applyCategory(category) {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         const normalized = category || "Todas";
         if (state.selectedCategory === normalized) return;
         
@@ -104,6 +146,12 @@ export function createProductosLogic({ service, eventBus }) {
         if (buscador) buscador.value = "";
         
         updateURL();
+<<<<<<< HEAD
+=======
+=======
+        state.selectedCategory = category || "Todas";
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         service.setPaginaActual(1);
         refresh();
     }

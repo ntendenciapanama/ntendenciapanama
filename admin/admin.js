@@ -57,13 +57,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (GITHUB_TOKEN && GITHUB_REPO) {
         showDashboard();
     } else {
+<<<<<<< HEAD
         // Si no hay token, no mostramos nada hasta que se loguee
         loginContainer.classList.remove('hidden');
         adminDashboard.classList.add('hidden');
+=======
+        // Modo local de prueba si no hay token
+        console.log("Entrando en modo de desarrollo local...");
+        loadDataLocal();
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     }
 });
 
 async function loadDataLocal() {
+<<<<<<< HEAD
     showLoader('Cargando datos...');
     try {
         // Cargar Categorías
@@ -74,11 +81,31 @@ async function loadDataLocal() {
             }
         } catch (e) {
             if (window.CATEGORIES_DATA) categories = window.CATEGORIES_DATA;
+=======
+    showLoader('Cargando datos locales...');
+    try {
+        // Cargar Categorías
+        const savedCats = localStorage.getItem('nt_admin_local_cats');
+        if (savedCats) {
+            categories = JSON.parse(savedCats);
+        } else {
+            try {
+                const response = await fetch('../categories.json');
+                if (response.ok) {
+                    categories = await response.json();
+                } else {
+                    throw new Error();
+                }
+            } catch (e) {
+                if (window.CATEGORIES_DATA) categories = window.CATEGORIES_DATA;
+            }
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         }
         updateCategorySelect();
         renderCategoriesTable();
 
         // Cargar Productos
+<<<<<<< HEAD
         try {
             const response = await fetch('../products.json');
             if (response.ok) {
@@ -99,13 +126,57 @@ async function loadDataLocal() {
         }
         
         // Mostrar dashboard
+=======
+        const savedProducts = localStorage.getItem('nt_admin_local_db');
+        if (savedProducts) {
+            products = JSON.parse(savedProducts);
+        } else {
+            try {
+                const response = await fetch('../products.json');
+                if (response.ok) {
+                    products = await response.json();
+                } else {
+                    throw new Error();
+                }
+            } catch (e) {
+                if (window.PRODUCTS_DATA) products = window.PRODUCTS_DATA;
+            }
+        }
+        
+        // Cargar Ventas Locales
+        const savedSales = localStorage.getItem('nt_admin_local_sales');
+        if (savedSales) {
+            sales = JSON.parse(savedSales);
+        } else {
+            try {
+                const response = await fetch('../sales.json');
+                if (response.ok) {
+                    sales = await response.json();
+                }
+            } catch (e) {
+                sales = [];
+            }
+        }
+        
+        // Mostrar dashboard en modo "Solo lectura/Prueba"
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         loginContainer.classList.add('hidden');
         adminDashboard.classList.remove('hidden');
         renderProductsTable();
         renderStats();
+<<<<<<< HEAD
         
     } catch (error) {
         console.error("Error cargando datos:", error);
+=======
+        checkLocalChanges();
+        
+        // Cambiar título para indicar modo local
+        document.querySelector('.admin-header h1').innerHTML += ' <span style="color: #fb3434; font-size: 0.8rem;">(MODO LOCAL)</span>';
+        
+    } catch (error) {
+        console.error("Error cargando modo local:", error);
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     } finally {
         hideLoader();
     }

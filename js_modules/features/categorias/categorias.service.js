@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
 export function createCategoriasService() {
     return {
         getCatalogoCompleto: () => window.catalogoCompleto || [],
@@ -28,5 +32,25 @@ export function createCategoriasService() {
             if (window.mostrarModalSaldos) window.mostrarModalSaldos();
         },
         scrollTop: () => window.scrollTo({ top: 0, behavior: "smooth" })
+<<<<<<< HEAD
+=======
+=======
+import { getDataBridge, getUiBridge } from "../../app.bridge.js";
+
+export function createCategoriasService() {
+    const dataBridge = getDataBridge();
+    const uiBridge = getUiBridge();
+    return {
+        getCatalogoCompleto: () => dataBridge.getCatalogoCompleto(),
+        getTodosLosProductos: () => dataBridge.getTodosLosProductos(),
+        closeCategoriesDropdown: () => uiBridge.closeCategoriesDropdown(),
+        closeCategoriesMobileModal: () => uiBridge.closeCategoriesMobileModal(),
+        updateActiveCategoryStyles: (category) => uiBridge.updateActiveCategoryStyles(category),
+        updateCategoryLabel: (category) => uiBridge.updateCategoryLabel(category),
+        setSaldosMode: (enabled) => uiBridge.setSaldosMode(enabled),
+        maybeShowSaldosModal: () => uiBridge.maybeShowSaldosModal(),
+        scrollTop: () => uiBridge.scrollTop()
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     };
 }

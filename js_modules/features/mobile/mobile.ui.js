@@ -45,16 +45,30 @@ export function createMobileUI() {
     function handleScroll() {
         if (!hideLogoOnScrollActive) return;
         const current = window.scrollY || window.pageYOffset || 0;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         
         // Umbral de scroll para decidir si ocultar el logo
         // Si estamos muy arriba, siempre mostramos el logo
         if (current <= 10) {
+<<<<<<< HEAD
+=======
+=======
+        if (current <= 8) {
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
             showMobileLogo();
             lastScrollY = current;
             return;
         }
 
         const delta = current - lastScrollY;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         
         // Mayor sensibilidad para evitar el lag de scroll
         if (delta > 10) {
@@ -65,6 +79,17 @@ export function createMobileUI() {
             showMobileLogo();
             lastScrollY = current;
         }
+<<<<<<< HEAD
+=======
+=======
+        if (delta > 8) {
+            hideMobileLogo();
+        } else if (delta < -8) {
+            showMobileLogo();
+        }
+        lastScrollY = current;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     }
 
     function handleInteraction(event) {

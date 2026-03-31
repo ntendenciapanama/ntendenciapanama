@@ -1,9 +1,19 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
 import { handleImageError, formatPrecio, applySkeletonEffect } from "../../core/ui-utils.js";
 
 export function createProductosUI({ service }) {
     // Exponer globalmente para que el HTML pueda llamar al fallback
     window.handleImageError = handleImageError;
 
+<<<<<<< HEAD
+=======
+=======
+export function createProductosUI({ service }) {
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     function toggleSaldosDescription(codigo, boton) {
         const product = service.getProductByCode(codigo);
         const container = document.getElementById(`desc-saldos-${codigo}`);
@@ -20,6 +30,30 @@ export function createProductosUI({ service }) {
         }
     }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+    function resolveProductImageError(img, codigo) {
+        const fallbackPng = `images/${codigo}/1.png`;
+        if (img.src.includes(fallbackPng)) {
+            console.error("IMAGEN NO ENCONTRADA (JPG y PNG) para el producto:", codigo);
+            img.src = "logo.png";
+            const productCard = img.closest(".producto");
+            if (productCard) {
+                const titleElement = productCard.querySelector("h3");
+                if (titleElement) {
+                    titleElement.innerHTML = `<span style="color:red; font-size:0.8em;">CÓDIGO CON ERROR:</span><br>${codigo}`;
+                }
+            }
+            img.onerror = null;
+        } else {
+            img.src = fallbackPng;
+        }
+    }
+
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     function renderPagination() {
         const container = document.getElementById("paginacion");
         if (!container) return;
@@ -55,6 +89,10 @@ export function createProductosUI({ service }) {
     function render() {
         const container = document.getElementById("productos");
         if (!container) return;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
 
         // EFECTO DE TRANSICIÓN: No vaciar de inmediato, aplicar clase de transición
         container.classList.add("renderizando");
@@ -84,6 +122,15 @@ export function createProductosUI({ service }) {
             return;
         }
 
+<<<<<<< HEAD
+=======
+=======
+        container.innerHTML = "";
+
+        const isMobile = window.innerWidth <= 768;
+        const filtered = service.getProductosFiltrados();
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         const currentPage = service.getPaginaActual();
         const perPage = service.getProductosPorPagina();
 
@@ -92,15 +139,31 @@ export function createProductosUI({ service }) {
             : filtered.slice((currentPage - 1) * perPage, (currentPage - 1) * perPage + perPage);
 
         const isSaldosSection = document.body.classList.contains("seccion-saldos-activa");
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         
         let gridHTML = "";
 
         list.forEach((product, idx) => {
+<<<<<<< HEAD
+=======
+=======
+
+        list.forEach(product => {
+            const card = document.createElement("div");
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
             const isSaldosProduct = isSaldosSection && product.categoria.toLowerCase() === "saldos";
             const isMobileView = window.innerWidth <= 768;
             const saldosClass = isSaldosProduct ? "producto-saldo" : "";
             const ofertaClass = product.esOferta ? "tiene-oferta" : "";
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
             const badgeHTML = product.esOferta ? `<div class="cinta-oferta">OFERTA</div>` : "";
             const liquidacionHTML = isSaldosProduct ? `<div class="cinta-liquidacion">LIQUIDACIÓN</div>` : "";
 
@@ -150,10 +213,64 @@ export function createProductosUI({ service }) {
                                      <i class="fa-solid fa-cart-plus"></i>
                                  </button>
                             </div>
+<<<<<<< HEAD
+=======
+=======
+            card.className = `producto producto-animado ${saldosClass} ${ofertaClass}`;
+            card.setAttribute("data-codigo", product.codigo);
+
+            const badgeHTML = product.esOferta ? `<div class="cinta-oferta">OFERTA</div>` : "";
+            const liquidacionHTML = isSaldosProduct ? `<div class="cinta-liquidacion">LIQUIDACIÓN</div>` : "";
+            const clickImagenHTML = `onclick="abrirModalProducto('${product.codigo}')"`;
+
+            const precioHTML = product.esOferta
+                ? `<div class="precio">
+                    <span class="precio-actual oferta">$${product.precio.toFixed(2)}</span>
+                    <div class="precio-viejo-stack">
+                        <span class="badge-descuento-grid">-${Math.round((1 - product.precio / product.precioOriginal) * 100)}%</span>
+                        <span class="precio-tachado">$${product.precioOriginal.toFixed(2)}</span>
+                    </div>
+                   </div>`
+                : `<div class="precio"><span class="precio-actual">$${product.precio.toFixed(2)}</span></div>`;
+
+            card.innerHTML = `
+                <div class="main-img-container" ${clickImagenHTML}>
+                    ${badgeHTML}
+                    ${liquidacionHTML}
+                    <img src="images/${product.codigo}/1.jpg"
+                         alt="${product.nombre}"
+                         loading="lazy"
+                         onerror="handleImageError(this, '${product.codigo}')">
+                </div>
+                <div class="producto-info">
+                    <h3>${product.nombre}</h3>
+                    <div class="codigo-producto-card">Cód: ${product.codigo}</div>
+                    <div class="talla-descriptiva-grid">
+                        <strong>Tallas:</strong> ${product.tallas && product.tallas.length > 0 ? product.tallas.join(", ") : "Única"}
+                    </div>
+                    ${(isSaldosProduct && isMobileView) ? `
+                        <div id="desc-saldos-${product.codigo}" class="desc-saldos-inline"></div>
+                        <button class="btn-ver-detalles" onclick="mostrarDescripcionSaldos('${product.codigo}', this)">Ver detalles</button>
+                    ` : ""}
+                    <div class="precio-acciones">
+                        ${precioHTML}
+                        <div class="icon-buttons">
+                            <button class="icon-btn-v2 whatsapp" onclick="comprarWhatsAppDirecto('${product.codigo}')" title="WhatsApp">
+                                <i class="fa-brands fa-whatsapp fa-xl"></i>
+                            </button>
+                            <button class="icon-btn-v2 add-cart" onclick="añadirAlCarrito('${product.codigo}')" title="Añadir Carrito">
+                                 <i class="fa-solid fa-cart-plus"></i>
+                             </button>
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
                         </div>
                     </div>
                 </div>
             `;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         });
 
         // Inyección instantánea sin setTimeout artificial
@@ -182,11 +299,31 @@ export function createProductosUI({ service }) {
             footer.style.opacity = "1";
             footer.style.transition = "opacity 0.5s ease";
         }
+<<<<<<< HEAD
+=======
+=======
+            container.appendChild(card);
+        });
+
+        renderPagination();
+
+        const footer = document.getElementById("main-footer");
+        if (footer) footer.style.display = "block";
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     }
 
     function init() {
         return () => {};
     }
 
+<<<<<<< HEAD
     return { init, render, renderPagination, toggleSaldosDescription };
+=======
+<<<<<<< HEAD
+    return { init, render, renderPagination, toggleSaldosDescription };
+=======
+    return { init, render, renderPagination, toggleSaldosDescription, resolveProductImageError };
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
 }

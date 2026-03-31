@@ -3,10 +3,21 @@ function formatCurrency(value) {
 }
 
 export function createCarritoLogic({ service, eventBus }) {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     // --- CARGA DESDE LOCALSTORAGE ---
     const savedItems = localStorage.getItem('nt_carrito');
     const items = savedItems ? JSON.parse(savedItems) : [];
     let currentOrderNumber = localStorage.getItem('nt_num_orden') || "";
+<<<<<<< HEAD
+=======
+=======
+    const items = [];
+    let currentOrderNumber = "";
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
 
     function generateOrderNumber() {
         const now = new Date();
@@ -34,11 +45,21 @@ export function createCarritoLogic({ service, eventBus }) {
     }
 
     function notifyChange() {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         const snapshot = buildSnapshot();
         // --- GUARDAR EN LOCALSTORAGE ---
         localStorage.setItem('nt_carrito', JSON.stringify(items));
         localStorage.setItem('nt_num_orden', currentOrderNumber);
         eventBus.emit("cart:changed", snapshot);
+<<<<<<< HEAD
+=======
+=======
+        eventBus.emit("cart:changed", buildSnapshot());
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     }
 
     function findVariant(codigo, tallaElegida, colorElegido) {
@@ -195,6 +216,10 @@ export function createCarritoLogic({ service, eventBus }) {
 
     function buildWhatsAppMessage() {
         if (items.length === 0) return null;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
 
         // --- VALIDACIÓN DE EXISTENCIA Y DISPONIBILIDAD ---
         // Esto verifica si el producto sigue en el catálogo y no está vendido
@@ -234,6 +259,11 @@ export function createCarritoLogic({ service, eventBus }) {
             };
         }
 
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         const orderNumber = ensureOrderNumber();
 
         let text = `✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n`;
@@ -249,7 +279,14 @@ export function createCarritoLogic({ service, eventBus }) {
             if (item.tallaElegida) text += `   📏 Talla: *${item.tallaElegida}*\n`;
             if (item.colorElegido) text += `   🎨 Color: *${item.colorElegido}*\n`;
             text += `   💰 Precio: *$${formatCurrency(item.precio)}*\n`;
+<<<<<<< HEAD
             // Link fijo a la URL de producción con el parámetro de búsqueda
+=======
+<<<<<<< HEAD
+            // Link fijo a la URL de producción con el parámetro de búsqueda
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
             text += `   🔗 Ver producto: https://ntendenciapanama.vercel.app/?search=${encodeURIComponent(item.codigo)}\n\n`;
             total += Number(item.precio || 0) * Number(item.cantidad || 1);
         });

@@ -21,7 +21,15 @@ export function createCarritoUI({ logic, eventBus, onRequestEditItem }) {
 
     function renderItems(snapshot) {
         const list = document.getElementById("lista-carrito");
+<<<<<<< HEAD
         const total = document.getElementById("total-carrito"); // Corregido ID
+=======
+<<<<<<< HEAD
+        const total = document.getElementById("total-carrito"); // Corregido ID
+=======
+        const total = document.getElementById("precio-total");
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
         const order = document.getElementById("carrito-order-number");
         if (!list || !total) return;
         if (order) {
@@ -36,6 +44,10 @@ export function createCarritoUI({ logic, eventBus, onRequestEditItem }) {
         }
 
         snapshot.items.forEach((item, index) => {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
             const size = item.tallaElegida ? `<div class="detalle-valor-uva">Talla: ${item.tallaElegida}</div>` : "";
             const color = item.colorElegido ? `<div class="codigo-producto">Color: ${item.colorElegido}</div>` : "";
             const quantity = `<div class="detalle-valor-uva">Cantidad: ${Number(item.cantidad || 1)}</div>`;
@@ -51,6 +63,26 @@ export function createCarritoUI({ logic, eventBus, onRequestEditItem }) {
                             ${size}
                             ${color}
                             <div class="editar-item-carrito">Clic para editar</div>
+<<<<<<< HEAD
+=======
+=======
+            const size = item.tallaElegida ? `<span class="talla-carrito">Talla: ${item.tallaElegida}</span>` : "";
+            const color = item.colorElegido ? `<span class="color-carrito">Color: ${item.colorElegido}</span>` : "";
+            const quantity = `<span class="color-carrito">Cantidad: ${Number(item.cantidad || 1)}</span>`;
+            const subtotal = Number(item.precio || 0) * Number(item.cantidad || 1);
+            list.innerHTML += `
+                <div class="item-carrito" data-cart-index="${index}" tabindex="0" role="button" aria-label="Editar ${item.nombre}">
+                    <img src="images/${item.codigo}/1.jpg" alt="${item.nombre}" class="miniatura-carrito">
+                    <div class="info-item-carrito">
+                        <strong class="nombre-producto-carrito">${item.nombre}</strong>
+                        <div class="detalles-producto-carrito">
+                            <small class="codigo-producto">Cód: ${item.codigo}</small>
+                            ${quantity}
+                            ${size}
+                            ${color}
+                            <small class="editar-item-carrito">Clic para editar</small>
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
                         </div>
                     </div>
                     <div class="acciones-item-carrito">
@@ -74,7 +106,15 @@ export function createCarritoUI({ logic, eventBus, onRequestEditItem }) {
             });
         }
 
+<<<<<<< HEAD
         total.innerHTML = snapshot.total ? `Total estimado: <span>$${Number(snapshot.total).toFixed(2)}</span>` : `Total estimado: <span>$0.00</span>`;
+=======
+<<<<<<< HEAD
+        total.innerHTML = snapshot.total ? `Total estimado: <span>$${Number(snapshot.total).toFixed(2)}</span>` : `Total estimado: <span>$0.00</span>`;
+=======
+        total.innerText = Number(snapshot.total || 0).toFixed(2);
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
+>>>>>>> 71d49ae63dc97c3d43873c8aa51ec5e6d5ba6b0f
     }
 
     function sync(snapshot) {
