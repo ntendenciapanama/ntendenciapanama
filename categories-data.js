@@ -1,0 +1,22 @@
+window.CATEGORIES_DATA = [
+  {
+    "id": "CM",
+    "nombre": "ROPA"
+  },
+  {
+    "id": "ZN",
+    "nombre": "CALZADOS"
+  },
+  {
+    "id": "VB",
+    "nombre": "VESTIDO DE BAÑO"
+  },
+  {
+    "id": "AC",
+    "nombre": "ACCESORIOS"
+  },
+  {
+    "id": "SALDOS",
+    "nombre": "SALDOS"
+  }
+];

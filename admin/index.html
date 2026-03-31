@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - NTENDENCIA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div id="login-container" class="container">
+        <div class="login-card">
+            <img src="../logo.png" alt="Logo" class="login-logo">
+            <h2>Acceso Administrativo</h2>
+            <p>Ingresa tu GitHub Personal Access Token para gestionar el catálogo.</p>
+            <div class="form-group">
+                <input type="password" id="gh-token" placeholder="GitHub Token (PAT)">
+                <small>El token debe tener permisos de 'repo'.</small>
+            </div>
+            <div class="form-group">
+                <input type="text" id="gh-repo" placeholder="usuario/repositorio" value="TU_USUARIO/ntendenciapanamaS">
+            </div>
+            <button id="btn-login" class="btn-primary">Entrar</button>
+        </div>
+    </div>
+
+    <div id="admin-dashboard" class="container hidden">
+        <header class="admin-header">
+            <div class="header-left">
+                <img src="../logo.png" alt="NTENDENCIA" class="admin-logo">
+                <h1>Panel de Control</h1>
+            </div>
+            <div class="header-right">
+                <button id="btn-logout" class="btn-outline">
+                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                </button>
+            </div>
+        </header>
+
+        <main class="admin-content">
+            <section class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">Total Productos</span>
+                    <span id="stat-total-products" class="stat-value">0</span>
+                </div>
+                <div id="inventory-value-container" class="stat-item">
+                    <span class="stat-label">Valor Inventario</span>
+                    <span id="stat-total-value" class="stat-value">$0.00</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Ventas Registradas</span>
+                    <span id="stat-total-sales" class="stat-value">0</span>
+                </div>
+                <button id="btn-view-sales" class="btn-outline">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Historial de Ventas
+                </button>
+            </section>
+
+            <section class="action-section">
+                <div class="filters">
+            <input type="text" id="admin-search" placeholder="Buscar por código o nombre...">
+            <select id="filter-categoria">
+                <option value="todos">Todas las categorías</option>
+            </select>
+            <select id="filter-estado">
+                <option value="todos">Todos los estados</option>
+                <option value="disponible">Disponibles</option>
+                <option value="vendido">Vendidos</option>
+            </select>
+        </div>
+        <div class="main-actions">
+            <button id="btn-manage-categories" class="btn-outline">
+                <i class="fa-solid fa-list"></i> Categorías
+            </button>
+            <button id="btn-show-add" class="btn-primary">
+                <i class="fa-solid fa-plus"></i> Nuevo Producto
+            </button>
+        </div>
+            </section>
+
+            <section id="categories-modal" class="form-modal hidden">
+                <div class="form-card" style="max-width: 500px;">
+                    <div class="form-header">
+                        <h2>Gestionar Categorías</h2>
+                        <button id="btn-close-categories" class="btn-close">&times;</button>
+                    </div>
+                    <div class="form-grid" style="grid-template-columns: 1fr; padding: 20px;">
+                        <form id="category-form" class="inline-form">
+                            <div class="form-group-row">
+                                <input type="text" id="cat-prefix" placeholder="Prefijo (ej: VB)" maxlength="5" required style="width: 100px;">
+                                <input type="text" id="cat-name" placeholder="Nombre (ej: Vestido de Baño)" required style="flex: 1;">
+                                <button type="submit" class="btn-primary" style="padding: 8px 15px;">Añadir</button>
+                            </div>
+                        </form>
+                        <div class="categories-list-container">
+                            <table class="simple-table">
+                                <thead>
+                                    <tr>
+                                        <th>Prefijo</th>
+                                        <th>Categoría</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categories-tbody">
+                                    <!-- Categorías dinámicas -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sales-modal" class="form-modal hidden">
+                <div class="form-card" style="max-width: 850px;">
+                    <div class="form-header">
+                        <h2>Historial de Ventas (Archivo Permanente)</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <button id="btn-export-sales" class="btn-outline" title="Descargar Historial"><i class="fa-solid fa-download"></i></button>
+                            <button id="btn-close-sales" class="btn-close">&times;</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="max-height: 500px; padding: 0 20px;">
+                        <table class="simple-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha Venta</th>
+                                    <th>Código</th>
+                                    <th>Producto</th>
+                                    <th>Precio Venta</th>
+                                    <th>Categoría</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-tbody">
+                                <!-- Ventas dinámicas -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-actions" style="justify-content: space-between; align-items: center;">
+                        <div style="font-weight: 700; color: var(--primary);">TOTAL ACUMULADO: <span id="total-sales-value">$0.00</span></div>
+                        <button type="button" onclick="document.getElementById('sales-modal').classList.add('hidden')" class="btn-primary">Cerrar</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="product-form-container" class="form-modal hidden">
+                <div class="form-card">
+                    <div class="form-header">
+                        <h2 id="form-title">Agregar Producto</h2>
+                        <button id="btn-close-form" class="btn-close">&times;</button>
+                    </div>
+                    <form id="product-form">
+                        <input type="hidden" id="edit-id">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="categoria">Categoría</label>
+                                <select id="categoria" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="VB">Vestido de Baño (VB)</option>
+                                    <option value="CM">Camisa (CM)</option>
+                                    <option value="PJ">Pantalón Jeans (PJ)</option>
+                                    <option value="ZN">Zapatos (ZN)</option>
+                                    <option value="AC">Accesorio (AC)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="producto-id">Código Sugerido</label>
+                                <div class="id-generator">
+                                    <input type="text" id="producto-id" readonly>
+                                    <button type="button" id="btn-refresh-id" title="Generar otro"><i class="fa-solid fa-sync"></i></button>
+                                </div>
+                            </div>
+                            <div class="form-group span-2">
+                                <label for="nombre">Nombre del Producto</label>
+                                <input type="text" id="nombre" required placeholder="Ej: Vestido de baño floral">
+                            </div>
+                            <div class="form-group">
+                                <label for="precio-original">Precio Original ($)</label>
+                                <input type="number" id="precio-original" step="0.01" required placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label for="precio-oferta">Precio Oferta ($) (Opcional)</label>
+                                <input type="number" id="precio-oferta" step="0.01" placeholder="0.00">
+                            </div>
+                            <div class="form-group span-2">
+                                <label for="descripcion">Descripción del Producto</label>
+                                <textarea id="descripcion" rows="3" placeholder="Detalles de la prenda..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="talla">Tallas (Separar por comas)</label>
+                                <input type="text" id="talla" placeholder="Ej: S, M, L o 32, 34">
+                            </div>
+                            <div class="form-group">
+                                <label for="color">Colores (Separar por comas)</label>
+                                <input type="text" id="color" placeholder="Ej: Azul, Negro, Blanco">
+                            </div>
+                            <div class="form-group">
+                                <label for="cantidad">Cantidad</label>
+                                <input type="number" id="cantidad" value="1" min="0">
+                            </div>
+                            <div class="form-group" style="display: flex; align-items: center; gap: 10px; padding-top: 25px;">
+                                <input type="checkbox" id="destacado" style="width: 20px; height: 20px; cursor: pointer;">
+                                <label for="destacado" style="cursor: pointer; margin: 0; font-weight: 600;">Destacado en Home</label>
+                            </div>
+                            <div class="form-group span-2">
+                                <label for="imagenes-input">Imágenes (Se convertirán a WEBP)</label>
+                                <input type="file" id="imagenes-input" multiple accept="image/*">
+                                <div id="image-preview" class="image-preview-grid"></div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="btn-cancel" class="btn-outline">Cancelar</button>
+                            <button type="submit" id="btn-save" class="btn-primary">Guardar Producto</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section class="products-list-section">
+                <div class="table-responsive">
+                    <table id="products-table">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-tbody">
+                            <!-- Los productos se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+        <p id="loader-text">Procesando...</p>
+    </div>
+
+    <script src="../products-data.js"></script>
+    <script src="../categories-data.js"></script>
+    <script src="admin.js" type="module"></script>
+</body>
+</html>

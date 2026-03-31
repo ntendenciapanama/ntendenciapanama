@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <title>NTENDENCIA PANAMÁ | CATALOGO</title>
+    <meta name="description" content="Viste el momento. Descubre nuestra colección exclusiva de moda.">
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ntendenciapanama.vercel.app/">
+    <meta property="og:title" content="NTENDENCIA PANAMÁ">
+    <meta property="og:description" content="Explora nuestro catálogo.">
+    <meta property="og:image" content="preview.jpg"> 
+    <meta property="og:image:width" content="600">
+    <meta property="og:image:height" content="600">
+    <meta property="og:image:type" content="image/jpeg">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="js_modules/core/core.css">
+    <link rel="stylesheet" href="catalog-styles.css">
+    
+    <!-- Librerías para ICONOS FONTAWESOME -->
+    <script src="https://kit.fontawesome.com/e7b3bc0720.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="fixed-top-container">
+        <!-- Banner de Advertencia para Saldos -->
+        <div id="saldos-warning-banner" class="saldos-warning-banner">
+            <span class="warning-icon">⚠️</span>
+            <span class="warning-text">Saldos No aplican cambios ni devoluciones.</span>
+        </div>
+
+        <!-- Título de la App para móvil -->
+        <div class="mobile-app-title" data-ui-scope="mobile">
+            <a href="index.html">
+                <img src="logo.png" alt="NTENDENCIA PANAMÁ" class="mobile-logo-img">
+            </a>
+        </div>
+
+        <header class="header-main"> 
+        <div class="logo-wrapper" data-ui-scope="desktop">
+            <a href="index.html">
+                <img src="logo.png" alt="NTENDENCIA PANAMÁ" class="logo-imagen" width="180" height="50">
+            </a>
+        </div>
+        
+        <div class="search-wrapper">
+            <div class="categorias-container" data-ui-scope="desktop">
+                <div class="categorias-trigger" onclick="toggleCategorias(event)">
+                    <span id="categoria-actual-texto">Categorías</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+                </div>
+                <nav id="categorias" class="categorias-dropdown">
+                    <!-- Las categorías se cargarán aquí dinámicamente -->
+                </nav>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="buscador" placeholder="¿Qué buscas hoy?">
+                <button class="search-btn" onclick="document.getElementById('buscador').focus()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="contact-icons" data-ui-scope="desktop">
+            <a href="https://instagram.com/NTENDENCIAPANAMA" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <i class="fa-brands fa-instagram fa-xl" style="color: rgb(255, 255, 255);"></i>
+            </a>
+
+            <a href="https://tiktok.com/@NTENDENCIAPANAMA" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                <i class="fa-brands fa-tiktok fa-xl" style="color: rgb(255, 255, 255);"></i>
+            </a>
+
+            <a href="https://facebook.com/NTENDENCIAPANAMA" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <i class="fa-brands fa-facebook-f fa-xl" style="color: rgb(255, 255, 255);"></i>
+            </a>
+
+            <a href="https://wa.me/50767710645" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                <i class="fa-brands fa-whatsapp fa-xl" style="color: rgb(255, 255, 255);"></i> 
+            </a>
+        </div>
+
+        </header>
+
+        <!-- Barra de categorías móvil (Estilo Temu) -->
+        <div class="mobile-categories-nav" data-ui-scope="mobile">
+            <div id="mobile-categories-list" class="mobile-categories-scroll">
+                <!-- Se llenará dinámicamente con JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedores para inyección de UI -->
+    <div id="modal-carrito-container"></div>
+    <div id="btn-carrito-container">
+        <!-- Botón Carrito Desktop -->
+        <div id="btn-carrito" data-ui-scope="desktop" onclick="toggleCarrito()">
+            <svg class="icono-carrito" viewBox="0 0 24 24">
+                <path d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18M7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.59 17.3,11.97L21.16,4.96L19.42,4H5.21L4.27,2H1V4H3L6.6,11.59L5.25,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42C7.29,15 7.17,14.89 7.17,14.63Z"/>
+            </svg>
+            <div id="contador-carrito">0</div>
+        </div>
+    </div>
+
+    <!-- BANNER PROMOCIONAL (TIPO APP - SLIDER RECTANGULAR VIBRANTE) -->
+    <div class="promo-banner-container" data-ui-scope="mobile">
+        <div class="promo-slider">
+            <div class="promo-slides">
+                <!-- Slide 1: Ahorrar Dinero -->
+                <div class="promo-slide active slide-1">
+                    <div class="slide-decor"></div>
+                    <div class="slide-content">
+                        <h2>EXCLUSIVIDAD AL MEJOR PRECIO</h2>
+                        <p class="slide-subtext">Estilo único para destacar cada día</p>
+                    </div>
+                </div>
+                <!-- Slide 2: Exclusividad -->
+                <div class="promo-slide slide-2">
+                    <div class="slide-decor"></div>
+                    <div class="slide-content">
+                        <h2>RETIROS EN PLAZA TERRONAL Y PLAZA GALERÍA</h2>
+                        <p class="slide-subtext">Compra fácil y recoge en tu punto preferido</p>
+                    </div>
+                </div>
+                <!-- Slide 3: Todo lo que buscas -->
+                <div class="promo-slide slide-3">
+                    <div class="slide-decor"></div>
+                    <div class="slide-content">
+                        <h2>ENVÍOS A TODO PANAMÁ 🚚</h2>
+                        <p class="slide-subtext">Pedidos por WhatsApp, rápido y seguro</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Indicadores -->
+            <div class="slider-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+    </div>
+    <!-- Bloque de Aviso para Saldos (Solo Móvil) -->
+    <div id="saldos-mobile-notice" class="saldos-mobile-notice">
+        <div class="notice-header">
+            <span class="notice-icon">⚠️</span>
+            <h2>SECCIÓN SALDOS – LEE ESTO ANTES</h2>
+        </div>
+        <div class="notice-body">
+            <div class="notice-item">
+                <span class="notice-number">1</span>
+                <p>Prendas pueden tener detalles estéticos (marcas, roces o golpes por manejo).</p>
+            </div>
+            <div class="notice-item">
+                <span class="notice-number">2</span>
+                <p>Otras están en estado excelente, pero a precio especial por ser de esta sección.</p>
+            </div>
+            <div class="notice-item">
+                <span class="notice-number">3</span>
+                <p>No aplican cambios ni devoluciones.</p>
+            </div>
+        </div>
+    </div>
+
+    <main id="productos" class="grid-productos">
+        <!-- El contenido se cargará instantáneamente desde el JS -->
+    </main>
+
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script src="products-data.js?v=1.5"></script>
+    <script src="categories-data.js?v=1.5"></script>
+    <script src="script.js?v=1.5" defer></script>
+</body>
+</html>
