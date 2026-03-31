@@ -17,11 +17,15 @@ export function createProductosLogic({ service, eventBus }) {
         if (state.selectedCategory === null) return true;
         if (state.selectedCategory === "Todas") return true;
         if (state.selectedCategory === "Saldos") return item.categoria?.toLowerCase() === "saldos";
+<<<<<<< HEAD
         
         // Comparación insensible a mayúsculas y espacios para máxima compatibilidad
         const itemCat = (item.categoria || "").toLowerCase().trim();
         const selectedCat = (state.selectedCategory || "").toLowerCase().trim();
         return itemCat === selectedCat;
+=======
+        return item.categoria === state.selectedCategory;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 
     function bySearch(item) {
@@ -30,6 +34,7 @@ export function createProductosLogic({ service, eventBus }) {
         return item.nombre.toLowerCase().includes(term) || item.codigo.toLowerCase().includes(term);
     }
 
+<<<<<<< HEAD
     function updateURL() {
         try {
             const url = new URL(window.location.href);
@@ -70,11 +75,23 @@ export function createProductosLogic({ service, eventBus }) {
             }
         }
         
+=======
+    function refresh() {
+        const catalog = service.getCatalogoCompleto();
+        let filtered;
+        const isAllCategory = state.selectedCategory === null || state.selectedCategory === "Todas";
+        if (isAllCategory && !state.searchTerm) {
+            filtered = shuffleItems(service.getTodosLosProductos());
+        } else {
+            filtered = catalog.filter(item => byCategory(item) && bySearch(item));
+        }
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
         service.setProductosFiltrados(filtered);
         service.renderProducts();
     }
 
     function applySearch(term) {
+<<<<<<< HEAD
         const normalized = (term || "").toLowerCase().trim();
         if (state.searchTerm === normalized) return;
         
@@ -87,11 +104,15 @@ export function createProductosLogic({ service, eventBus }) {
         }
         
         updateURL();
+=======
+        state.searchTerm = (term || "").toLowerCase().trim();
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
         service.setPaginaActual(1);
         refresh();
     }
 
     function applyCategory(category) {
+<<<<<<< HEAD
         const normalized = category || "Todas";
         if (state.selectedCategory === normalized) return;
         
@@ -104,6 +125,9 @@ export function createProductosLogic({ service, eventBus }) {
         if (buscador) buscador.value = "";
         
         updateURL();
+=======
+        state.selectedCategory = category || "Todas";
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
         service.setPaginaActual(1);
         refresh();
     }

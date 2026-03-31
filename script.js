@@ -12,6 +12,7 @@ let imgIndex = 1;
 let totalImg = 1;
 let codActual = "";
 
+<<<<<<< HEAD
 function sincronizarArranqueApp() {
     // Esta función es llamada desde init.js cuando todo está listo
     generarCategorias();
@@ -20,11 +21,65 @@ function sincronizarArranqueApp() {
     const params = new URLSearchParams(window.location.search);
     if (!params.has('category') && !params.has('search')) {
         mostrarProductos();
+=======
+const URL_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRe9xAP_lzm47_N4A537uVihKnztxVT8K8pB7En2qGvt9Ut3gAQrGy2FK_tCZb3jucsDtyyrRtEPYM1/pub?gid=2091984533&single=true&output=csv';
+const URL_SHEET = URL_BASE + '&t=' + new Date().getTime() + '&v=' + Math.random();
+let datosInicializados = false;
+let modulosInicializados = false;
+let interfazSincronizada = false;
+
+function sincronizarArranqueApp() {
+    if (interfazSincronizada || !datosInicializados || !modulosInicializados) return;
+    interfazSincronizada = true;
+    generarCategorias();
+    mostrarProductos();
+    leerParametrosURL();
+}
+
+/* --- BANNER POPUP PARA MÓVILES --- */
+function mostrarBannerMovil() {
+    // Solo mostrar en móviles (menos de 768px)
+    if (window.innerWidth < 768) {
+        const banner = document.getElementById('banner-popup');
+        if (banner) {
+            banner.style.display = 'flex';
+            
+            // Auto-cerrar después de 8 segundos
+            setTimeout(() => {
+                cerrarBanner();
+            }, 8000);
+        }
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
     
     leerParametrosURL();
 }
 
+<<<<<<< HEAD
+=======
+function cerrarBanner() {
+    const banner = document.getElementById('banner-popup');
+    if (banner) {
+        banner.style.display = 'none';
+        // Guardar en localStorage para no mostrar de nuevo en esta sesión
+        localStorage.setItem('banner-cerrado', 'true');
+    }
+}
+
+// Mostrar banner solo si no se ha cerrado en esta sesión
+function initBanner() {
+    if (localStorage.getItem('banner-cerrado') !== 'true') {
+        setTimeout(mostrarBannerMovil, 1000);
+    }
+}
+
+function iniciarBannerApp() {
+    initBanner();
+}
+
+iniciarBannerApp();
+
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 /* --- RESPONSIVIDAD --- */
 function ajustarPaginacionDinamica() {
     const ancho = window.innerWidth;
@@ -53,6 +108,7 @@ function ejecutarEnModulo(nombre, accion) {
     // si algún HTML inline todavía la llama.
 }
 
+<<<<<<< HEAD
 
 function cambiarFotoPrincipal(src, thumb) {
     document.getElementById('modal-img-grande').src = src;
@@ -60,6 +116,74 @@ function cambiarFotoPrincipal(src, thumb) {
     thumb.classList.add('activa');
 }
 
+=======
+function parsearStockPorTalla(texto) {
+    const inventario = {};
+    if (!texto) return inventario;
+    texto.split('|').forEach(par => {
+        const [tallaRaw, stockRaw] = par.split(':');
+        const talla = (tallaRaw || "").trim();
+        const stock = parseInt((stockRaw || "").replace(/[^\d]/g, ''), 10);
+        if (!talla) return;
+        inventario[talla] = Number.isFinite(stock) && stock >= 0 ? stock : 0;
+    });
+    return inventario;
+}
+
+function mezclarArray(items) {
+    const copia = Array.isArray(items) ? [...items] : [];
+    for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
+    }
+    return copia;
+}
+
+fetch(URL_SHEET)
+    .then(res => res.text())
+    .then(csvText => {
+        const todasLasFilas = csvText.split(/\r?\n/);
+        // Saltar las primeras 2 filas (Título "EXPORTACION" y Encabezados)
+        const filasDeProductos = todasLasFilas.slice(2);
+        
+        const productosMapeados = filasDeProductos.map(fila => {
+            if (!fila.trim()) return null;
+            
+            const columnas = parsearCSVLine(fila);
+            const limpiar = (txt) => txt ? txt.replace(/^"|"$/g, '').trim() : "";
+
+            // Mapeo basado en tu fórmula (0:A, 1:D, 2:F, 3:G, 4:H, 5:Status, 6:J, 7:K, 8:L, 9:M)
+            const precioBase = parseFloat(limpiar(columnas[2]).replace('$', '')) || 0;
+            const precioOferta = parseFloat(limpiar(columnas[8]).replace('$', '')) || 0;
+            const precioVentaHoy = precioOferta > 0 ? precioOferta : precioBase;
+            const stockRaw = limpiar(columnas[3]);
+            const stockNumerico = parseInt((stockRaw || "").replace(/[^\d]/g, ''), 10);
+            const stockPorTallaRaw = limpiar(columnas[11]);
+            const stockPorTalla = parsearStockPorTalla(stockPorTallaRaw);
+
+            return {
+                codigo: limpiar(columnas[0]),
+                nombre: limpiar(columnas[1]),
+                precio: precioVentaHoy,
+                precioOriginal: precioBase,
+                esOferta: precioOferta > 0 && precioOferta < precioBase,
+                stock: Number.isFinite(stockNumerico) && stockNumerico >= 0 ? stockNumerico : null,
+                descripcion: limpiar(columnas[4]) || "",
+                status: limpiar(columnas[5])?.toLowerCase(),
+                categoria: limpiar(columnas[6]) || "General",
+                totalImagenes: parseInt(limpiar(columnas[7])) || 1,
+                tallas: limpiar(columnas[9]) ? limpiar(columnas[9]).split(',').map(s => s.trim()) : [],
+                colores: limpiar(columnas[10]) ? limpiar(columnas[10]).split(',').map(s => s.trim()) : [],
+                stockPorTalla
+            };
+        }).filter(p => {
+            if (!p) return false;
+            // Filtro de seguridad por si hay filas vacías al final
+            const tieneCodigoValido = p.codigo && p.codigo.length > 1;
+            const estaVendido = p.status === 'vendido' || p.status === 'vrai';
+            return tieneCodigoValido && !estaVendido;
+        });
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 
 function abrirModalProducto(codigo) {
     if (window.NtModules?.modalProducto) {
@@ -78,34 +202,102 @@ function abrirModalProducto(codigo) {
     }
 }
 
+<<<<<<< HEAD
 function cerrarModalProducto() {
     if (window.NtModules?.modalProducto) {
         window.NtModules.modalProducto.close();
     }
+=======
+        const listaInvertida = productosMapeados.reverse();
+        catalogoCompleto = listaInvertida;
+        todosLosProductos = listaInvertida.filter(p => p.categoria.toLowerCase() !== 'saldos');
+        productosFiltrados = mezclarArray(todosLosProductos);
+        datosInicializados = true;
+        sincronizarArranqueApp();
+    })
+    .catch(err => {
+        console.error("Error cargando Google Sheets:", err);
+    });
+
+/* --- LÓGICA DE SELECCIÓN DE TALLA Y COLOR --- */
+let tallasSeleccionadasPorCodigo = {}; // Objeto para guardar la talla elegida por producto
+let coloresSeleccionadosPorCodigo = {}; // Objeto para guardar el color elegido por producto
+
+function ejecutarEnModulo(nombre, accion) {
+    const modulo = window.NtModules?.[nombre];
+    if (modulo) {
+        accion(modulo);
+        return;
+    }
+    setTimeout(() => {
+        const moduloDiferido = window.NtModules?.[nombre];
+        if (moduloDiferido) {
+            accion(moduloDiferido);
+        }
+    }, 0);
+}
+
+
+function cambiarFotoPrincipal(src, thumb) {
+    document.getElementById('modal-img-grande').src = src;
+    thumb.parentElement.querySelectorAll('.color-thumb').forEach(t => t.classList.remove('activa'));
+    thumb.classList.add('activa');
+}
+
+
+function abrirModalProducto(codigo) {
+    ejecutarEnModulo('modalProducto', (modal) => {
+        modal.open(codigo);
+    });
+}
+
+function cerrarModalProducto() {
+    ejecutarEnModulo('modalProducto', (modal) => {
+        modal.close();
+    });
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 /* --- MOSTRAR PRODUCTOS EN GRILLA --- */
 
 function mostrarProductos() {
+<<<<<<< HEAD
     if (window.NtModules?.productos) {
         window.NtModules.productos.render();
     }
+=======
+    ejecutarEnModulo('productos', (productos) => {
+        productos.render();
+    });
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 /* --- MOSTRAR DESCRIPCIÓN INLINE PARA SALDOS --- */
 
 function mostrarDescripcionSaldos(codigo, boton) {
+<<<<<<< HEAD
     if (window.NtModules?.productos) {
         window.NtModules.productos.toggleSaldosDescription(codigo, boton);
     }
+=======
+    ejecutarEnModulo('productos', (productos) => {
+        productos.toggleSaldosDescription(codigo, boton);
+    });
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 /* --- MANEJO DE ERRORES DE IMAGEN --- */
 
 function handleImageError(img, codigo) {
+<<<<<<< HEAD
     if (window.NtModules?.productos) {
         window.NtModules.productos.resolveProductImageError(img, codigo);
     }
+=======
+    ejecutarEnModulo('productos', (productos) => {
+        productos.resolveProductImageError(img, codigo);
+    });
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 /* --- LÓGICA DE SELECCIÓN DE TALLA --- */
@@ -224,25 +416,113 @@ function cerrarImagen() {
 
 /* --- LÓGICA DEL CARRITO --- */
 function añadirAlCarritoDesdeModal(codigo) {
+<<<<<<< HEAD
     if (window.NtModules?.carrito) {
         window.NtModules.carrito.addToCartFromModal(codigo);
+=======
+    const p = catalogoCompleto.find(x => x.codigo === codigo);
+    if (!p) return;
+
+    // Obtener la talla y color seleccionados
+    const tallaSeleccionada = tallasSeleccionadasPorCodigo[codigo] || (p.tallas && p.tallas.length > 0 ? p.tallas[0] : "");
+    const colorSeleccionado = coloresSeleccionadosPorCodigo[codigo] || (p.colores && p.colores.length > 0 ? p.colores[0] : "");
+
+    // Permitir añadir el mismo código pero con diferente talla/color
+    const yaExiste = carrito.find(x => x.codigo === codigo && x.tallaElegida === tallaSeleccionada && x.colorElegido === colorSeleccionado);
+    if (yaExiste) {
+        mostrarNotificacion("⚠️ Este producto ya está en tu lista", ["#ff6b6b", "#ee5a24", "#ff4757"]);
+        return;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 }
 
+<<<<<<< HEAD
 function actualizarInterfazCarrito() {
     // Esta función ahora es manejada por el módulo de carrito
     // Pero mantenemos el escalado visual por compatibilidad
+=======
+    // Guardar una copia del producto con la talla y color elegidos
+    const itemCarrito = { ...p, tallaElegida: tallaSeleccionada, colorElegido: colorSeleccionado };
+    carrito.push(itemCarrito); 
+
+    actualizarInterfazCarrito();
+    mostrarNotificacion("¡Producto agregado a tu lista!");
+}
+
+function actualizarInterfazCarrito() {
+    const contador = document.getElementById('contador-carrito');
+    if (contador) contador.innerText = carrito.length;
+    
+    // Actualizar badge en móvil
+    const badge = document.getElementById('bottom-nav-badge');
+    if (badge) {
+        badge.innerText = carrito.length;
+        badge.style.display = carrito.length > 0 ? 'flex' : 'none';
+    }
+    
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     const btn = document.getElementById('btn-carrito');
     if (btn) {
         btn.style.transform = "scale(1.2)";
         setTimeout(() => btn.style.transform = "scale(1)", 200);
     }
+<<<<<<< HEAD
+=======
+}
+
+function añadirAlCarrito(codigo) {
+    const p = catalogoCompleto.find(x => x.codigo === codigo);
+    if (!p) return;
+
+    // --- REGLA: Si tiene múltiples opciones, abrir modal en lugar de añadir directo ---
+    const tieneMultiplesTallas = p.tallas && p.tallas.length > 1;
+    const tieneMultiplesColores = p.colores && p.colores.length > 1;
+    
+    // Si tiene más de una opción, forzamos a que el usuario elija en el modal
+    if (tieneMultiplesTallas || tieneMultiplesColores) {
+        abrirModalProducto(codigo);
+        return;
+    }
+
+    // Obtener valores por defecto
+    const tallaSeleccionada = tallasSeleccionadasPorCodigo[codigo] || (p.tallas && p.tallas.length > 0 ? p.tallas[0] : "");
+    const colorSeleccionado = coloresSeleccionadosPorCodigo[codigo] || (p.colores && p.colores.length > 0 ? p.colores[0] : "");
+
+    // Permitir añadir el mismo código pero con diferente talla/color
+    const yaExiste = carrito.find(x => x.codigo === codigo && x.tallaElegida === tallaSeleccionada && x.colorElegido === colorSeleccionado);
+    if (yaExiste) {
+        mostrarNotificacion("⚠️ Este producto ya está en tu lista", ["#ff6b6b", "#ee5a24", "#ff4757"]);
+        return;
+    }
+
+    // Guardar una copia del producto con la talla y color elegidos
+    const itemCarrito = { ...p, tallaElegida: tallaSeleccionada, colorElegido: colorSeleccionado };
+    carrito.push(itemCarrito); 
+
+    actualizarInterfazCarrito();
+    
+    const badge = document.getElementById('bottom-nav-badge');
+    if (badge) {
+        badge.innerText = carrito.length;
+        badge.style.display = carrito.length > 0 ? 'flex' : 'none';
+    }
+    
+    // Mostrar notificación para producto agregado
+    mostrarNotificacion("¡Producto agregado a tu lista!");
+}
+
+function quitarDelCarrito(i) {
+    carrito.splice(i, 1);
+    actualizarInterfazCarrito();
+    dibujarCarrito();
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 function añadirAlCarrito(codigo) {
     if (window.NtModules?.carrito) {
         window.NtModules.carrito.addToCart(codigo);
     }
+<<<<<<< HEAD
 }
 
 function quitarDelCarrito(i) {
@@ -261,6 +541,101 @@ function enviarPedidoWhatsApp() {
     if (window.NtModules?.carrito) {
         window.NtModules.carrito.sendOrderWhatsApp();
     }
+=======
+    if (!isVisible) dibujarCarrito();
+}
+
+function dibujarCarrito() {
+    const lista = document.getElementById('lista-carrito');
+    const totalSpan = document.getElementById('precio-total');
+    if (!lista || !totalSpan) return;
+    lista.innerHTML = ""; 
+    let total = 0;
+    if (carrito.length === 0) {
+        lista.innerHTML = `<div style="text-align:center; padding:40px 0; color:#888;"><p>Tu lista está vacía.</p></div>`;
+        totalSpan.innerText = "0.00";
+        return;
+    }
+    carrito.forEach((p, i) => {
+        total += p.precio;
+        const tallaHTML = p.tallaElegida ? `<span class="talla-carrito">Talla: ${p.tallaElegida}</span>` : "";
+        const colorHTML = p.colorElegido ? `<span class="color-carrito">Color: ${p.colorElegido}</span>` : "";
+        
+        lista.innerHTML += `
+            <div class="item-carrito">
+                <img src="images/${p.codigo}/1.jpg" alt="${p.nombre}" class="miniatura-carrito">
+                <div class="info-item-carrito">
+                    <strong class="nombre-producto-carrito">${p.nombre}</strong>
+                    <div class="detalles-producto-carrito">
+                        <small class="codigo-producto">Cód: ${p.codigo}</small>
+                        ${tallaHTML}
+                        ${colorHTML}
+                    </div>
+                </div>
+                <div class="acciones-item-carrito">
+                    <span class="precio-item-carrito">$${p.precio.toFixed(2)}</span>
+                    <button class="btn-quitar" onclick="quitarDelCarrito(${i})">✕</button>
+                </div>
+            </div>`;
+    });
+    totalSpan.innerText = total.toFixed(2);
+}
+
+function enviarPedidoWhatsApp() {
+    if (carrito.length === 0) return;
+    
+    // Generar un número de orden único combinando Fecha + Random
+    const ahora = new Date();
+    const diaMes = ahora.getDate().toString().padStart(2, '0') + (ahora.getMonth() + 1).toString().padStart(2, '0');
+    const numAzar = Math.floor(1000 + Math.random() * 9000);
+    const numOrden = `${diaMes}-${numAzar}`;
+    
+    // Emojis literales (asegura que el archivo sea guardado en UTF-8)
+    const eBrillo = "✨";
+    const eID = "🆔";
+    const eItem = "🛍️";
+    const eEtiqueta = "🏷️";
+    const eRegla = "📏";
+    const eDinero = "💰";
+    const eCheck = "✅";
+    const eUbi = "📍";
+    const eCamion = "🚚";
+    const eManos = "🙏";
+    const eFuego = "🔥";
+
+    let txt = `${eBrillo} *¡HOLA NTENDENCIA PANAMÁ!* ${eBrillo}\n`;
+    txt += `${eID} *ORDEN:* #NP-${numOrden}\n\n`;
+    txt += `${eFuego} Me gustaría consultar la disponibilidad de estos artículos:\n`;
+    txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
+    
+    let total = 0;
+    carrito.forEach((p, index) => {
+        txt += `${eItem} *${index + 1}. ${p.nombre.toUpperCase()}*\n`;
+        txt += `   ${eEtiqueta} Código: ${p.codigo}\n`;
+        if (p.tallaElegida) {
+            txt += `   ${eRegla} Talla: *${p.tallaElegida}*\n`;
+        }
+        if (p.colorElegido) {
+            txt += `   🎨 Color: *${p.colorElegido}*\n`;
+        }
+        txt += `   ${eDinero} Precio: *$${p.precio.toFixed(2)}*\n`;
+        txt += `   🔗 Ver producto: https://ntendenciapanama.vercel.app/?search=${encodeURIComponent(p.codigo)}\n\n`;
+        total += p.precio;
+    });
+    
+    txt += "━━━━━━━━━━━━━━━━━━━━\n";
+    txt += `${eCheck} *TOTAL ESTIMADO: $${total.toFixed(2)}*\n`;
+    txt += "━━━━━━━━━━━━━━━━━━━━\n\n";
+    
+    txt += `${eUbi} *INFORMACIÓN DE ENTREGA:*\n`;
+    txt += `Podemos coordinar los detalles de su entrega directamente por esta vía. Contamos con retiro en *Plaza Terronal* y *Plaza Galería*, o envíos ${eCamion} a todo Panamá mediante *Ferguson, Jedidias y Fletes Chavales*.\n\n`;
+    
+    txt += `${eManos} _Quedo atento(a) a su respuesta para coordinar el pago y la entrega. ¡Muchas gracias!_`;
+    
+    // Usamos api.whatsapp.com que es más estable en PC que wa.me para mensajes con muchos emojis
+    const url = `https://api.whatsapp.com/send?phone=50767710645&text=${encodeURIComponent(txt)}`;
+    window.open(url, '_blank');
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 function scrollToTop() {
@@ -279,6 +654,7 @@ function focusSearch() {
 }
 
 function aplicarBusqueda(term) {
+<<<<<<< HEAD
     if (window.NtModules?.productos) {
         window.NtModules.productos.applySearch(term);
         
@@ -294,6 +670,22 @@ function aplicarBusqueda(term) {
             }
         }
     }
+=======
+    const productos = window.NtModules?.productos;
+    if (productos) {
+        productos.applySearch(term);
+        return;
+    }
+    if (term === "") {
+        productosFiltrados = todosLosProductos;
+    } else {
+        productosFiltrados = catalogoCompleto.filter(p =>
+            p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
+        );
+    }
+    paginaActual = 1;
+    mostrarProductos();
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 document.getElementById('buscador')?.addEventListener('input', (e) => {
@@ -370,9 +762,31 @@ window.addEventListener('scroll', handleMobileScroll);
 window.addEventListener('resize', handleMobileScroll);
 document.addEventListener('click', manejarClickGlobalCategorias);
 
+function toggleCategorias(event) {
+    if (event) event.stopPropagation();
+    const dropdown = document.getElementById('categorias');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+}
+
+// Cerrar dropdown al hacer clic fuera
+function manejarClickGlobalCategorias(e) {
+    const dropdown = document.getElementById('categorias');
+    const trigger = document.querySelector('.categorias-trigger');
+    if (!dropdown || !dropdown.classList.contains('show')) return;
+    if (trigger && trigger.contains(e.target)) return;
+    if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('show');
+    }
+}
+
+document.addEventListener('click', manejarClickGlobalCategorias);
+
 /* --- CATEGORÍAS --- */
 
 function generarCategorias() {
+<<<<<<< HEAD
     if (window.NtModules?.categorias) {
         window.NtModules.categorias.render();
     }
@@ -410,6 +824,45 @@ function actualizarPaginacion() {
 
 function manejarResizeVentana() {
     const previo = window.productosPorPagina;
+=======
+    ejecutarEnModulo('categorias', (categorias) => {
+        categorias.render();
+    });
+}
+
+function filtrarPorCategoria(c, btnElement, event) {
+    if (event) event.stopPropagation();
+    ejecutarEnModulo('categorias', (categorias) => {
+        categorias.select(c);
+    });
+}
+
+function toggleCategoriasMobile() {
+    const modal = document.getElementById('modal-categorias-mobile');
+    if (modal) {
+        if (modal.classList.contains('modal-cats-hidden')) {
+            modal.classList.remove('modal-cats-hidden');
+            modal.classList.add('modal-cats');
+            document.body.style.overflow = 'hidden'; // Bloquear scroll al abrir
+        } else {
+            modal.classList.remove('modal-cats');
+            modal.classList.add('modal-cats-hidden');
+            document.body.style.overflow = ''; // Restaurar scroll al cerrar
+        }
+    }
+}
+
+/* --- PAGINACIÓN (DESHABILITADA EN MÓVIL) --- */
+
+function actualizarPaginacion() {
+    ejecutarEnModulo('productos', (productos) => {
+        productos.renderPagination();
+    });
+}
+
+function manejarResizeVentana() {
+    const previo = productosPorPagina;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     ajustarPaginacionDinamica();
     if (previo !== window.productosPorPagina) {
         // En lugar de llamar a mostrarProductos() local, usamos el módulo
@@ -729,7 +1182,11 @@ window.NtDataBridge = {
 };
 
 window.NtUIBridge = {
+<<<<<<< HEAD
     notify: (mensaje, color, product) => mostrarNotificacion(mensaje, color, product),
+=======
+    notify: (mensaje, color) => mostrarNotificacion(mensaje, color),
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     openProductModal: (codigo) => abrirModalProducto(codigo),
     addToCartFromModal: (codigo) => {
         if (typeof window.añadirAlCarritoDesdeModal === 'function') {
@@ -774,6 +1231,7 @@ window.NtUIBridge = {
 };
 
 import('./js_modules/app/init.js')
+<<<<<<< HEAD
     .then(async ({ initializeApp }) => {
         // Cargar componentes comunes antes de inicializar para evitar saltos
         const { renderCommonUI } = await import('./js_modules/core/common-ui.js');
@@ -784,11 +1242,17 @@ import('./js_modules/app/init.js')
         window.NtModules = app;
         
         // Exponer funciones necesarias para compatibilidad legacy
+=======
+    .then(({ initializeApp }) => {
+        const app = initializeApp();
+        window.NtModules = app;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
         window.añadirAlCarrito = app.carrito.addToCart;
         window.añadirAlCarritoDesdeModal = app.carrito.addToCartFromModal;
         window.quitarDelCarrito = app.carrito.removeFromCart;
         window.toggleCarrito = app.carrito.toggleCart;
         window.enviarPedidoWhatsApp = app.carrito.sendOrderWhatsApp;
+<<<<<<< HEAD
         
         modulosInicializados = true;
         
@@ -805,6 +1269,10 @@ import('./js_modules/app/init.js')
                 })
                 .catch(err => console.error("Error cargando el módulo de la Home:", err));
         }
+=======
+        modulosInicializados = true;
+        sincronizarArranqueApp();
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     })
     .catch((error) => {
         console.error("Error inicializando módulos JS:", error);

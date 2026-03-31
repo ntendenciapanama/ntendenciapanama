@@ -41,6 +41,7 @@
     -webkit-tap-highlight-color: transparent; 
 }
 
+<<<<<<< HEAD
 html, body {
     width: 100%;
     position: relative;
@@ -49,11 +50,17 @@ html, body {
     overflow-x: clip; /* FIX: clip no rompe position: sticky como hidden */
 }
 
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 body { 
     background-color: var(--blanco); 
     color: var(--marca-primario); 
     padding-bottom: 0; 
+<<<<<<< HEAD
     transition: background-color 0.5s ease; /* Solo transicionar el fondo, no todo (evita lag en scroll) */
+=======
+    transition: all 0.5s ease;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 body.ui-mobile [data-ui-scope="desktop"] {
@@ -168,7 +175,11 @@ body.seccion-saldos-activa #productos {
     background-color: transparent !important; /* Hacemos el contenedor transparente para que se vea el diseño del body */
 }
 
+<<<<<<< HEAD
 body.seccion-saldos-activa .header-main,
+=======
+body.seccion-saldos-activa header,
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 body.seccion-saldos-activa .fixed-top-container,
 body.seccion-saldos-activa .mobile-app-title {
     background-color: #000 !important;
@@ -183,7 +194,42 @@ body.seccion-saldos-activa .mobile-app-title {
     padding-bottom: 0px; /* Reducido de 45px al eliminar el marquee */
 }
 
+<<<<<<< HEAD
 /* El footer se maneja ahora desde core.css y common-ui.js */
+=======
+.footer-main {
+    text-align: center; 
+    margin-top: 50px; 
+    padding: 40px; 
+    border-top: 1px solid #333; 
+    background: #000;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-text {
+    font-size: 0.7rem; 
+    color: #ccc; 
+    margin-top: 25px; 
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Clases para eliminar estilos inline de modales */
+.modal-pdf-hidden {
+    display: none;
+}
+
+.modal-icon {
+    font-size: 3rem;
+}
+
+.modal-text {
+    font-size: 0.8rem; 
+    color: #888; 
+    margin-top: 10px;
+}
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 
 .modal-saldos-hidden {
     display: none;
@@ -193,7 +239,11 @@ body.seccion-saldos-activa .mobile-app-title {
 /* 4. 🏠 HEADER Y CONTENEDOR FIJO */
 /* =================================== */
 .saldos-warning-banner {
+<<<<<<< HEAD
     display: none !important; /* Oculto por defecto en todas las vistas */
+=======
+    display: none; /* Oculto por defecto */
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     background-color: var(--marca-secundario);
     color: #000;
     padding: 3px 15px; /* Igualamos grosor visual */
@@ -210,11 +260,14 @@ body.seccion-saldos-activa .mobile-app-title {
     width: 100%;
 }
 
+<<<<<<< HEAD
 /* Solo mostrar si el body tiene la clase activa de saldos */
 body.seccion-saldos-activa .saldos-warning-banner {
     display: flex !important;
 }
 
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 .saldos-warning-banner .warning-icon {
     font-size: 0.8rem; /* Icono más pequeño acorde a la franja */
 }
@@ -227,14 +280,22 @@ body.seccion-saldos-activa .saldos-warning-banner {
     background: #000;
 }
 
+<<<<<<< HEAD
 .header-main { 
+=======
+header { 
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     background: var(--marca-primario); 
     color: var(--blanco); 
     padding: 5px 20px 10px 20px; /* Reducido arriba (5px) y abajo (10px) */
     display: flex;
     align-items: center; 
     justify-content: space-between;
+<<<<<<< HEAD
     position: relative;
+=======
+    position: relative !important;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     border-bottom: 3px solid var(--marca-secundario); /* Franja de abajo más visible (3px) */
     min-height: 60px; /* Reducido de 80px */
@@ -273,7 +334,10 @@ body.seccion-saldos-activa .saldos-warning-banner {
 
 #productos {
     margin-top: 0; /* Ya no necesitamos margen si el contenedor es sticky */
+<<<<<<< HEAD
     min-height: 60vh; /* Asegura que el footer no salte al inicio durante la carga */
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 @media (max-width: 480px) {
@@ -281,7 +345,11 @@ body.seccion-saldos-activa .saldos-warning-banner {
         /* No necesita cambios, hereda el sticky */
     }
     
+<<<<<<< HEAD
     .header-main {
+=======
+    header {
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
         flex-direction: column;
         padding: 20px 15px 12px;
         gap: 15px;
@@ -546,11 +614,16 @@ body.seccion-saldos-activa .saldos-warning-banner {
 
 .promo-banner-container {
     display: none;
+<<<<<<< HEAD
     padding: 0; /* Sin padding lateral para que sobresalga de borde a borde */
     background: #f5f5f5;
     width: 100%; /* Corregido de 100vw para evitar scroll horizontal */
     margin-left: 0;
     margin-right: 0;
+=======
+    padding: 10px 15px;
+    background: #f5f5f5;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .promo-slider {
@@ -760,9 +833,14 @@ body.seccion-saldos-activa .saldos-warning-banner {
 }
 
 .dot.active {
+<<<<<<< HEAD
     background: #fff;
     width: 20px;
     border-radius: 4px;
+=======
+    background: #000;
+    width: 6px;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 @media (max-width: 768px) {
@@ -802,6 +880,7 @@ body.seccion-saldos-activa .saldos-warning-banner {
     #productos {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
+<<<<<<< HEAD
         gap: 12px !important; /* Un poco más de aire */
         padding: 12px !important;
         width: 100% !important;
@@ -816,19 +895,34 @@ body.seccion-saldos-activa .saldos-warning-banner {
         padding: 8px !important; /* Mantenemos un padding cómodo */
         border-radius: 0 !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; /* Sombra más elegante */
+=======
+        gap: 8px !important;
+        padding: 8px !important;
+        width: 100% !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .producto {
+        border-radius: 0 !important;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
         width: 100% !important;
         max-width: none !important;
         margin: 0 !important;
         display: flex !important;
         flex-direction: column !important;
+<<<<<<< HEAD
         transition: transform 0.3s ease !important;
         cursor: pointer !important; /* Asegurar que sea clicable */
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 
     .main-img-container {
         width: 100% !important;
         height: auto !important;
         aspect-ratio: 1/1 !important;
+<<<<<<< HEAD
         background: #f9f9f9 !important;
         margin-bottom: 8px !important;
     }
@@ -862,6 +956,24 @@ body.seccion-saldos-activa .saldos-warning-banner {
 
     .badge-descuento-grid {
         font-size: 0.65rem !important;
+=======
+    }
+
+    .producto-info {
+        padding: 8px !important;
+    }
+
+    .precio-actual {
+        font-size: 1.1rem !important;
+    }
+
+    .precio-tachado {
+        font-size: 0.7rem !important;
+    }
+
+    .badge-descuento-grid {
+        font-size: 0.6rem !important;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 }
 @media (max-width: 768px) {
@@ -1259,6 +1371,18 @@ body.seccion-saldos-activa .saldos-warning-banner {
     }
 }
 
+<<<<<<< HEAD
+=======
+/* Ajuste para el botón PDF en móvil */
+@media (max-width: 768px) {
+    #contenedor-pdf-dinamico {
+        position: relative;
+        z-index: 900;
+        margin-top: 0;
+    }
+}
+
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 /* =================================== */
 /* 5. 🏷️ CATEGORÍAS (DROPDOWN MODERNO) */
 /* =================================== */
@@ -1339,6 +1463,7 @@ body.seccion-saldos-activa .saldos-warning-banner {
 .producto:nth-child(12) { animation-delay: 0.6s; }
 
 /* =================================== */
+<<<<<<< HEAD
 /* 7. 🃏 TARJETAS DE PRODUCTO (ESTILO REFERENCIA) */
 /* =================================== */
 #productos { 
@@ -1352,15 +1477,136 @@ body.seccion-saldos-activa .saldos-warning-banner {
     #productos {
         grid-template-columns: repeat(3, 1fr); /* 3 columnas en tablets medianas */
     }
+=======
+/* 6. 🎪 BANNER POPUP MÓVIL */
+/* =================================== */
+.banner-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.banner-content {
+    background: linear-gradient(135deg, var(--marca-primario) 0%, #6a1b3a 50%, var(--marca-primario) 100%);
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    color: white;
+    max-width: 350px;
+    width: 90%;
+    position: relative;
+    animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--marca-secundario);
+}
+
+.cerrar-banner {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.cerrar-banner:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.banner-logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.banner-title {
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+.banner-subtitle {
+    font-size: 1rem;
+    font-weight: 300;
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+.banner-cta {
+    background: var(--marca-secundario);
+    color: var(--marca-primario);
+    padding: 12px 30px;
+    border-radius: 25px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.banner-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+    background: var(--marca-dorado-brillante);
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 @media (max-width: 768px) {
     #productos {
         grid-template-columns: repeat(2, 1fr) !important;
+<<<<<<< HEAD
         gap: 10px !important;
         padding: 10px !important;
         background: #fdfdfd !important;
     }
+=======
+        gap: 6px !important;
+        padding: 6px !important;
+        display: grid !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .producto {
+        border-radius: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+    }
+}
+
+/* =================================== */
+/* 7. 🃏 TARJETAS DE PRODUCTO (ESTILO REFERENCIA) */
+/* =================================== */
+#productos { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 20px; 
+    padding: 20px;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .producto { 
@@ -1393,8 +1639,12 @@ body.seccion-saldos-activa .saldos-warning-banner {
 .main-img-container img { 
     width: 100%;
     height: 100%;
+<<<<<<< HEAD
     object-fit: contain; /* Cambiado de cover a contain para no cortar la ropa */
     padding: 5px; /* Pequeño respiro interno */
+=======
+    object-fit: cover; /* Llena el espacio */
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     transition: transform 0.5s ease;
 }
 
@@ -1405,9 +1655,15 @@ body.seccion-saldos-activa .saldos-warning-banner {
 /* --- Cinta de Oferta --- */
 .cinta-oferta {
     position: absolute;
+<<<<<<< HEAD
     top: 15px; /* Más cerca de la esquina superior */
     left: -42px; /* Más afuera para cruzar la esquina izquierda */
     width: 150px; /* Ancho suficiente para cubrir la esquina */
+=======
+    top: 20px;
+    left: -30px;
+    width: 150px;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     height: 30px;
     background: var(--oferta-rojo);
     color: white;
@@ -2477,6 +2733,7 @@ h3 {
 /* =================================== */
 /* 7.5 📏 SELECTOR DE TALLAS (ESTILO BOUTIQUE) */
 /* =================================== */
+<<<<<<< HEAD
 
 /* MENSAJE DE SIN RESULTADOS */
 .no-results-container {
@@ -2551,6 +2808,8 @@ h3 {
     }
 }
 /* =================================== */
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 .selector-tallas {
     margin: 12px 0 18px;
 }
@@ -2658,6 +2917,7 @@ h3 {
     transform: translateY(-2px);
 }
 
+<<<<<<< HEAD
 /* =================================== */
 /* 9. 🔔 NOTIFICACIONES PREMIUM */
 /* =================================== */
@@ -2801,6 +3061,8 @@ h3 {
     }
 }
 
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 .whatsapp-btn:active, .btn-añadir-lista:active {
     transform: scale(0.95);
 }
@@ -2818,10 +3080,16 @@ h3 {
     padding: 8px 0;
     justify-content: space-around;
     align-items: center;
+<<<<<<< HEAD
     z-index: 5000; /* Aumentado para estar por encima de todo */
     box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
     border-top: 1px solid #eee;
     padding-bottom: env(safe-area-inset-bottom, 10px); /* Soporte para notch */
+=======
+    z-index: 4000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    border-top: 1px solid #eee;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .nav-item {
@@ -2878,6 +3146,7 @@ h3 {
     .bottom-nav {
         display: flex;
     }
+<<<<<<< HEAD
 
     /* OCULTAR BOTTOM NAV CUANDO EL CARRITO ESTÁ ABIERTO */
     body.carrito-abierto .bottom-nav {
@@ -2886,10 +3155,101 @@ h3 {
     
     body {
         padding-bottom: calc(100px + env(safe-area-inset-bottom, 20px)) !important; /* Más espacio para evitar que el nav tape el último producto */
+=======
+    
+    body {
+        padding-bottom: 90px; /* Espacio aumentado para que el nav no tape contenido */
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 }
 
 /* =================================== */
+<<<<<<< HEAD
+=======
+/* 8.6 📄 MODAL PDF */
+/* =================================== */
+.modal-pdf {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(5px);
+    z-index: 6000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-pdf-content {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cerrar-modal-pdf {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #888;
+}
+
+.modal-pdf-header h2 {
+    color: var(--marca-primario);
+    font-family: 'Playfair Display', serif;
+    margin-top: 10px;
+    font-size: 1.5rem;
+}
+
+.modal-pdf-body {
+    margin: 20px 0;
+    color: #555;
+    line-height: 1.5;
+}
+
+.modal-pdf-footer {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-cancelar-pdf, .btn-confirmar-pdf {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancelar-pdf {
+    background: #f0f0f0;
+    color: #666;
+}
+
+.btn-confirmar-pdf {
+    background: var(--marca-primario);
+    color: white;
+}
+
+.btn-confirmar-pdf:hover {
+    background: var(--marca-dorado-brillante);
+    color: var(--marca-primario);
+}
+
+/* =================================== */
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 /* 🔔 MODAL SALDOS                     */
 /* =================================== */
 
@@ -3116,6 +3476,7 @@ h3 {
 }
 
 .contenido-carrito { 
+<<<<<<< HEAD
     background: #ffffff; 
     width: 95%; 
     max-width: 1100px; /* Aumentado para el diseño de dos columnas */
@@ -3193,16 +3554,82 @@ h3 {
 .miniatura-carrito {
     width: 55px;
     height: 55px;
+=======
+    background: var(--blanco); 
+    width: 95%; 
+    max-width: 480px; 
+    border-radius: 25px; 
+    display: flex; 
+    flex-direction: column; 
+    box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    overflow: hidden;
+}
+
+.carrito-layout {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-carrito { 
+    padding: 25px; 
+    background: var(--marca-primario); 
+    color: var(--blanco); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 3px solid var(--marca-secundario);
+}
+
+.titulo-carrito h2 { font-size: 1.3rem; }
+.titulo-carrito p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+.cerrar-carrito { font-size: 32px; cursor: pointer; transition: 0.3s; }
+.cuerpo-carrito { padding: 25px; max-height: 55vh; overflow-y: auto; }
+
+.item-carrito { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 15px 0; 
+    border-bottom: 1px solid #f0f0f0; 
+    gap: 12px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.item-carrito:hover {
+    background: #f8fafc;
+}
+
+.item-carrito:focus-visible {
+    outline: 2px solid #bfd8ff;
+    outline-offset: 2px;
+}
+
+.miniatura-carrito {
+    width: 50px;
+    height: 50px;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     object-fit: cover;
     border-radius: 8px;
     flex-shrink: 0;
     background: #f8f8f8;
+<<<<<<< HEAD
+=======
+    border: 1px solid #e0e0e0;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .info-item-carrito {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+<<<<<<< HEAD
     gap: 2px;
 }
 
@@ -3211,6 +3638,19 @@ h3 {
     font-weight: 800;
     color: #1a1a1a;
     text-transform: uppercase;
+=======
+    justify-content: center;
+    text-align: left; /* Asegurar alineación a la izquierda */
+    min-width: 0; /* Permitir que el texto se ajuste y no desborde */
+}
+
+.nombre-producto-carrito {
+    font-size: 0.9rem;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    display: block;
+    color: #333;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .detalles-producto-carrito {
@@ -3220,6 +3660,7 @@ h3 {
 }
 
 .codigo-producto {
+<<<<<<< HEAD
     color: #8892a0;
     font-size: 0.8rem;
     font-weight: 400;
@@ -3230,22 +3671,38 @@ h3 {
     color: #410020;
     font-weight: 600;
     font-size: 0.9rem;
+=======
+    color: #888;
+    font-size: 0.75rem;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .editar-item-carrito {
     margin-top: 4px;
+<<<<<<< HEAD
     color: #8892a0;
     font-size: 0.75rem;
+=======
+    color: #6b7480;
+    font-size: 0.72rem;
+    font-weight: 600;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .acciones-item-carrito {
     display: flex;
     align-items: center;
+<<<<<<< HEAD
     gap: 15px;
+=======
+    gap: 10px;
+    flex-shrink: 0;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .precio-item-carrito {
     font-weight: 800;
+<<<<<<< HEAD
     color: #1a1a1a;
     font-size: 1.1rem;
 }
@@ -3259,12 +3716,28 @@ h3 {
     border-radius: 50%; 
     cursor: pointer; 
     font-size: 14px;
+=======
+    color: var(--marca-primario);
+    font-size: 1rem;
+}
+
+.btn-quitar { 
+    background: #fff0f0; 
+    color: var(--oferta-rojo); 
+    border: none; 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    font-weight: bold; 
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     display: flex; 
     align-items: center; 
     justify-content: center;
     transition: all 0.2s;
 }
 
+<<<<<<< HEAD
 .panel-resumen-carrito {
     display: flex;
     flex-direction: column;
@@ -3281,10 +3754,40 @@ h3 {
     padding: 15px 20px; /* Reducido para más compactación */
     display: flex;
     flex-direction: column;
+=======
+.btn-quitar:hover {
+    background: #ffe0e0;
+    transform: scale(1.1);
+}
+
+.footer-carrito { 
+    padding: 16px 25px 24px; 
+    background: transparent; 
+    border-top: none; 
+}
+
+.titulo-resumen-carrito {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: #1f2a37;
+    letter-spacing: 0.2px;
+    text-align: left;
+    line-height: 1.2;
+    padding: 15px 25px 9px;
+    margin: 0;
+    border-bottom: 1px solid #e8edf5;
+}
+
+.panel-resumen-carrito {
+    display: flex;
+    flex-direction: column;
+    background: #f8faff;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .orden-carrito {
     font-size: 0.95rem;
+<<<<<<< HEAD
     font-weight: 800;
     color: #1a2a3a;
     margin-bottom: 15px; /* Reducido */
@@ -3342,19 +3845,76 @@ h3 {
     border-radius: 15px;
     padding: 18px;
     text-align: left;
+=======
+    font-weight: 700;
+    color: #273142;
+    margin-bottom: 14px;
+}
+
+.total-contenedor { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 20px; 
+}
+
+.monto-total { 
+    font-size: 1.8rem; 
+    font-weight: 900; 
+    color: var(--marca-primario); 
+}
+
+.btn-enviar-pedido { 
+    width: 100%; 
+    background: var(--whatsapp); 
+    color: white; 
+    padding: 18px; 
+    border-radius: 15px; 
+    border: none; 
+    font-size: 1rem; 
+    font-weight: 800; 
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.btn-enviar-pedido:hover {
+    filter: brightness(1.05);
+}
+
+.nota-seguridad {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: #6f7682;
+    line-height: 1.4;
+}
+
+.info-entrega-carrito {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e9edf5;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .info-entrega-carrito strong {
     display: block;
+<<<<<<< HEAD
     font-size: 0.9rem;
     color: #1a2a3a;
     text-transform: uppercase;
     margin-bottom: 8px;
     letter-spacing: 0.5px;
+=======
+    font-size: 0.82rem;
+    color: #1f2a37;
+    margin-bottom: 6px;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 .info-entrega-carrito p {
     margin: 0;
+<<<<<<< HEAD
     font-size: 0.88rem;
     line-height: 1.5;
     color: #556070;
@@ -3371,6 +3931,51 @@ h3 {
     transform: scale(0.95) !important;
     background: #219150 !important;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+=======
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: #556070;
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+    .modal-carrito {
+        padding: 12px;
+        align-items: flex-start;
+    }
+
+    .contenido-carrito {
+        width: min(920px, 96vw);
+        max-width: none;
+        max-height: 94vh;
+        border-radius: 18px;
+    }
+
+    .header-carrito {
+        padding: 16px 18px;
+    }
+
+    .titulo-carrito h2 {
+        font-size: 1.2rem;
+    }
+
+    .titulo-carrito p {
+        font-size: 0.82rem;
+    }
+
+    .cuerpo-carrito {
+        padding: 16px;
+        max-height: 52vh;
+    }
+
+    .footer-carrito {
+        padding: 16px;
+    }
+
+    .titulo-resumen-carrito {
+        font-size: 0.9rem;
+        padding: 12px 16px 8px;
+    }
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
 
 @media (max-width: 768px) {
@@ -3385,6 +3990,7 @@ h3 {
         height: 100vh;
         max-height: 100dvh;
         border-radius: 0;
+<<<<<<< HEAD
         display: flex;
         flex-direction: column;
     }
@@ -3406,18 +4012,38 @@ h3 {
         font-size: 0.75rem; /* Más pequeño */
         color: rgba(255, 255, 255, 0.8) !important;
         margin-top: 1px;
+=======
+    }
+
+    .header-carrito {
+        padding: calc(10px + env(safe-area-inset-top)) 14px 10px 14px;
+        flex-shrink: 0;
+    }
+
+    .titulo-carrito h2 {
+        font-size: 1.05rem;
+    }
+
+    .titulo-carrito p {
+        font-size: 0.78rem;
+        margin-top: 3px;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 
     .carrito-layout {
         flex: 1;
         min-height: 0;
+<<<<<<< HEAD
         display: flex;
         flex-direction: column;
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
         overflow: hidden;
     }
 
     .cuerpo-carrito {
         flex: 1;
+<<<<<<< HEAD
         padding: 10px 12px; /* Más compacto */
         overflow-y: auto;
         background: #f8faff; /* Fondo sutil para items */
@@ -3458,12 +4084,57 @@ h3 {
         width: 32px;
         height: 32px;
         font-size: 12px;
+=======
+        min-height: 0;
+        max-height: none;
+        overflow-y: auto;
+        padding: 12px 14px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .item-carrito {
+        gap: 10px;
+        padding: 10px 8px;
+    }
+
+    .miniatura-carrito {
+        width: 44px;
+        height: 44px;
+    }
+
+    .nombre-producto-carrito {
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+    }
+
+    .codigo-producto,
+    .editar-item-carrito {
+        font-size: 0.68rem;
+    }
+
+    .detalles-producto-carrito {
+        gap: 1px;
+    }
+
+    .acciones-item-carrito {
+        gap: 8px;
+    }
+
+    .precio-item-carrito {
+        font-size: 0.9rem;
+    }
+
+    .btn-quitar {
+        width: 30px;
+        height: 30px;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 
     .panel-resumen-carrito {
         flex-shrink: 0;
         border-top: 1px solid #edf1f7;
         background: #fff;
+<<<<<<< HEAD
         max-height: none; /* Dejar que el contenido mande pero compacto */
         padding: 0;
     }
@@ -3507,16 +4178,66 @@ h3 {
     .info-entrega-carrito strong {
         font-size: 0.75rem;
         margin-bottom: 4px;
+=======
+        max-height: 39dvh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .footer-carrito {
+        padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) 12px;
+    }
+
+    .titulo-resumen-carrito {
+        font-size: 0.82rem;
+        padding: 10px 12px 7px;
+    }
+
+    .orden-carrito {
+        font-size: 0.84rem;
+        margin-bottom: 10px;
+    }
+
+    .total-contenedor {
+        margin-bottom: 12px;
+    }
+
+    .monto-total {
+        font-size: 1.7rem;
+    }
+
+    .btn-enviar-pedido {
+        padding: 12px;
+        font-size: 0.82rem;
+    }
+
+    .nota-seguridad {
+        margin-top: 8px;
+        font-size: 0.72rem;
+    }
+
+    .info-entrega-carrito {
+        margin-top: 8px;
+        padding: 8px 10px;
+    }
+
+    .info-entrega-carrito strong {
+        font-size: 0.76rem;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 
     .info-entrega-carrito p {
         font-size: 0.72rem;
+<<<<<<< HEAD
         line-height: 1.3;
     }
 
     .cerrar-carrito {
         color: #ffffff !important;
         font-size: 26px; /* Más pequeño */
+=======
+        line-height: 1.35;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 }
 
@@ -4014,7 +4735,11 @@ h3 {
 
 .promo-banner-container {
     display: none;
+<<<<<<< HEAD
     padding: 0; /* Sin padding para que el banner sea de borde a borde */
+=======
+    padding: 10px 15px;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     background: #f5f5f5;
 }
 
@@ -4225,6 +4950,7 @@ h3 {
     #productos {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
+<<<<<<< HEAD
         gap: 10px !important;
         padding: 10px !important;
         width: 100% !important;
@@ -4239,6 +4965,17 @@ h3 {
         padding: 0 !important; /* Quitamos padding a la tarjeta para que la imagen sea full-width */
         border-radius: 0 !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+=======
+        gap: 8px !important;
+        padding: 8px !important;
+        width: 100% !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .producto {
+        border-radius: 0 !important;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
         width: 100% !important;
         max-width: none !important;
         margin: 0 !important;
@@ -4250,6 +4987,7 @@ h3 {
         width: 100% !important;
         height: auto !important;
         aspect-ratio: 1/1 !important;
+<<<<<<< HEAD
         background: #f9f9f9 !important;
         margin-bottom: 0 !important; /* Pegada a la info */
     }
@@ -4283,5 +5021,23 @@ h3 {
 
     .badge-descuento-grid {
         font-size: 0.65rem !important;
+=======
+    }
+
+    .producto-info {
+        padding: 8px !important;
+    }
+
+    .precio-actual {
+        font-size: 1.1rem !important;
+    }
+
+    .precio-tachado {
+        font-size: 0.7rem !important;
+    }
+
+    .badge-descuento-grid {
+        font-size: 0.6rem !important;
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 }

@@ -3,10 +3,15 @@ function formatCurrency(value) {
 }
 
 export function createCarritoLogic({ service, eventBus }) {
+<<<<<<< HEAD
     // --- CARGA DESDE LOCALSTORAGE ---
     const savedItems = localStorage.getItem('nt_carrito');
     const items = savedItems ? JSON.parse(savedItems) : [];
     let currentOrderNumber = localStorage.getItem('nt_num_orden') || "";
+=======
+    const items = [];
+    let currentOrderNumber = "";
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 
     function generateOrderNumber() {
         const now = new Date();
@@ -34,11 +39,15 @@ export function createCarritoLogic({ service, eventBus }) {
     }
 
     function notifyChange() {
+<<<<<<< HEAD
         const snapshot = buildSnapshot();
         // --- GUARDAR EN LOCALSTORAGE ---
         localStorage.setItem('nt_carrito', JSON.stringify(items));
         localStorage.setItem('nt_num_orden', currentOrderNumber);
         eventBus.emit("cart:changed", snapshot);
+=======
+        eventBus.emit("cart:changed", buildSnapshot());
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
     }
 
     function findVariant(codigo, tallaElegida, colorElegido) {
@@ -195,6 +204,7 @@ export function createCarritoLogic({ service, eventBus }) {
 
     function buildWhatsAppMessage() {
         if (items.length === 0) return null;
+<<<<<<< HEAD
 
         // --- VALIDACIÓN DE EXISTENCIA Y DISPONIBILIDAD ---
         // Esto verifica si el producto sigue en el catálogo y no está vendido
@@ -234,6 +244,8 @@ export function createCarritoLogic({ service, eventBus }) {
             };
         }
 
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
         const orderNumber = ensureOrderNumber();
 
         let text = `✨ *¡HOLA NTENDENCIA PANAMÁ!* ✨\n`;
@@ -249,7 +261,10 @@ export function createCarritoLogic({ service, eventBus }) {
             if (item.tallaElegida) text += `   📏 Talla: *${item.tallaElegida}*\n`;
             if (item.colorElegido) text += `   🎨 Color: *${item.colorElegido}*\n`;
             text += `   💰 Precio: *$${formatCurrency(item.precio)}*\n`;
+<<<<<<< HEAD
             // Link fijo a la URL de producción con el parámetro de búsqueda
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
             text += `   🔗 Ver producto: https://ntendenciapanama.vercel.app/?search=${encodeURIComponent(item.codigo)}\n\n`;
             total += Number(item.precio || 0) * Number(item.cantidad || 1);
         });

@@ -14,6 +14,7 @@ export function createCategoriasLogic({ service, eventBus }) {
         service.updateActiveCategoryStyles(normalized);
         service.updateCategoryLabel(normalized);
         const isSaldos = normalized === "Saldos";
+<<<<<<< HEAD
         
         // Sincronizar clase en el body para CSS
         document.body.classList.toggle('seccion-saldos-activa', isSaldos);
@@ -24,6 +25,8 @@ export function createCategoriasLogic({ service, eventBus }) {
             banner.style.display = isSaldos ? 'flex' : 'none';
         }
         
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
         service.setSaldosMode(isSaldos);
         if (isSaldos) {
             service.maybeShowSaldosModal();

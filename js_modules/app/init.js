@@ -1,6 +1,9 @@
 import { eventBus } from "../core/event-bus.js";
+<<<<<<< HEAD
 import { fetchCatalogo, getCachedCatalogo } from "../core/data-service.js";
 import { renderCommonUI, showCommonUI } from "../core/common-ui.js";
+=======
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 import { initializeCarritoModule } from "../features/carrito/index.js";
 import { initializeCategoriasModule } from "../features/categorias/index.js";
 import { initializeModalProductoModule } from "../features/modal-producto/index.js";
@@ -8,6 +11,7 @@ import { initializeProductosModule } from "../features/productos/index.js";
 import { initializeNotificacionesModule } from "../features/notificaciones/index.js";
 import { initializeMobileModule } from "../features/mobile/index.js";
 
+<<<<<<< HEAD
 function mezclarArray(items) {
     const copia = Array.isArray(items) ? [...items] : [];
     for (let i = copia.length - 1; i > 0; i--) {
@@ -106,4 +110,29 @@ function inicializarDatosYModulos(productos) {
         
         window.modulosInicializados = true;
     }
+=======
+export function initializeApp() {
+    const carrito = initializeCarritoModule({ eventBus });
+    const modalProducto = initializeModalProductoModule({ eventBus });
+    const productos = initializeProductosModule({ eventBus });
+    const categorias = initializeCategoriasModule({ eventBus });
+    const notificaciones = initializeNotificacionesModule({ eventBus });
+    const mobile = initializeMobileModule({ eventBus });
+
+    carrito.init();
+    modalProducto.init();
+    productos.init();
+    categorias.init();
+    notificaciones.init();
+    mobile.init();
+
+    return {
+        carrito,
+        modalProducto,
+        productos,
+        categorias,
+        notificaciones,
+        mobile
+    };
+>>>>>>> a73dd3d6e3f462a7af46de463ebdc119ab757d61
 }
